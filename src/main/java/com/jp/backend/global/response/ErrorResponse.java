@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 
 import com.jp.backend.global.exception.CustomLogicException;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.ConstraintViolation;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,8 +17,11 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ErrorResponse {
+	@Schema(description = "상태코드")
 	private int status;
+	@Schema(description = "메세지")
 	private String message;
+	@Schema(description = "필드에러")
 	private final List<FieldError> fieldErrors;
 	private final List<ConstraintViolationError> violationErrors;
 
@@ -53,8 +57,12 @@ public class ErrorResponse {
 
 	@Getter
 	public static class FieldError {
+		@Schema(description = "필드명")
 		private String field;
+		@Schema(description = "에러필드")
 		private Object rejectedValue;
+
+		@Schema(description = "원인")
 		private String reason;
 
 		private FieldError(String field, Object rejectedValue, String reason) {
@@ -78,8 +86,12 @@ public class ErrorResponse {
 
 	@Getter
 	public static class ConstraintViolationError {
+		@Schema(description = "경로")
 		private String propertyPath;
+		@Schema(description = "에러 필드")
 		private Object rejectedValue;
+
+		@Schema(description = "원인")
 		private String reason;
 
 		private ConstraintViolationError(String propertyPath, Object rejectedValue,
