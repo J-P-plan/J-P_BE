@@ -42,3 +42,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+//CICD설정 위해 추가
+jar {
+    enabled = false
+}
