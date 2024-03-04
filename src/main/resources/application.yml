@@ -1,28 +1,29 @@
-h2:
-  console:
-    enabled: true  # 여기까지만 해도 H2 Browser 생성됨
-    path: /h2  # 추가 - Context path 변경
-datasource: # 추가
-  url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
-output: #로그 색상 바꾸기
-  ansi:
-    enabled: always
+spring:
+  h2:
+    console:
+      enabled: true  # 여기까지만 해도 H2 Browser 생성됨
+      path: /h2  # 추가 - Context path 변경
+  datasource: # 추가
+    url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
+  output: #로그 색상 바꾸기
+    ansi:
+      enabled: always
 
-jpa:
-  show_sql: true
-  generate-ddl: true
-  hibernate:
-    ddl-auto: create-drop
-  properties:
+  jpa:
+    show_sql: true
+    generate-ddl: true
     hibernate:
-      auto_quote_keyword: true
-      jdbc:
-        batch_size: 1000
-      order_insert: true
-      default_batch_fetch_size: 1000
-      show_sql: true
-      format_sql: true
-      use_sql_comments: true
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        auto_quote_keyword: true
+        jdbc:
+          batch_size: 1000
+        order_insert: true
+        default_batch_fetch_size: 1000
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
 
 server:
   port: 8081
