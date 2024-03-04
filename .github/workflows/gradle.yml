@@ -103,4 +103,4 @@ jobs:
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-group-name ${{ env.CODE_DEPLOY_GROUP_NAME }} \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=spring-project.zip \
+          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=webservice-deploy.zip \
