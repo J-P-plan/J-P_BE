@@ -1,3 +1,4 @@
+#!/bin/sh
 PROJECT_ROOT="/home/ubuntu/app/deploy"
 JAR_FILE="$PROJECT_ROOT/spring-project.jar"
 
