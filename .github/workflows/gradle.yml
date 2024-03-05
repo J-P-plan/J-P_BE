@@ -22,7 +22,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -94,13 +93,3 @@ jobs:
       # 압축한 프로젝트를 S3로 전송합니다.
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./webservice-deploy.zip s3://$S3_BUCKET_NAME/webservice-deploy.zip
-
-
-      # Deploy
-      - name: Deploy
-        run: |
-          aws deploy create-deployment \
-          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-          --deployment-group-name ${{ env.CODE_DEPLOY_GROUP_NAME }} \
-          --file-exists-behavior OVERWRITE \
-          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=webservice-deploy.zip \
