@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -28,7 +26,7 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
+public class SecurityConfig {
 	private final CustomFilterConfigurer customFilterConfigurer;
 	private final AuthTokenProvider authTokenProvider;
 	private final JwtConfig jwtConfig;
@@ -51,27 +49,19 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		// CSRF / CORS
+
 		http.csrf(csrf -> csrf.disable())
 			.cors(Customizer.withDefaults())
-
 			.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-
-			// 세션 관리 상태 없음
 			.sessionManagement(
 				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-			// FormLogin, BasicHttp 비활성화
 			.formLogin(form -> form.disable())
 			.httpBasic(AbstractHttpConfigurer::disable)
-
-			// .apply(customFilterConfigurer) // TODO : customFilterConfigurer 추가하는 부분
-
+			// .apply(customFilterConfigurer) // TODO : CustomFilterConfigurer 적용해야하는 부분
 			.exceptionHandling(
 				exceptionHandling -> exceptionHandling
 					.authenticationEntryPoint(authenticationEntryPoint())
 					.accessDeniedHandler(accessDeniedHandler()))
-
 			.authorizeHttpRequests(
 				authorize -> authorize
 					.requestMatchers(HttpMethod.GET, "/api/v1/members/**").authenticated()
