@@ -17,11 +17,11 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ErrorResponse {
-	@Schema(description = "상태코드")
+	@Schema(description = "상태 코드")
 	private int status;
 	@Schema(description = "메세지")
 	private String message;
-	@Schema(description = "필드에러")
+	@Schema(description = "필드 에러")
 	private final List<FieldError> fieldErrors;
 	private final List<ConstraintViolationError> violationErrors;
 
@@ -59,7 +59,7 @@ public class ErrorResponse {
 	public static class FieldError {
 		@Schema(description = "필드명")
 		private String field;
-		@Schema(description = "에러필드")
+		@Schema(description = "에러 필드")
 		private Object rejectedValue;
 
 		@Schema(description = "원인")
