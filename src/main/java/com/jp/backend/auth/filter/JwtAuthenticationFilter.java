@@ -71,8 +71,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			user.getRoles().stream().map(role -> role.getRole().name()).collect(Collectors.toList()));
 		AuthToken refreshToken = authTokenProvider.createRefreshToken(user.getEmail());
 
-		response.addHeader("Authorization", "Bearer" + accessToken.getToken());
-		response.addHeader("RefreshToken", "Bearer" + refreshToken.getToken());
+		response.addHeader("Authorization", "Bearer " + accessToken.getToken());
+		response.addHeader("RefreshToken", "Bearer " + refreshToken.getToken());
 
 		refreshService.saveRefreshToken(user.getEmail(), refreshToken);
 

@@ -30,20 +30,20 @@ public class AuthToken {
 
 	AuthToken(String id, Date expiry, Key key) {
 		this.key = key;
-		this.token = createAuthToken(id, expiry);
+		this.token = createAccessToken(id, expiry);
 	}
 
 	AuthToken(String id, String role, Date expiry, Key key) {
 		this.key = key;
-		this.token = createAuthToken(id, role, expiry);
+		this.token = createAccessToken(id, role, expiry);
 	}
 
 	AuthToken(String id, List<String> roles, Date expiry, Key key) {
 		this.key = key;
-		this.token = createAuthToken(id, roles, expiry);
+		this.token = createAccessToken(id, roles, expiry);
 	}
 
-	private String createAuthToken(String id, Date expiry) {
+	private String createAccessToken(String id, Date expiry) {
 		return Jwts.builder()
 			.setSubject(id)
 			.signWith(key,
@@ -52,7 +52,7 @@ public class AuthToken {
 			.compact();
 	}
 
-	private String createAuthToken(String id, String role, Date expiry) {
+	private String createAccessToken(String id, String role, Date expiry) {
 		return Jwts.builder()
 			.setSubject(id)
 			.claim(AUTHORITIES_KEY, role)
@@ -61,7 +61,7 @@ public class AuthToken {
 			.compact();
 	}
 
-	private String createAuthToken(String id, List<String> role, Date expiry) {
+	private String createAccessToken(String id, List<String> role, Date expiry) {
 		return Jwts.builder()
 			.setSubject(id)
 			.claim(AUTHORITIES_KEY, role)

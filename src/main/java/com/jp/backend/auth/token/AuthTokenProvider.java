@@ -32,11 +32,11 @@ public class AuthTokenProvider {
 		this.refreshTokenValidTime = refreshTokenValidTime;
 	}
 
-	public AuthToken createAuthToken(String id, Date expiry) {
+	public AuthToken createAccessToken(String id, Date expiry) {
 		return new AuthToken(id, expiry, key);
 	}
 
-	public AuthToken createAuthToken(String id, String role, Date expiry) {
+	public AuthToken createAccessToken(String id, String role, Date expiry) {
 		return new AuthToken(id, role, expiry, key);
 	}
 
@@ -57,7 +57,7 @@ public class AuthTokenProvider {
 	}
 
 	public Authentication getAuthentication(AuthToken authToken) {
-		if (authToken.isTokenValid()) { // 토큰 유효성 확인
+		if (authToken.isTokenValid()) {
 			Claims claims = authToken.getValidTokenClaims();
 			Collection<? extends GrantedAuthority> authorities = getAuthorities((List)claims.get(AUTHORITIES_KEY));
 

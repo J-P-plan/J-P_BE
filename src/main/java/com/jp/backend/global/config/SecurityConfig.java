@@ -3,7 +3,9 @@ package com.jp.backend.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,11 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.jp.backend.auth.config.JwtConfig;
-import com.jp.backend.auth.filter.CustomFilterConfigurer;
+import com.jp.backend.auth.filter.JwtAuthenticationFilter;
+import com.jp.backend.auth.filter.JwtVerificationFilter;
 import com.jp.backend.auth.handler.UserAccessDeniedHandler;
 import com.jp.backend.auth.handler.UserAuthenticationEntryPoint;
+import com.jp.backend.auth.handler.UserAuthenticationFailureHandler;
+import com.jp.backend.auth.handler.UserAuthenticationSuccessHandler;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
 
@@ -27,17 +32,12 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-	private final CustomFilterConfigurer customFilterConfigurer;
 	private final AuthTokenProvider authTokenProvider;
-	private final JwtConfig jwtConfig;
 	private final RefreshService refreshService;
 	// TODO : oauth2
 
-	public SecurityConfig(CustomFilterConfigurer customFilterConfigurer, AuthTokenProvider authTokenProvider,
-		JwtConfig jwtConfig, RefreshService refreshService) {
-		this.customFilterConfigurer = customFilterConfigurer;
+	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService) {
 		this.authTokenProvider = authTokenProvider;
-		this.jwtConfig = jwtConfig;
 		this.refreshService = refreshService;
 	}
 
@@ -48,7 +48,14 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http,
+		AuthenticationManager authenticationManager) throws Exception {
+		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authTokenProvider,
+			authenticationManager, refreshService);
+		jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
+		jwtAuthenticationFilter.setAuthenticationSuccessHandler(new UserAuthenticationSuccessHandler());
+		jwtAuthenticationFilter.setAuthenticationFailureHandler(new UserAuthenticationFailureHandler());
+		JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(authTokenProvider);
 
 		http.csrf(csrf -> csrf.disable())
 			.cors(Customizer.withDefaults())
@@ -57,7 +64,8 @@ public class SecurityConfig {
 				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin(form -> form.disable())
 			.httpBasic(AbstractHttpConfigurer::disable)
-			// .apply(customFilterConfigurer) // TODO : CustomFilterConfigurer 적용해야하는 부분
+			.addFilterBefore(jwtVerificationFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilter(jwtAuthenticationFilter)
 			.exceptionHandling(
 				exceptionHandling -> exceptionHandling
 					.authenticationEntryPoint(authenticationEntryPoint())
@@ -82,5 +90,11 @@ public class SecurityConfig {
 	@Bean
 	public AccessDeniedHandler accessDeniedHandler() {
 		return new UserAccessDeniedHandler();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
+		Exception {
+		return authenticationConfiguration.getAuthenticationManager();
 	}
 }
