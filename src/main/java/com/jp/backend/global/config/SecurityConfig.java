@@ -48,6 +48,12 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
+		Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http,
 		AuthenticationManager authenticationManager) throws Exception {
 		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authTokenProvider,
@@ -90,11 +96,5 @@ public class SecurityConfig {
 	@Bean
 	public AccessDeniedHandler accessDeniedHandler() {
 		return new UserAccessDeniedHandler();
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
-		Exception {
-		return authenticationConfiguration.getAuthenticationManager();
 	}
 }

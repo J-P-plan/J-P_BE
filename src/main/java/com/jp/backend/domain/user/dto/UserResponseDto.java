@@ -20,12 +20,8 @@ import lombok.Setter;
 public class UserResponseDto {
 	@Schema(description = "이메일")
 	private String email;
-	@Schema(description = "이름")
-	private String name;
 	@Schema(description = "닉네임")
 	private String nickname;
-	@Schema(description = "성별")
-	private User.Gender genders;
 	@Schema(description = "mbti")
 	private User.Mbti mbti;
 	@Schema(description = "oauth2 제공자")
