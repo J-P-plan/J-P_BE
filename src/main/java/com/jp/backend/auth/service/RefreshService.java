@@ -16,17 +16,14 @@ import com.jp.backend.global.exception.ExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RefreshService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final AuthTokenProvider authTokenProvider;
-
-	public RefreshService(RefreshTokenRepository refreshTokenRepository, AuthTokenProvider authTokenProvider) {
-		this.refreshTokenRepository = refreshTokenRepository;
-		this.authTokenProvider = authTokenProvider;
-	}
 
 	public void saveRefreshToken(String email, AuthToken authToken) {
 		refreshTokenRepository.findById(email)
