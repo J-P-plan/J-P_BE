@@ -17,19 +17,26 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@Builder
 @Table(name = "users")
 public class User extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long id;
+
+	private String name;
 
 	@Email
 	@Column(nullable = false, updatable = false, unique = true, length = 100)
@@ -56,6 +63,9 @@ public class User extends Auditable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Authorities> roles;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserRole role;
 	// TODO : file
 	// TODO : badge
 	// TODO : 다른 클래스와 연관관계 추가
@@ -72,9 +82,14 @@ public class User extends Auditable {
 		}
 	}
 
+	@Getter
+	@RequiredArgsConstructor
 	public enum UserRole {
-		USER,
-		ADMIN;
+		USER("일반유저"),
+		ADMIN("어드민유저");
+
+		private final String value;
+
 	}
 
 	public enum UserStatus {

@@ -83,6 +83,14 @@ public class SecurityConfig {
 
 					.requestMatchers("/h2/**").permitAll()
 					.anyRequest().permitAll()
+			)//여기부터 추가
+			.logout(logout -> logout
+				.logoutSuccessUrl("/")
+			)
+			.oauth2Login(oauth2Login -> oauth2Login
+				.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+					.userService(customOAuth2UserService)
+				)
 			);
 
 		return http.build();
