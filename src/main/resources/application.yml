@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: oauth
   h2:
     console:
       enabled: true  # 여기까지만 해도 H2 Browser 생성됨
