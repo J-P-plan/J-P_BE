@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,21 +31,15 @@ public class User extends Auditable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long id;
 
+	@Email
 	@Column(nullable = false, updatable = false, unique = true, length = 100)
 	private String email;
 
 	@Column(nullable = false, length = 100)
 	private String password;
 
-	@Column(nullable = false, length = 100)
-	private String name;
-
 	@Column(nullable = false, length = 50)
 	private String nickname;
-
-	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false, length = 20)
-	private Gender gender;
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false, length = 20)
@@ -64,18 +59,6 @@ public class User extends Auditable {
 	// TODO : file
 	// TODO : badge
 	// TODO : 다른 클래스와 연관관계 추가
-
-	public enum Gender {
-		MAN("남성"),
-		WOMAN("여성");
-
-		@Getter
-		private String gender;
-
-		Gender(String gender) {
-			this.gender = gender;
-		}
-	}
 
 	public enum Mbti {
 		P("인식형 P"),

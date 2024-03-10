@@ -16,18 +16,14 @@ import com.jp.backend.global.exception.ExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RefreshService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final AuthTokenProvider authTokenProvider;
-	// TODO : 로그아웃 Redis 추가?
-
-	public RefreshService(RefreshTokenRepository refreshTokenRepository, AuthTokenProvider authTokenProvider) {
-		this.refreshTokenRepository = refreshTokenRepository;
-		this.authTokenProvider = authTokenProvider;
-	}
 
 	public void saveRefreshToken(String email, AuthToken authToken) {
 		refreshTokenRepository.findById(email)
@@ -76,16 +72,5 @@ public class RefreshService {
 
 		if (!refreshToken.getToken().equals(headerRefreshToken.getToken()))
 			throw new CustomLogicException(ExceptionCode.REFRESH_TOKEN_NOT_MATCH);
-	}
-
-	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		AuthToken accessToken = authTokenProvider.convertAuthToken(getAccessToken(request));
-
-		if (!accessToken.isTokenValid())
-			throw new CustomLogicException(ExceptionCode.TOKEN_INVALID);
-
-		String userEmail = accessToken.getValidTokenClaims().getSubject();
-
-		refreshTokenRepository.deleteById(userEmail);
 	}
 }

@@ -61,10 +61,10 @@ public class AuthToken {
 			.compact();
 	}
 
-	private String createAccessToken(String id, List<String> role, Date expiry) {
+	private String createAccessToken(String id, List<String> roles, Date expiry) {
 		return Jwts.builder()
 			.setSubject(id)
-			.claim(AUTHORITIES_KEY, role)
+			.claim(AUTHORITIES_KEY, roles)
 			.signWith(key, SignatureAlgorithm.HS256)
 			.setExpiration(expiry)
 			.compact();
@@ -112,5 +112,4 @@ public class AuthToken {
 		}
 		return null;
 	}
-
 }

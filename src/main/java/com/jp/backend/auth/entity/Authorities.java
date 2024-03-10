@@ -38,5 +38,4 @@ public class Authorities extends Auditable {
 		this.user = user;
 		this.role = User.UserRole.valueOf(role);
 	}
-
 }

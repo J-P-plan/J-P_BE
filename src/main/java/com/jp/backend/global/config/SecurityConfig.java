@@ -48,11 +48,17 @@ public class SecurityConfig {
 	}
 
 	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
+		Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http,
 		AuthenticationManager authenticationManager) throws Exception {
 		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authTokenProvider,
 			authenticationManager, refreshService);
-		jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
+		jwtAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
 		jwtAuthenticationFilter.setAuthenticationSuccessHandler(new UserAuthenticationSuccessHandler());
 		jwtAuthenticationFilter.setAuthenticationFailureHandler(new UserAuthenticationFailureHandler());
 		JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(authTokenProvider);
@@ -72,8 +78,8 @@ public class SecurityConfig {
 					.accessDeniedHandler(accessDeniedHandler()))
 			.authorizeHttpRequests(
 				authorize -> authorize
-					.requestMatchers(HttpMethod.GET, "/api/v1/members/**").authenticated()
-					.requestMatchers("/api/v1/members/**").permitAll()
+					.requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
+					.requestMatchers("/api/users/**").permitAll()
 
 					.requestMatchers("/h2/**").permitAll()
 					.anyRequest().permitAll()
@@ -90,11 +96,5 @@ public class SecurityConfig {
 	@Bean
 	public AccessDeniedHandler accessDeniedHandler() {
 		return new UserAccessDeniedHandler();
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws
-		Exception {
-		return authenticationConfiguration.getAuthenticationManager();
 	}
 }
