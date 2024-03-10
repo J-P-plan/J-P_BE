@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @Validated
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @Tag(name = "1. [인증]")
 public class AuthController {
 	private final AuthService authService;
