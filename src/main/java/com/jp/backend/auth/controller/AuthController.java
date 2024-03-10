@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @Validated
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @Tag(name = "1. [인증]")
 public class AuthController {
 	private final AuthService authService;
@@ -39,12 +39,12 @@ public class AuthController {
 
 	@PostMapping("/login")
 	@Operation(summary = "로그인을 진행합니다.")
-	public ResponseEntity login(@Valid @RequestBody LoginDto loginDto) {
-		String result = authService.authentication(loginDto);
+	public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
+		String result = authService.authentication(loginDto, request);
 		return ResponseEntity.ok(result);
 	}
 
-	@PostMapping("/logout")
+	// @PostMapping("/logout")
 	// @Operation(summary = "로그아웃을 진행합니다.")
 	public ResponseEntity logout(HttpServletRequest request, HttpServletResponse response) {
 		authService.logout(request, response);
