@@ -78,8 +78,8 @@ public class SecurityConfig {
 					.accessDeniedHandler(accessDeniedHandler()))
 			.authorizeHttpRequests(
 				authorize -> authorize
-					.requestMatchers(HttpMethod.GET, "/api/v1/members/**").authenticated()
-					.requestMatchers("/api/v1/members/**").permitAll()
+					.requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
+					.requestMatchers("/api/users/**").permitAll()
 
 					.requestMatchers("/h2/**").permitAll()
 					.anyRequest().permitAll()
