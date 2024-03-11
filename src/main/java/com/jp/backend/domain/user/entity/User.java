@@ -48,6 +48,9 @@ public class User extends Auditable {
 	@Column(nullable = false, length = 50)
 	private String nickname;
 
+	@Column
+	private String picture;
+
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private Mbti mbti;
@@ -85,9 +88,10 @@ public class User extends Auditable {
 	@Getter
 	@RequiredArgsConstructor
 	public enum UserRole {
-		USER("일반유저"),
-		ADMIN("어드민유저");
+		USER("ROLE_USER","일반유저"),
+		ADMIN("ROLE_ADMIN","어드민유저");
 
+		private final String key;
 		private final String value;
 
 	}
@@ -103,5 +107,16 @@ public class User extends Auditable {
 		UserStatus(String status) {
 			this.status = status;
 		}
+	}
+
+	public String getRoleKey() {
+		return this.role.getKey();
+	}
+
+	public User update(String name, String picture) {
+		this.name = name;
+		this.picture = picture;
+
+		return this;
 	}
 }
