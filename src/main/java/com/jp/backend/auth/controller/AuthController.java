@@ -2,6 +2,8 @@ package com.jp.backend.auth.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.auth.dto.LoginDto;
 import com.jp.backend.auth.service.AuthService;
 import com.jp.backend.auth.service.RefreshService;
+import com.jp.backend.auth.token.AuthToken;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,11 +40,20 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/login")
-	@Operation(summary = "로그인을 진행합니다.")
+	@PostMapping("/login2")
+	@Operation(summary = "로그인을 진행합니다. 실제 로그인은 /login 으로 해주세요")
 	public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
-		String result = authService.authentication(loginDto, request);
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(
+			"Login Success! Then get your AccessToken in the endpoint /auth/{userId}/getAccessToken");
+	}
+
+	@GetMapping("/{userId}/getAccessToken")
+	@Operation(summary = "AccessToken을 가져옵니다.")
+	public ResponseEntity getAccessToken(@PathVariable Long userId) {
+
+		AuthToken token = authService.getUserAccessToken(userId);
+		String accessToken = token.toString();
+		return ResponseEntity.ok("AccessToken: " + accessToken);
 	}
 
 	// @PostMapping("/logout")

@@ -112,4 +112,9 @@ public class AuthToken {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return token;
+	}
 }
