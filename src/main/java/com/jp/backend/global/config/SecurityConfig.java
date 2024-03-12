@@ -25,6 +25,7 @@ import com.jp.backend.auth.handler.UserAccessDeniedHandler;
 import com.jp.backend.auth.handler.UserAuthenticationEntryPoint;
 import com.jp.backend.auth.handler.UserAuthenticationFailureHandler;
 import com.jp.backend.auth.handler.UserAuthenticationSuccessHandler;
+import com.jp.backend.auth.oauth.CustomOauth2UserService;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
 
@@ -34,11 +35,15 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 public class SecurityConfig {
 	private final AuthTokenProvider authTokenProvider;
 	private final RefreshService refreshService;
+
+	private final CustomOauth2UserService customOauth2UserService;
 	// TODO : oauth2
 
-	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService) {
+	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService,
+		CustomOauth2UserService customOauth2UserService, CustomOauth2UserService customOauth2UserService1) {
 		this.authTokenProvider = authTokenProvider;
 		this.refreshService = refreshService;
+		this.customOauth2UserService = customOauth2UserService1;
 	}
 
 	@Bean
@@ -89,7 +94,7 @@ public class SecurityConfig {
 			)
 			.oauth2Login(oauth2Login -> oauth2Login// OAuth2 로그인 기능에 대한 여러 설정의 진입점
 				.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint  // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당
-					.userService(customOAuth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
+					.userService(customOauth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
 				) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 				.defaultSuccessUrl("/", true) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 			);
