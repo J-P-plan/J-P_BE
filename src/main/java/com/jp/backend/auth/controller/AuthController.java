@@ -47,7 +47,7 @@ public class AuthController {
 			"Login Success! Then get your AccessToken in the endpoint /auth/{userId}/getAccessToken");
 	}
 
-	@GetMapping("/{userId}/getAccessToken")
+	@GetMapping("/{userId}/access-token")
 	@Operation(summary = "AccessToken을 가져옵니다.")
 	public ResponseEntity getAccessToken(@PathVariable Long userId) {
 
