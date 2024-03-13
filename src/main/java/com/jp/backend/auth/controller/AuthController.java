@@ -1,8 +1,11 @@
 package com.jp.backend.auth.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +16,7 @@ import com.jp.backend.auth.dto.LoginDto;
 import com.jp.backend.auth.service.AuthService;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthToken;
+import com.jp.backend.global.response.SingleResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +31,8 @@ import jakarta.validation.Valid;
 public class AuthController {
 	private final AuthService authService;
 	private final RefreshService refreshService;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
 	public AuthController(AuthService authService, RefreshService refreshService) {
 		this.authService = authService;
@@ -40,15 +46,25 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/login2")
-	@Operation(summary = "로그인을 진행합니다. 실제 로그인은 /login 으로 해주세요")
+	@PostMapping("/login")
+	@Operation(summary = "로그인을 진행합니다.")
+	public ResponseEntity login(@RequestBody LoginDto loginDto) {
+
+		authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+
+		return new ResponseEntity<>(new SingleResponse<>("Login Success"), HttpStatus.OK);
+	}
+
+	// @PostMapping("/login2")
+	// @Operation(summary = "로그인을 진행합니다. 실제 로그인은 /login 으로 해주세요")
 	public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
 		return ResponseEntity.ok(
 			"Login Success! Then get your AccessToken in the endpoint /auth/{userId}/access-token");
 	}
 
-	@GetMapping("/{userId}/access-token")
-	@Operation(summary = "AccessToken을 가져옵니다.")
+	// @GetMapping("/{userId}/access-token")
+	// @Operation(summary = "AccessToken을 가져옵니다.")
 	public ResponseEntity getAccessToken(@PathVariable Long userId) {
 
 		AuthToken token = authService.getUserAccessToken(userId);
