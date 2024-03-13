@@ -12,9 +12,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.jp.backend.auth.entity.UserPrincipal;
-import com.jp.backend.auth.oauth.entity.OAuthUserInfo;
 import com.jp.backend.auth.oauth.exception.OAuthProviderMissMatchException;
 import com.jp.backend.auth.oauth.info.OAuthUserInfoFactory;
+import com.jp.backend.auth.oauth.info.entity.OAuthUserInfo;
 import com.jp.backend.auth.utils.AuthoritiesUtils;
 import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;

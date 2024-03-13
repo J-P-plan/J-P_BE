@@ -2,8 +2,8 @@ package com.jp.backend.auth.oauth.info;
 
 import java.util.Map;
 
-import com.jp.backend.auth.oauth.entity.GoogleOAuthUserInfo;
-import com.jp.backend.auth.oauth.entity.OAuthUserInfo;
+import com.jp.backend.auth.oauth.info.entity.GoogleOAuthUserInfo;
+import com.jp.backend.auth.oauth.info.entity.OAuthUserInfo;
 import com.jp.backend.domain.user.entity.ProviderType;
 
 public class OAuthUserInfoFactory {

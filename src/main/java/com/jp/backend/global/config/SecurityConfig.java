@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.jp.backend.auth.config.JwtConfig;
 import com.jp.backend.auth.filter.JwtAuthenticationFilter;
 import com.jp.backend.auth.filter.JwtVerificationFilter;
 import com.jp.backend.auth.handler.UserAccessDeniedHandler;
@@ -26,6 +27,9 @@ import com.jp.backend.auth.handler.UserAuthenticationEntryPoint;
 import com.jp.backend.auth.handler.UserAuthenticationFailureHandler;
 import com.jp.backend.auth.handler.UserAuthenticationSuccessHandler;
 import com.jp.backend.auth.oauth.CustomOauth2UserService;
+import com.jp.backend.auth.oauth.handler.OAuth2AuthenticationFailureHandler;
+import com.jp.backend.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import com.jp.backend.auth.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
 
@@ -35,14 +39,17 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 public class SecurityConfig {
 	private final AuthTokenProvider authTokenProvider;
 	private final RefreshService refreshService;
+	private final JwtConfig jwtConfig;
 
 	private final CustomOauth2UserService customOauth2UserService;
 	// TODO : oauth2
 
 	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService,
-		CustomOauth2UserService customOauth2UserService, CustomOauth2UserService customOauth2UserService1) {
+		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig,
+		CustomOauth2UserService customOauth2UserService1) {
 		this.authTokenProvider = authTokenProvider;
 		this.refreshService = refreshService;
+		this.jwtConfig = jwtConfig;
 		this.customOauth2UserService = customOauth2UserService1;
 	}
 
@@ -96,10 +103,33 @@ public class SecurityConfig {
 				.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint  // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당
 					.userService(customOauth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
 				) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
+				.successHandler(oAuth2AuthenticationSuccessHandler())
+				.failureHandler(oAuth2AuthenticationFailureHandler())
 				.defaultSuccessUrl("/", true) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 			);
 
 		return http.build();
+	}
+
+	@Bean
+	public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+		return new OAuth2AuthenticationSuccessHandler(
+			authTokenProvider,
+			jwtConfig,
+			oAuth2AuthorizationRequestBasedOnCookieRepository(),
+			refreshService
+
+		);
+	}
+
+	@Bean
+	public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
+		return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestBasedOnCookieRepository());
+	}
+
+	@Bean
+	public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
+		return new OAuth2AuthorizationRequestBasedOnCookieRepository();
 	}
 
 	@Bean

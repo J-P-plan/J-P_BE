@@ -1,4 +1,4 @@
-package com.jp.backend.auth.oauth.entity;
+package com.jp.backend.auth.oauth.info.entity;
 
 import java.util.Map;
 
