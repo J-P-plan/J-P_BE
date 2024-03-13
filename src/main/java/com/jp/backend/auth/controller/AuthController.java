@@ -44,7 +44,7 @@ public class AuthController {
 	@Operation(summary = "로그인을 진행합니다. 실제 로그인은 /login 으로 해주세요")
 	public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
 		return ResponseEntity.ok(
-			"Login Success! Then get your AccessToken in the endpoint /auth/{userId}/getAccessToken");
+			"Login Success! Then get your AccessToken in the endpoint /auth/{userId}/access-token");
 	}
 
 	@GetMapping("/{userId}/access-token")
