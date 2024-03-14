@@ -57,7 +57,7 @@ public class AuthController {
 	@Operation(
 		summary = "Google 로그인 API",
 		description = "Google 에서 받은 인가코드를 이용해서 로그인을 수행한다. <br>"
-			+ "<b><a href='http://localhost:8080/oauth2/authorization/google'>  https://localhost:8090/api/v1/oauth2/authorization/kakao </a></b> <br>"
+			+ "<b><a href='http://localhost:8080/oauth2/authorization/google'>  https://localhost:8090/api/v1/oauth2/authorization/google </a></b> <br>"
 	)
 	public ResponseEntity signinGoogle(
 		@RequestParam String code, HttpServletRequest request) {

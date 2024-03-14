@@ -42,15 +42,15 @@ public class SecurityConfig {
 	private final JwtConfig jwtConfig;
 
 	private final CustomOauth2UserService customOauth2UserService;
+
 	// TODO : oauth2
 
 	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService,
-		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig,
-		CustomOauth2UserService customOauth2UserService1) {
+		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig) {
 		this.authTokenProvider = authTokenProvider;
 		this.refreshService = refreshService;
 		this.jwtConfig = jwtConfig;
-		this.customOauth2UserService = customOauth2UserService1;
+		this.customOauth2UserService = customOauth2UserService;
 	}
 
 	@Bean

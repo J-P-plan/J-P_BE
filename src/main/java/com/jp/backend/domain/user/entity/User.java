@@ -42,32 +42,32 @@ public class User extends Auditable {
 	@Column(nullable = false, updatable = false, unique = true, length = 100)
 	private String email;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = true, length = 100)
 	private String password;
 
-	@Column(nullable = false, length = 50)
+	@Column(nullable = true, length = 50)
 	private String nickname;
 
 	@Column
 	private String picture;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false, length = 20)
+	@Column(nullable = true, length = 20)
 	private Mbti mbti;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false, length = 20)
+	@Column(nullable = true, length = 20)
 	private ProviderType providerType;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false, length = 20)
+	@Column(nullable = true, length = 20)
 	private UserStatus userStatus = UserStatus.MEMBER_ACTIVE;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Authorities> roles;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private UserRole role;
 	// TODO : file
 	// TODO : badge
@@ -88,8 +88,8 @@ public class User extends Auditable {
 	@Getter
 	@RequiredArgsConstructor
 	public enum UserRole {
-		USER("ROLE_USER","일반유저"),
-		ADMIN("ROLE_ADMIN","어드민유저");
+		USER("ROLE_USER", "일반유저"),
+		ADMIN("ROLE_ADMIN", "어드민유저");
 
 		private final String key;
 		private final String value;
