@@ -9,10 +9,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -73,6 +75,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
 			.map(Cookie::getValue);
 
+		System.out.println("-------successHandler------------");
+
 		//매개변수가 있다면, 인가된 리디렉션 url인지 확인, 인가되지 않은 경우 예외
 		if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
 			throw new IllegalArgumentException(
@@ -85,9 +89,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken)authentication;
 		ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
 
-		OidcUser user = ((OidcUser)authentication.getPrincipal());
+		System.out.println("유저타입 : " + authentication.getPrincipal().getClass());
+		DefaultOAuth2User user = (DefaultOAuth2User)authentication.getPrincipal();
 		OAuthUserInfo userInfo = OAuthUserInfoFactory.getOAuthUserInfo(providerType, user.getAttributes());
-		Collection<? extends GrantedAuthority> authorities = ((OidcUser)authentication.getPrincipal()).getAuthorities();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
 		List<String> roles = authorities.stream().map(GrantedAuthority::getAuthority).toList();
 		AuthToken accessToken = tokenProvider.createAccessToken(
@@ -108,10 +113,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		//응답에 쿠키로 추가!
 		CookieUtils.addCookie(response, "RefreshToken", refreshToken.getToken(),
 			(int)(System.currentTimeMillis() + jwtConfig.getRefreshTokenValidTime()));
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
+
+		// 응답 헤더에 토큰을 설정하여 클라이언트에게 반환
+		// 이 부분에서 targetUrl 대신에 response header에 직접 토큰을 설정해줍니다.
+		response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
+
 		//엑세스 토큰과 리프레시 토큰을 쿼리 매개변수로 하는 대상 url을 구성하여 반환
 		return UriComponentsBuilder.fromUriString(targetUrl)
 			.queryParam(AUTHORIZATION, accessToken.getToken())
-			.queryParam(REFRESH_TOKEN, refreshToken.getToken())
 			.build().toUriString();
 	}
 
