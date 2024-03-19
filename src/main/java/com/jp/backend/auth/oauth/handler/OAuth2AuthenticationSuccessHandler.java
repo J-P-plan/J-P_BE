@@ -27,6 +27,7 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 import com.jp.backend.auth.utils.CookieUtils;
 import com.jp.backend.domain.user.entity.ProviderType;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	//인증 속성을 지우고, 결정된 대상 url로 사용자를 리디렉션
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException {
+		Authentication authentication) throws IOException, ServletException {
 		String targetUrl = determineTargetUrl(request, response, authentication);
 
 		System.out.println("-------------------SUCCESSHANDLER------------------------");
