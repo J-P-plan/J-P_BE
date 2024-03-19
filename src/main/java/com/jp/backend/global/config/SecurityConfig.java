@@ -1,5 +1,7 @@
 package com.jp.backend.global.config;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -92,8 +94,14 @@ public class SecurityConfig {
 				authorize -> authorize
 					.requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
 					.requestMatchers("/api/users/**").permitAll()
-
+					.requestMatchers("/sign-up").permitAll()
+					.requestMatchers("/favicon.ico").permitAll()
+					.requestMatchers("/css/**").permitAll()
+					.requestMatchers("/js/**").permitAll()
 					.requestMatchers("/h2/**").permitAll()
+					.requestMatchers("/swagger-ui/*").permitAll()
+					.requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
+					.requestMatchers("/oauth2/authorization/google").permitAll()
 					.anyRequest().permitAll()
 			)//여기부터 추가
 			.logout(logout -> logout
@@ -104,8 +112,7 @@ public class SecurityConfig {
 					.userService(customOauth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
 				) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 				.successHandler(oAuth2AuthenticationSuccessHandler())
-				.failureHandler(oAuth2AuthenticationFailureHandler())
-				.defaultSuccessUrl("/", true) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
+				.failureHandler(oAuth2AuthenticationFailureHandler())// 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 			);
 
 		return http.build();
