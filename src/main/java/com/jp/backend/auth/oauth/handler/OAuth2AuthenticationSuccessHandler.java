@@ -1,7 +1,6 @@
 package com.jp.backend.auth.oauth.handler;
 
 import static com.jp.backend.auth.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -56,11 +54,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		Authentication authentication) throws IOException, ServletException {
 		String targetUrl = determineTargetUrl(request, response, authentication);
 
-		System.out.println("-------------------SUCCESSHANDLER------------------------");
-		System.out.println("target URI : " + targetUrl);
-
 		if (response.isCommitted()) {
-			logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+			logger.debug("Response has already been committed. Unable to redirect");
 			return;
 		}
 
@@ -75,8 +70,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		//요청 쿠키에서 리디렉션 url 매개변수가 있는지 확인
 		Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
 			.map(Cookie::getValue);
-
-		System.out.println("-------successHandler------------");
 
 		//매개변수가 있다면, 인가된 리디렉션 url인지 확인, 인가되지 않은 경우 예외
 		if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
@@ -124,7 +117,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		//엑세스 토큰과 리프레시 토큰을 쿼리 매개변수로 하는 대상 url을 구성하여 반환
 		return UriComponentsBuilder.fromUriString(targetUrl)
-			.queryParam(AUTHORIZATION, accessToken.getToken())
 			.build().toUriString();
 	}
 

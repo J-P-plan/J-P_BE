@@ -1,10 +1,9 @@
 package com.jp.backend.global.config;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.*;
+import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -34,6 +33,7 @@ import com.jp.backend.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.jp.backend.auth.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
+import com.jp.backend.global.enums.AuthorizedUrl;
 
 @Configuration
 @EnableWebSecurity
@@ -44,6 +44,9 @@ public class SecurityConfig {
 	private final JwtConfig jwtConfig;
 
 	private final CustomOauth2UserService customOauth2UserService;
+	private static final String[] AUTHORIZED_URLS = Arrays.stream(AuthorizedUrl.values())
+		.map(AuthorizedUrl::getUrl)
+		.toList().toArray(new String[0]);
 
 	// TODO : oauth2
 
@@ -92,27 +95,21 @@ public class SecurityConfig {
 					.accessDeniedHandler(accessDeniedHandler()))
 			.authorizeHttpRequests(
 				authorize -> authorize
-					.requestMatchers(HttpMethod.GET, "/api/users/**").authenticated()
-					.requestMatchers("/api/users/**").permitAll()
-					.requestMatchers("/sign-up").permitAll()
-					.requestMatchers("/favicon.ico").permitAll()
-					.requestMatchers("/css/**").permitAll()
-					.requestMatchers("/js/**").permitAll()
-					.requestMatchers("/h2/**").permitAll()
-					.requestMatchers("/swagger-ui/*").permitAll()
-					.requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
-					.requestMatchers("/oauth2/authorization/google").permitAll()
+					.requestMatchers(
+						AUTHORIZED_URLS
+					).authenticated()
 					.anyRequest().permitAll()
 			)//여기부터 추가
 			.logout(logout -> logout
 				.logoutSuccessUrl("/")// 로그아웃 성공시 해당 주소로 이동
 			)
 			.oauth2Login(oauth2Login -> oauth2Login// OAuth2 로그인 기능에 대한 여러 설정의 진입점
-				.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint  // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당
-					.userService(customOauth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
-				) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
-				.successHandler(oAuth2AuthenticationSuccessHandler())
-				.failureHandler(oAuth2AuthenticationFailureHandler())// 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
+					.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint  // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정 담당
+						.userService(customOauth2UserService) // 소셜 로그인 성공 시 후속 조치를 진행할 userService 인터페이스의 구현체 등록
+					) // 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
+					.successHandler(oAuth2AuthenticationSuccessHandler())
+					.failureHandler(oAuth2AuthenticationFailureHandler())
+				// 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 			);
 
 		return http.build();

@@ -18,13 +18,16 @@ import jakarta.servlet.http.HttpServletResponse;
 @Tag(name = "1. [인증]")
 public class OauthController {
 
-  @GetMapping("/oauth2/authorization/google")
-  @Operation(
-    summary = "Google 로그인 API",
-    description = "Access Token은 헤더로, Refresh Token은 cookie로 전송 (어디로 보내는게 좋은지 고민중,,,)"
-  )
-  public ResponseEntity signinGoogle(
-    HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-    return ResponseEntity.ok(response);
-  }
+	@GetMapping("/oauth2/authorization/google")
+	@Operation(
+		summary = "Google 로그인 API",
+		description = "Access Token은 헤더의 Authorization으로, Refresh Token은 cookie로 전송<br>"
+			+ "swagger로 요청시 Cors 에러가 나더라구요 ㅠㅠ 테스트시 아래 url로 요청<br>"
+			+ "local : <b><a href='http://localhost:8080/oauth2/authorization/google'> http://localhost:8080/oauth2/authorization/google </a></b> <br> "
+			+ "prod : <b><a href='http://43.202.248.10:8080/oauth2/authorization/google'> http://43.202.248.10:8080/oauth2/authorization/google </a></b> <br> "
+	)
+	public ResponseEntity signinGoogle(
+		HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		return ResponseEntity.ok(response);
+	}
 }
