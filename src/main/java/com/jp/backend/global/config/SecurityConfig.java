@@ -75,7 +75,7 @@ public class SecurityConfig {
 		AuthenticationManager authenticationManager) throws Exception {
 		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authTokenProvider,
 			authenticationManager, refreshService);
-		jwtAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
+		jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
 		jwtAuthenticationFilter.setAuthenticationSuccessHandler(new UserAuthenticationSuccessHandler());
 		jwtAuthenticationFilter.setAuthenticationFailureHandler(new UserAuthenticationFailureHandler());
 		JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(authTokenProvider);

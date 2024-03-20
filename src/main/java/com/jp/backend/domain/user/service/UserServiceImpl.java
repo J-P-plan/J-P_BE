@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.auth.utils.AuthoritiesUtils;
+import com.jp.backend.domain.user.dto.UserUpdateDto;
 import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.repository.JpaUserRepository;
@@ -12,8 +13,11 @@ import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 import com.jp.backend.global.utils.CustomBeanUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Transactional
+@Slf4j
 public class UserServiceImpl implements UserService {
 	private final JpaUserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public User createUser(User user) {
 		duplicateUser(user.getEmail());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,6 +46,16 @@ public class UserServiceImpl implements UserService {
 	public User verifyUser(String eamil) {
 		return userRepository.findByEmail(eamil)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.USER_NONE));
+	}
+
+	@Override
+	@Transactional
+	public Boolean updateUser(UserUpdateDto updateDto, String username) {
+
+		User user = verifyUser(username);
+		user.updateByDto(updateDto);
+
+		return true;
 	}
 
 	@Override

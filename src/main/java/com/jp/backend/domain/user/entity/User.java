@@ -3,6 +3,7 @@ package com.jp.backend.domain.user.entity;
 import java.util.List;
 
 import com.jp.backend.auth.entity.Authorities;
+import com.jp.backend.domain.user.dto.UserUpdateDto;
 import com.jp.backend.global.audit.Auditable;
 
 import jakarta.persistence.CascadeType;
@@ -118,5 +119,12 @@ public class User extends Auditable {
 		this.picture = picture;
 
 		return this;
+	}
+
+	public void updateByDto(UserUpdateDto updateDto) {
+		if (updateDto.getMbti() != null)
+			this.mbti = updateDto.getMbti();
+		if (updateDto.getNickname() != null)
+			this.nickname = updateDto.getNickname();
 	}
 }
