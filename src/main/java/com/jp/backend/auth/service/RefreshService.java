@@ -25,6 +25,7 @@ public class RefreshService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final AuthTokenProvider authTokenProvider;
 
+	@Transactional
 	public void saveRefreshToken(String email, AuthToken authToken) {
 		refreshTokenRepository.findById(email)
 			.ifPresentOrElse(

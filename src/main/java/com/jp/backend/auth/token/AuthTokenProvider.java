@@ -10,8 +10,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import com.jp.backend.auth.service.CustomUserDetailService;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
@@ -21,12 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AuthTokenProvider {
+
+	private final CustomUserDetailService customUserDetailService;
 	private final Key key;
 	private final long tokenValidTime;
 	private final long refreshTokenValidTime;
 	private static final String AUTHORITIES_KEY = "role";
 
-	public AuthTokenProvider(String secret, long tokenValidTime, long refreshTokenValidTime) {
+	public AuthTokenProvider(CustomUserDetailService customUserDetailService, String secret, long tokenValidTime,
+		long refreshTokenValidTime) {
+		this.customUserDetailService = customUserDetailService;
 		this.key = Keys.hmacShaKeyFor(secret.getBytes());
 		this.tokenValidTime = tokenValidTime;
 		this.refreshTokenValidTime = refreshTokenValidTime;
@@ -62,9 +67,10 @@ public class AuthTokenProvider {
 			Collection<? extends GrantedAuthority> authorities = getAuthorities((List)claims.get(AUTHORITIES_KEY));
 
 			log.debug("claims subject := [{}]", claims.getSubject());
-			User principal = new User(claims.getSubject(), "", authorities);
 
-			return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+			UserDetails userDetails = customUserDetailService.loadUserByUsername(
+				authToken.getValidTokenClaims().getSubject());
+			return new UsernamePasswordAuthenticationToken(userDetails, authToken, userDetails.getAuthorities());
 		} else {
 			throw new CustomLogicException(ExceptionCode.USER_NONE);
 		}
