@@ -62,7 +62,6 @@ public class PlaceServiceImpl implements PlaceService {
 		for (PlacesResponseDto.Place placeDto : response.getResults()) {
 			Place.Location location = new Place.Location(placeDto.getGeometry().getLocation().getLat(),
 				placeDto.getGeometry().getLocation().getLng());
-			System.out.println(location);
 			Place place = Place.builder()
 				.name(placeDto.getName())
 				.location(location)
@@ -70,11 +69,9 @@ public class PlaceServiceImpl implements PlaceService {
 				.types(placeDto.getTypes())
 				.rating(placeDto.getRating()).build();
 
-			System.out.println(place);
-
 			placeList.add(place);
 		}
-		System.out.println(placeList);
+
 		return placeList;
 	}
 
