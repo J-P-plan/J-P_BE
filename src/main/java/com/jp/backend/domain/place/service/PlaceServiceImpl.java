@@ -130,32 +130,32 @@ public class PlaceServiceImpl implements PlaceService {
 
 		PlacesResponseDto response = restTemplate.getForObject(url, PlacesResponseDto.class);
 
-		// List<Place> places = convertToPlaceList(response);
-		//
-		// return places;
-		return null;
+		List<Place> places = convertToPlaceList(response);
+		System.out.println(places);
+
+		return places;
 	}
 
-	// public List<Place> convertToPlaceList(PlacesResponseDto response) {
-	// 	List<Place> placeList = new ArrayList<>();
-	// 	for (PlacesResponseDto.Place placeDto : response.getResults()) {
-	// 		Place.Location location = new Place.Location(placeDto.getGeometry().getLocation().getLat(),
-	// 			placeDto.getGeometry().getLocation().getLng());
-	// 		System.out.println(location);
-	// 		Place place = Place.builder()
-	// 			.name(placeDto.getName())
-	// 			.location(location)
-	// 			.formatted_address(placeDto.getFormattedAddress())
-	// 			.types(placeDto.getTypes())
-	// 			.rating(placeDto.getRating()).build();
-	//
-	// 		System.out.println(place);
-	//
-	// 		placeList.add(place);
-	// 	}
-	// 	System.out.println(placeList);
-	// 	return placeList;
-	// }
+	public List<Place> convertToPlaceList(PlacesResponseDto response) {
+		List<Place> placeList = new ArrayList<>();
+		for (PlacesResponseDto.Place placeDto : response.getResults()) {
+			Place.Location location = new Place.Location(placeDto.getGeometry().getLocation().getLat(),
+				placeDto.getGeometry().getLocation().getLng());
+			System.out.println(location);
+			Place place = Place.builder()
+				.name(placeDto.getName())
+				.location(location)
+				.formatted_address(placeDto.getFormattedAddress())
+				.types(placeDto.getTypes())
+				.rating(placeDto.getRating()).build();
+
+			System.out.println(place);
+
+			placeList.add(place);
+		}
+		System.out.println(placeList);
+		return placeList;
+	}
 
 	// places api는 응답 필드가 snake_case로 들어오는데 우리 프젝의 경우 responseDto가 CamelCase이기 때문에
 	// RestTemplate을 재정의하여 CamelCase로 받도록 설정

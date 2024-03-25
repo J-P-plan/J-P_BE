@@ -2,8 +2,6 @@ package com.jp.backend.domain.place.entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -21,9 +19,10 @@ import lombok.ToString;
 @Entity
 @Builder
 @ToString
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonSerialize
 public class Place {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

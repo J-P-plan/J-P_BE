@@ -1,5 +1,7 @@
 package com.jp.backend.domain.place.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jp.backend.domain.place.dto.PlacesResponseDto;
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.service.PlaceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,9 +34,10 @@ public class PlaceController {
 	@Operation(summary = "장소를 검색합니다.")
 	public ResponseEntity searchPlaces(@RequestParam("Contents") String contents) {
 
-		PlacesResponseDto places = placeService.searchPlaces3(contents);
+		// PlacesResponseDto places = placeService.searchPlaces3(contents);
 
-		// List<Place> places = placeService.searchPlaces4(contents);
+		List<Place> places = placeService.searchPlaces4(contents);
+		System.out.println("controller : " + places);
 		return new ResponseEntity(places, HttpStatus.OK);
 	}
 	//TODO: 그러면 나랑 가까운 순으로 나타나도록 정렬을 해줄까?
