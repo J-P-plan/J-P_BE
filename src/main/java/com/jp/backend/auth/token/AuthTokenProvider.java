@@ -67,13 +67,9 @@ public class AuthTokenProvider {
 			Collection<? extends GrantedAuthority> authorities = getAuthorities((List)claims.get(AUTHORITIES_KEY));
 
 			log.debug("claims subject := [{}]", claims.getSubject());
-			//User principal = new User(claims.getSubject(), "", authorities);
 
 			UserDetails userDetails = customUserDetailService.loadUserByUsername(
 				authToken.getValidTokenClaims().getSubject());
-			System.out.println("userDeatails : " + userDetails.toString());
-			System.out.println(
-				"userDeatails-------------------------------------------------- : " + userDetails.toString());
 			return new UsernamePasswordAuthenticationToken(userDetails, authToken, userDetails.getAuthorities());
 		} else {
 			throw new CustomLogicException(ExceptionCode.USER_NONE);

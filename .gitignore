@@ -41,6 +41,3 @@ out/
 
 # qClass
 /src/main/generated/
-
-#Oauth
-!**src/main/resources/application-oauth.yml
