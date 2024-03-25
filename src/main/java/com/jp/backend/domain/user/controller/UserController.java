@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @Validated
 @Tag(name = "2. [유저]")
 public class UserController {
@@ -34,6 +34,6 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity signup(@Valid @RequestBody UserPostDto userPostDto) {
 		userService.createUser(userMapper.userPostDtoToUser(userPostDto));
-		return ResponseEntity.created(URI.create("/api/v1/users")).build();
+		return ResponseEntity.created(URI.create("/user")).build();
 	}
 }

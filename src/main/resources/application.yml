@@ -24,6 +24,8 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 logging:
   level:
@@ -34,12 +36,17 @@ logging:
 
 jwt:
   secret: randomTestValueItisNotUsedInProdEnv
-  expiration: 1800000000 # 30 minutes
+  expiration: 1800000 # 30 minutes
+  #  expiration: 60000 # 1 minutes -> 리프레시 토큰 테스트 시 사용
   refresh:
     expiration: 604800000 # 7 days
 
 admin:
   email: test@gmail.com,test1@gmail.com
+
+google:
+  places:
+    api-key: AIzaSyCTeOA4gqhKBT_ID23OABN_zndStqAx3f0  # TODO: 올리기 전에 이거 환경변수로 설정
 
   server:
     port: 8080
