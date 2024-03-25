@@ -46,7 +46,7 @@ admin:
 
 google:
   places:
-    api-key: AIzaSyCTeOA4gqhKBT_ID23OABN_zndStqAx3f0  # TODO: 올리기 전에 이거 환경변수로 설정
+    api-key: ${GOOGLE_PLACES_API_KEY}
 
   server:
     port: 8080

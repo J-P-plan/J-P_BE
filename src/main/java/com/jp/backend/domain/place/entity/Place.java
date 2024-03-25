@@ -51,35 +51,4 @@ public class Place {
 	// formatted_phone_number
 	// reviews
 	// 음식점인 경우 메뉴가 안나오니까 website?
-
-	@Getter
-	@Setter
-	public static class Geometry {
-		private Place.Location location;
-		private Place.Viewport viewport;
-	}
-
-	@Getter
-	@Setter
-	public static class Viewport {
-		private Place.Location northeast;
-		private Place.Location southwest;
-	}
-
-	@Getter
-	@Setter
-	public static class Photo {
-		private int height;
-		private List<String> htmlAttributions;
-		private String photoReference;
-		private int width;
-	}
-
-	@Getter
-	@Setter
-	public static class PlusCode {
-		private String compoundCode;
-		private String globalCode;
-	}
-
 }

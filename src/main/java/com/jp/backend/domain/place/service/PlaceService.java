@@ -12,15 +12,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public interface PlaceService {
-
-	List<Place> searchPlaces(String contents);
+	PlacesResponseDto searchPlaces(String contents);
 
 	List<Place> searchPlaces2(String contents);
-
-	PlacesResponseDto searchPlaces3(String contents);
-
-	List<Place> searchPlaces4(String contents);
-
-	// List<Place> searchPlaces4(String contents);
-
 }
