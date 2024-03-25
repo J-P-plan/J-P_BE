@@ -98,9 +98,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		AuthToken refreshToken = tokenProvider.createRefreshToken(
 			userInfo.getEmail()
 		);
-		// TODO : refresh 토큰 저장
 		// DB 저장
-
 		//refresh 토큰 데이터베이스에 저장
 		refreshService.saveRefreshToken(userInfo.getEmail(), refreshToken);
 

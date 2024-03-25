@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Slf4j
 public class UserPrincipal extends User implements UserDetails, OAuth2User {
-	// TODO : ouath2
 	private Map<String, Object> attributes;
 
 	public UserPrincipal(User user) {

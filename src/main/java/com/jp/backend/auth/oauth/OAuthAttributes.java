@@ -2,6 +2,7 @@ package com.jp.backend.auth.oauth;
 
 import java.util.Map;
 
+import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;
 
 import lombok.Builder;
@@ -36,7 +37,7 @@ public class OAuthAttributes {
 		return OAuthAttributes.builder()
 			.name((String)attributes.get("name"))
 			.email((String)attributes.get("email"))
-			.picture((String) attributes.get("picture"))
+			.picture((String)attributes.get("picture"))
 			.attributes(attributes)
 			.nameAttributeKey(userNameAttributeName)
 			.build();
@@ -48,6 +49,8 @@ public class OAuthAttributes {
 			.name(name)
 			.email(email)
 			.picture(picture)
+			.providerType(ProviderType.GOOGLE)
+			.userStatus(User.UserStatus.MEMBER_ACTIVE)
 			.role(User.UserRole.USER) // 가입할 때 기본 권한
 			.build();
 	}

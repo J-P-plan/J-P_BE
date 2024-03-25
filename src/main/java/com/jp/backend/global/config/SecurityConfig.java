@@ -48,8 +48,6 @@ public class SecurityConfig {
 		.map(AuthorizedUrl::getUrl)
 		.toList().toArray(new String[0]);
 
-	// TODO : oauth2
-
 	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService,
 		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig) {
 		this.authTokenProvider = authTokenProvider;

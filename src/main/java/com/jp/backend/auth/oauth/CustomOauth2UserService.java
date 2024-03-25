@@ -101,7 +101,6 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
 			.providerType(providerType)
 			.userStatus(User.UserStatus.MEMBER_ACTIVE)
 			.name(userInfo.getName())
-			.nickname(userInfo.getName())
 			.build();
 		user.setRoles(AuthoritiesUtils.createAuthorities(user));
 		return jpaUserRepository.saveAndFlush(user);

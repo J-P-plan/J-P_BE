@@ -36,7 +36,7 @@ logging:
 
 jwt:
   secret: randomTestValueItisNotUsedInProdEnv
-  expiration: 1800000000 # 30 minutes
+  expiration: 180000000000 # 30 minutes
   refresh:
     expiration: 604800000 # 7 days
 
