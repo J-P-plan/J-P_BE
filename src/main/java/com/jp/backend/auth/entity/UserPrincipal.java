@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.jp.backend.auth.utils.AuthoritiesUtils;
 import com.jp.backend.domain.user.entity.User;
@@ -16,9 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Slf4j
-public class UserPrincipal extends User implements UserDetails {
-	// TODO : ouath2
-	private Map<String, Object> attribues;
+public class UserPrincipal extends User implements UserDetails, OAuth2User {
+	private Map<String, Object> attributes;
 
 	public UserPrincipal(User user) {
 		setEmail(user.getEmail());
@@ -33,7 +33,7 @@ public class UserPrincipal extends User implements UserDetails {
 
 	public static UserPrincipal create(User user, Map<String, Object> attribues) {
 		UserPrincipal userPrincipal = create(user);
-		userPrincipal.setAttribues(attribues);
+		userPrincipal.setAttributes(attribues);
 
 		return userPrincipal;
 	}
@@ -66,6 +66,15 @@ public class UserPrincipal extends User implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	//우리 서버에서 구글 access token 을 얻은 다음 이 토큰으로 구글한테 사용자 정보를 알려달라고 요청하면
+	//구글에서 응답을 하는데 이 때 사용자정보가 attributes 안에 담아져 온다
+	//attribues가 Map 형식이니까 { "email" : "yelim@gmail.com" } 이런식으로!
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 
 }

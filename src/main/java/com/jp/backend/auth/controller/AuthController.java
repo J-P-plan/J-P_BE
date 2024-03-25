@@ -1,6 +1,5 @@
 package com.jp.backend.auth.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,12 +27,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthController {
 	private final AuthService authService;
 	private final RefreshService refreshService;
-	@Autowired
-	private AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
-	public AuthController(AuthService authService, RefreshService refreshService) {
+	public AuthController(AuthService authService, RefreshService refreshService,
+		AuthenticationManager authenticationManager) {
 		this.authService = authService;
 		this.refreshService = refreshService;
+		this.authenticationManager = authenticationManager;
 	}
 
 	@PostMapping("/login")
@@ -59,4 +59,5 @@ public class AuthController {
 		authService.logout(request, response);
 		return ResponseEntity.ok().build();
 	}
+
 }
