@@ -70,7 +70,7 @@ public class UserPrincipal extends User implements UserDetails, OAuth2User {
 
 	//우리 서버에서 구글 access token 을 얻은 다음 이 토큰으로 구글한테 사용자 정보를 알려달라고 요청하면
 	//구글에서 응답을 하는데 이 때 사용자정보가 attributes 안에 담아져 온다
-	//attribues가 Map 형식이니까 { "email" : "yelim@gmail.com" } 이런식으로!
+	//attribues가 Map 형식이니까 { "email" : "rlacodms@gmail.com" } 이런식으로!
 
 	@Override
 	public Map<String, Object> getAttributes() {
