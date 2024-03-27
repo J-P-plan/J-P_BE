@@ -7,7 +7,6 @@ import com.jp.backend.global.audit.Auditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "REFRESH_TOKEN")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -24,7 +22,7 @@ import lombok.Setter;
 @Builder
 public class RefreshToken extends Auditable {
 	@Id
-	@Column( unique = true)
+	@Column(unique = true)
 	@NotNull
 	private String email;
 	@NotNull

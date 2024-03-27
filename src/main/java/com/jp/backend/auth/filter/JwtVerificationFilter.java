@@ -2,8 +2,11 @@ package com.jp.backend.auth.filter;
 
 import java.io.IOException;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.jp.backend.auth.token.AuthToken;
 import com.jp.backend.auth.token.AuthTokenProvider;
 import com.jp.backend.auth.utils.HeaderUtils;
 
@@ -23,6 +26,16 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
+		String tokenStr = HeaderUtils.getAccessToken(request);
+		AuthToken token = authTokenProvider.convertAuthToken(tokenStr);
+
+		if (token.isTokenValid()) {
+			Authentication authentication = authTokenProvider.getAuthentication(token);
+
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		}
 
 		filterChain.doFilter(request, response);
 	}
