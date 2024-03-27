@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class PlacesResponseDto {
+public class PlaceSearchResDto {
 	private List<Object> htmlAttributions;
 	private String nextPageToken;
 	private List<Place> results;

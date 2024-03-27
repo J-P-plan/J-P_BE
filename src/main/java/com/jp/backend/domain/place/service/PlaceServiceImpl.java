@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.jp.backend.domain.place.config.GooglePlacesConfig;
-import com.jp.backend.domain.place.dto.PlacesResponseDto;
+import com.jp.backend.domain.place.dto.PlaceSearchResDto;
 import com.jp.backend.domain.place.entity.Place;
 
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ public class PlaceServiceImpl implements PlaceService {
 	}
 
 	@Override
-	public PlacesResponseDto searchPlaces(String contents) {
+	public PlaceSearchResDto searchPlaces(String contents) {
 		RestTemplate restTemplate = restTemplate();
 
 		String url = String.format(
@@ -34,7 +34,7 @@ public class PlaceServiceImpl implements PlaceService {
 			GooglePlacesConfig.URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
 		// 한국어로 받지 않으려면 language 빼기
 
-		PlacesResponseDto response = restTemplate.getForObject(url, PlacesResponseDto.class);
+		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
 
 		return response;
 	}
@@ -49,7 +49,7 @@ public class PlaceServiceImpl implements PlaceService {
 			GooglePlacesConfig.URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
 		// 한국어로 받지 않으려면 language 빼기
 
-		PlacesResponseDto response = restTemplate.getForObject(url, PlacesResponseDto.class);
+		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
 
 		List<Place> places = convertToPlaceList(response);
 		System.out.println(places);
@@ -57,9 +57,9 @@ public class PlaceServiceImpl implements PlaceService {
 		return places;
 	}
 
-	public List<Place> convertToPlaceList(PlacesResponseDto response) {
+	public List<Place> convertToPlaceList(PlaceSearchResDto response) {
 		List<Place> placeList = new ArrayList<>();
-		for (PlacesResponseDto.Place placeDto : response.getResults()) {
+		for (PlaceSearchResDto.Place placeDto : response.getResults()) {
 			Place.Location location = new Place.Location(placeDto.getGeometry().getLocation().getLat(),
 				placeDto.getGeometry().getLocation().getLng());
 			Place place = Place.builder()
