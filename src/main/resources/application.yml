@@ -52,5 +52,5 @@ admin:
   email: test@gmail.com,test1@gmail.com
 
 server:
-  port: 80
+  port: 8080
 
