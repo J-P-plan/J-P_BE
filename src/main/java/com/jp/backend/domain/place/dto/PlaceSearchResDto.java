@@ -16,34 +16,24 @@ import lombok.ToString;
 @Getter
 @Setter
 public class PlaceSearchResDto {
-	private List<Object> htmlAttributions;
-	private String nextPageToken;
 	private List<Place> results;
 
 	@Getter
 	@Setter
 	public static class Place {
-		private String businessStatus;
+		private String placeId;
+		private String name;
 		private String formattedAddress;
 		private Geometry geometry;
-		private String icon;
-		private String iconBackgroundColor;
-		private String iconMaskBaseUri;
-		private String name;
-		private List<Photo> photos;
-		private String placeId;
-		private PlusCode plusCode;
 		private double rating;
-		private String reference;
 		private List<String> types;
-		private int userRatingsTotal;
+		private String businessStatus;
 	}
 
 	@Getter
 	@Setter
 	public static class Geometry {
-		private Location location;
-		private Viewport viewport;
+		private Location location; // 지리적 좌표 - 위도/경도
 	}
 
 	@Getter
@@ -51,28 +41,5 @@ public class PlaceSearchResDto {
 	public static class Location {
 		private double lat;
 		private double lng;
-	}
-
-	@Getter
-	@Setter
-	public static class Viewport {
-		private Location northeast;
-		private Location southwest;
-	}
-
-	@Getter
-	@Setter
-	public static class Photo {
-		private int height;
-		private List<String> htmlAttributions;
-		private String photoReference;
-		private int width;
-	}
-
-	@Getter
-	@Setter
-	public static class PlusCode {
-		private String compoundCode;
-		private String globalCode;
 	}
 }

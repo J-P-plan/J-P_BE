@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.jp.backend.domain.place.config.GooglePlacesConfig;
+import com.jp.backend.domain.place.dto.PlaceDetailsResDto;
 import com.jp.backend.domain.place.dto.PlaceSearchResDto;
 import com.jp.backend.domain.place.entity.Place;
 
@@ -31,7 +32,7 @@ public class PlaceServiceImpl implements PlaceService {
 
 		String url = String.format(
 			"%s?query=%s&key=%s&language=ko",
-			GooglePlacesConfig.URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
+			GooglePlacesConfig.SEARCH_URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
 		// 한국어로 받지 않으려면 language 빼기
 
 		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
@@ -46,7 +47,7 @@ public class PlaceServiceImpl implements PlaceService {
 
 		String url = String.format(
 			"%s?query=%s&key=%s&language=ko",
-			GooglePlacesConfig.URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
+			GooglePlacesConfig.SEARCH_URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
 		// 한국어로 받지 않으려면 language 빼기
 
 		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
@@ -73,6 +74,23 @@ public class PlaceServiceImpl implements PlaceService {
 		}
 
 		return placeList;
+	}
+
+	// placeId로 장소 상세 정보 가져오는 메서드
+	@Override
+	public PlaceDetailsResDto getPlaceDetails(String placeId) {
+
+		RestTemplate restTemplate = restTemplate();
+
+		String url = String.format(
+			"%s?placeid=%s&key=%s&language=ko",
+			GooglePlacesConfig.DETAILS_URL, placeId, googlePlacesConfig.getGooglePlacesApiKey());
+		// placeId 넣어서 상세 정보 요청
+
+		PlaceDetailsResDto response = restTemplate.getForObject(url, PlaceDetailsResDto.class);
+		System.out.println(response);
+
+		return response;
 	}
 
 	// places api는 응답 필드가 snake_case로 들어오는데, 우리 프젝의 경우 responseDto가 CamelCase이기 때문에 / RestTemplate을 재정의하여 CamelCase로 받도록 설정
