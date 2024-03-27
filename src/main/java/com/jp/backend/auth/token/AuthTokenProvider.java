@@ -64,8 +64,6 @@ public class AuthTokenProvider {
 	public Authentication getAuthentication(AuthToken authToken) {
 		if (authToken.isTokenValid()) {
 			Claims claims = authToken.getValidTokenClaims();
-			Collection<? extends GrantedAuthority> authorities = getAuthorities((List)claims.get(AUTHORITIES_KEY));
-
 			log.debug("claims subject := [{}]", claims.getSubject());
 
 			UserDetails userDetails = customUserDetailService.loadUserByUsername(
