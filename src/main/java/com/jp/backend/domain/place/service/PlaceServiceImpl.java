@@ -41,6 +41,7 @@ public class PlaceServiceImpl implements PlaceService {
 	}
 
 	// 우리 입맛대로 Place list 로 반환하는 메서드
+	// TODO: 나중에 필요없으면 삭제
 	@Override
 	public List<Place> searchPlaces2(String contents) {
 		RestTemplate restTemplate = restTemplate();
