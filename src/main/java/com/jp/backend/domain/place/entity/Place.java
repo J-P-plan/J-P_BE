@@ -30,7 +30,7 @@ public class Place {
 	private String name; // 이름
 	@Embedded
 	private Location location; // 위치, 경도와 위도를 포함
-	private String formatted_address; // 주소 --> formatted_address ( 인간이 읽기 쉬운 주소 도로명, 도시, 우편번호 등이 포함 )
+	private String formattedAddress; // 주소 --> formatted_address ( 인간이 읽기 쉬운 주소 도로명, 도시, 우편번호 등이 포함 )
 	@ElementCollection
 	private List<String> types; // 장소 타입 / 음식점, 관광지 등
 	private double rating; // 별점
@@ -50,5 +50,4 @@ public class Place {
 	// url ?
 	// formatted_phone_number
 	// reviews
-	// 음식점인 경우 메뉴가 안나오니까 website?
 }

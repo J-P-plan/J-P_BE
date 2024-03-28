@@ -18,4 +18,7 @@ public interface PlaceService {
 	List<Place> searchPlaces2(String contents);
 
 	PlaceDetailsResDto getPlaceDetails(String placeId);
+
+	List<String> getPlacePhotos(String placeId);
+
 }

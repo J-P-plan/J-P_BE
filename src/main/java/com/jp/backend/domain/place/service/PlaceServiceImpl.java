@@ -54,7 +54,6 @@ public class PlaceServiceImpl implements PlaceService {
 		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
 
 		List<Place> places = convertToPlaceList(response);
-		System.out.println(places);
 
 		return places;
 	}
@@ -67,7 +66,7 @@ public class PlaceServiceImpl implements PlaceService {
 			Place place = Place.builder()
 				.name(placeDto.getName())
 				.location(location)
-				.formatted_address(placeDto.getFormattedAddress())
+				.formattedAddress(placeDto.getFormattedAddress())
 				.types(placeDto.getTypes())
 				.rating(placeDto.getRating()).build();
 
@@ -89,9 +88,36 @@ public class PlaceServiceImpl implements PlaceService {
 		// placeId 넣어서 상세 정보 요청
 
 		PlaceDetailsResDto response = restTemplate.getForObject(url, PlaceDetailsResDto.class);
-		System.out.println(response);
 
 		return response;
+	}
+
+	//
+	@Override
+	public List<String> getPlacePhotos(String placeId) {
+
+		PlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
+
+		// 상세 정보의 result 의 photos 안에 있는 width/height/photoReference list들을 돌면서 하나씩 가져와서
+		// 한 번 돌면 그 때 저 3개 요소 뽑아서
+		// 요청 url에 넣어서 url 만들고
+		// List<String> photoUrls 에 하나씩 넣어
+		List<String> photoUrls = new ArrayList<>();
+
+		for (PlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
+			int maxWidth = photo.getWidth();
+			int maxHeight = photo.getHeight();
+			String photoReference = photo.getPhotoReference();
+
+			String url = String.format(
+				"%s?maxWidth=%s&maxHeight=%s&photo_reference=%s&key=%s",
+				GooglePlacesConfig.PHOTO_URL, maxWidth, maxHeight, photoReference,
+				googlePlacesConfig.getGooglePlacesApiKey());
+
+			photoUrls.add(url);
+		}
+
+		return photoUrls;
 	}
 
 	// places api는 응답 필드가 snake_case로 들어오는데, 우리 프젝의 경우 responseDto가 CamelCase이기 때문에 / RestTemplate을 재정의하여 CamelCase로 받도록 설정
