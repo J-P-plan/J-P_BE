@@ -38,7 +38,7 @@ public class UserController {
 	@PostMapping("/signup")
 	public ResponseEntity signup(@Valid @RequestBody UserPostDto userPostDto) {
 		userService.createUser(userMapper.userPostDtoToUser(userPostDto));
-		return ResponseEntity.created(URI.create("/api/v1/users")).build();
+		return ResponseEntity.created(URI.create("/user")).build();
 	}
 
 	@Operation(summary = "엑세스 토큰을 이용해 유저 정보를 업데이트합니다.")

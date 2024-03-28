@@ -60,7 +60,7 @@ public class RefreshService {
 	}
 
 	public void validateAccessTokenCheck(AuthToken authToken) {
-		if (authToken.isTokenExpired())
+		if (!authToken.isTokenExpired())
 			throw new CustomLogicException(ExceptionCode.TOKEN_INVALID);
 
 		if (authToken.getExpiredTokenClaims() == null)
