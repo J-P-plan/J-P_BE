@@ -98,10 +98,6 @@ public class PlaceServiceImpl implements PlaceService {
 
 		PlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
 
-		// 상세 정보의 result 의 photos 안에 있는 width/height/photoReference list들을 돌면서 하나씩 가져와서
-		// 한 번 돌면 그 때 저 3개 요소 뽑아서
-		// 요청 url에 넣어서 url 만들고
-		// List<String> photoUrls 에 하나씩 넣어
 		List<String> photoUrls = new ArrayList<>();
 
 		for (PlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
