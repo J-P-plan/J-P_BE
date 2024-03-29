@@ -1,4 +1,4 @@
-package com.jp.backend.global.config;
+package com.jp.backend.auth.config;
 
 import java.util.Arrays;
 
@@ -20,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.jp.backend.auth.config.JwtConfig;
+import com.jp.backend.auth.enums.AuthorizedUrl;
 import com.jp.backend.auth.filter.JwtAuthenticationFilter;
 import com.jp.backend.auth.filter.JwtVerificationFilter;
 import com.jp.backend.auth.handler.UserAccessDeniedHandler;
@@ -33,7 +33,6 @@ import com.jp.backend.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.jp.backend.auth.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
-import com.jp.backend.global.enums.AuthorizedUrl;
 
 @Configuration
 @EnableWebSecurity
