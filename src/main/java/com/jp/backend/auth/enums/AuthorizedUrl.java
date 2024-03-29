@@ -1,4 +1,4 @@
-package com.jp.backend.global.enums;
+package com.jp.backend.auth.enums;
 
 public enum AuthorizedUrl {
 	POST_SCHEDULE("/schedule");
