@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 public interface PlaceService {
 	PlaceSearchResDto searchPlaces(String contents, String nextPageToken);
 
-	List<Place> searchPlaces2(String contents);
+	List<Place> searchPlaces2(String contents, String nextPageToken);
 
 	PlaceDetailsResDto getPlaceDetails(String placeId);
 

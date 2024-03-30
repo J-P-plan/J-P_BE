@@ -30,13 +30,21 @@ public class PlaceController {
 	}
 
 	// 장소 검색하기
-	@GetMapping("/search")
+	@GetMapping("/textSearch")
 	@Operation(summary = "장소를 검색합니다. 다음 페이지를 불러오고 싶다면, nextPageToken을 파라미터에 넣어 요청하세요.")
 	public ResponseEntity<PlaceSearchResDto> searchPlaces(@RequestParam String contents,
 		@RequestParam(required = false) String nextPageToken) {
 		PlaceSearchResDto places = placeService.searchPlaces(contents, nextPageToken);
-		// List<Place> places = placeService.searchPlaces2(contents);
+		// List<Place> places = placeService.searchPlaces2(contents, nextPageToken);
 		return new ResponseEntity(places, HttpStatus.OK);
+	}
+
+	// TODO : 인기 여행지 상세 - 해당 장소의 반경 4-5km 내의 여행지 추천
+	//  이것도 리뷰 개수 순으로 정렬해서
+	@GetMapping("/nearbySearch")
+	@Operation(summary = "해당 장소의 반경 4-5km 내에 있는 인기 여행지들을 추천합니다.")
+	public ResponseEntity searchNearbyPlaces() {
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	// 장소 세부 정보 가져오기
