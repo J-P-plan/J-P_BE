@@ -31,6 +31,7 @@ public class PlaceDetailsResDto {
 		private List<String> types;
 		private List<Photo> photos;
 		private Double rating;
+		private int userRatingsTotal;
 		private List<Review> reviews;
 		private String url;
 		private String website;

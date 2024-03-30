@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public interface PlaceService {
-	PlaceSearchResDto searchPlaces(String contents);
+	PlaceSearchResDto searchPlaces(String contents, String nextPageToken);
 
 	List<Place> searchPlaces2(String contents);
 

@@ -1,6 +1,7 @@
 package com.jp.backend.domain.place.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -27,15 +28,29 @@ public class PlaceServiceImpl implements PlaceService {
 	}
 
 	@Override
-	public PlaceSearchResDto searchPlaces(String contents) {
+	public PlaceSearchResDto searchPlaces(String contents, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
 
-		String url = String.format(
-			"%s?query=%s&key=%s&language=ko",
-			GooglePlacesConfig.SEARCH_URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
-		// 한국어로 받지 않으려면 language 빼기
+		String url;
+		if (nextPageToken == null) {
+			url = String.format(
+				"%s?query=%s&key=%s&language=ko",
+				GooglePlacesConfig.SEARCH_URL, contents, googlePlacesConfig.getGooglePlacesApiKey());
+			// 한국어로 받지 않으려면 language 빼기
+		} else {
+			url = String.format(
+				"%s?query=%s&pageToken=%s&key=%s&language=ko",
+				GooglePlacesConfig.SEARCH_URL, contents, nextPageToken, googlePlacesConfig.getGooglePlacesApiKey());
+		}
 
 		PlaceSearchResDto response = restTemplate.getForObject(url, PlaceSearchResDto.class);
+
+		// userRatingsTotal 순으로 내림차순 정렬 / 사용자 평점 수가 같을 경우엔 Rating 순으로 내림차순 정렬
+		if (response != null && response.getResults() != null) {
+			response.getResults()
+				.sort(Comparator.comparing(PlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
+					.thenComparing(PlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+		}
 
 		return response;
 	}

@@ -16,6 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class PlaceSearchResDto {
+	private String nextPageToken;
 	private List<Place> results;
 
 	@Getter
@@ -26,6 +27,7 @@ public class PlaceSearchResDto {
 		private String formattedAddress;
 		private Geometry geometry;
 		private double rating;
+		private int userRatingsTotal;
 		private List<String> types;
 		private String businessStatus;
 	}

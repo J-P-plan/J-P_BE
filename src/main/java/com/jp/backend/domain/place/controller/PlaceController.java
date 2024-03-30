@@ -31,9 +31,10 @@ public class PlaceController {
 
 	// 장소 검색하기
 	@GetMapping("/search")
-	@Operation(summary = "장소를 검색합니다.")
-	public ResponseEntity<PlaceSearchResDto> searchPlaces(@RequestParam("contents") String contents) {
-		PlaceSearchResDto places = placeService.searchPlaces(contents);
+	@Operation(summary = "장소를 검색합니다. 다음 페이지를 불러오고 싶다면, nextPageToken을 파라미터에 넣어 요청하세요.")
+	public ResponseEntity<PlaceSearchResDto> searchPlaces(@RequestParam String contents,
+		@RequestParam(required = false) String nextPageToken) {
+		PlaceSearchResDto places = placeService.searchPlaces(contents, nextPageToken);
 		// List<Place> places = placeService.searchPlaces2(contents);
 		return new ResponseEntity(places, HttpStatus.OK);
 	}
