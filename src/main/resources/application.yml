@@ -31,9 +31,11 @@ spring:
         registration:
           google:
             client-id: 521878069403-pe47h04vdr0bceboq7fm9430bahsae13.apps.googleusercontent.com
-            client-secret: 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
-            scope: profile,email
-            redirect-uri: "http://jandp-travel.kro.kr:8080/oauth2/callback/google"
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "http://jandp-travel.kro.kr:8080/login/oauth2/code/google"
 
 logging:
   level:
