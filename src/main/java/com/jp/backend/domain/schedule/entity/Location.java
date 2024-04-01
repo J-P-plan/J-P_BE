@@ -19,13 +19,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Location {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  private Point location;
+	private Point location; //위도, 경도
 
-  private String address;
+	private String placeId; //restourant, cafe
 
-  private List locationTypeList;
+	private String name;
 }

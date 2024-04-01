@@ -21,16 +21,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class DayLocation {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  //순서
-  private Integer Index;
-  //시간
-  private LocalTime localTime;
-  //description
-  private String description;
-  //
-  @OneToOne(fetch = FetchType.LAZY)
-  private Location location; //todo 원투원? 매니투매니? 생각해보기
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	//순서
+	private Integer Index;
+	//시간
+	private LocalTime localTime; //새로 생성시 이전 시간과 똑같게
+	//description
+	private String description;
+	//
+	@OneToOne(fetch = FetchType.LAZY)
+	private Location location; //todo 원투원? 매니투매니? 생각해보기
 }
