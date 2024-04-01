@@ -118,15 +118,12 @@ public class PlaceServiceImpl implements PlaceService {
 		URI uri = uriBuilder.build().toUri();
 
 		PlaceDetailsResDto response = restTemplate.getForObject(uri, PlaceDetailsResDto.class);
-
 		return response;
 	}
 
 	//
 	@Override
 	public List<String> getPlacePhotos(String placeId) {
-		// TODO : 이거 string으로 주면 거기서 이미지들어가면 403이미지 뜨는 문제 해결
-
 		PlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
 
 		List<String> photoUrls = new ArrayList<>();
@@ -138,22 +135,14 @@ public class PlaceServiceImpl implements PlaceService {
 
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder
 				.fromUriString(GooglePlacesConfig.PHOTO_URL)
-				.queryParam("maxWidth", maxWidth)
-				.queryParam("maxHeight", maxHeight)
+				.queryParam("maxwidth", maxWidth)
+				.queryParam("maxheight", maxHeight)
 				.queryParam("photo_reference", photoReference)
 				.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey());
 
-			String uri = String.valueOf(uriBuilder.build().toUri());
+			String uri = uriBuilder.toUriString();
 
 			photoUrls.add(uri);
-
-			// TODO : 문제 해결 후 이거 필요없으면 지우기
-			// String url = String.format(
-			// 	"%s?maxWidth=%s&maxHeight=%s&photo_reference=%s&key=%s",
-			// 	GooglePlacesConfig.PHOTO_URL, maxWidth, maxHeight, photoReference,
-			// 	googlePlacesConfig.getGooglePlacesApiKey());
-			//
-			// photoUrls.add(url);
 		}
 
 		return photoUrls;
