@@ -35,7 +35,7 @@ import lombok.Setter;
 public class User extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long id;
+	private Long id;
 
 	private String name;
 
