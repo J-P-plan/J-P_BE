@@ -24,7 +24,7 @@ public class OauthController {
 		description = "Access Token은 헤더의 Authorization으로, Refresh Token은 cookie로 전송<br>"
 			+ "swagger로 요청시 Cors 에러가 나더라구요 ㅠㅠ 테스트시 아래 url로 요청<br>"
 			+ "local : <b><a href='http://localhost:8080/oauth2/authorization/google'> http://localhost:8080/oauth2/authorization/google </a></b> <br> "
-			+ "prod : <b><a href='http://43.202.248.10:8080/oauth2/authorization/google'> http://43.202.248.10:8080/oauth2/authorization/google </a></b> <br> "
+			+ "prod : <b><a href='http://jandp-travel.kro.kr:8080/oauth2/authorization/google'> http://jandp-travel.kro.kr:8080/oauth2/authorization/google </a></b> <br> "
 	)
 	public ResponseEntity signinGoogle(
 		HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

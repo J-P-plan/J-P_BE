@@ -1,6 +1,6 @@
 package com.jp.backend.domain.schedule.entity;
 
-import java.awt.*;
+import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,14 +18,12 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @Builder
-public class Location {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	private Point location; //위도, 경도
-
-	private String placeId; //restourant, cafe
-
-	private String name;
+public class DayTime {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  //순서
+  private Integer timeIndex;
+  //시간
+  private LocalTime time; //새로 생성시 이전 시간과 똑같게
 }

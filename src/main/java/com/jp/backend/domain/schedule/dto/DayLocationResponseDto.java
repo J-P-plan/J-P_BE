@@ -1,6 +1,6 @@
 package com.jp.backend.domain.schedule.dto;
 
-import java.time.LocalDate;
+import java.awt.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SchedulePostDto {
-//도시, 일자 한번 보내주고
-  //얘네로 요청하면 Day는 자동생성. 업데이트만!
-  //
-  private LocalDate startDate;
+public class DayLocationResponseDto {
+  private Long id;
+  //순서
+  private Integer locationIndex;
+  //description
+  private String description;
 
-  private LocalDate endDate;
+  private Point location; //위도, 경도
+
+  private String placeId; //restourant, cafe
+
+  private String name;
 }

@@ -3,8 +3,6 @@ package com.jp.backend.domain.schedule.entity;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.security.core.userdetails.User;
-
 import com.jp.backend.domain.schedule.enums.Status;
 
 import jakarta.persistence.Entity;

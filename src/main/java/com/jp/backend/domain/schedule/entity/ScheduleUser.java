@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//초대된 유저 넣어줄 예정
 @NoArgsConstructor
 @Getter
 @Setter
