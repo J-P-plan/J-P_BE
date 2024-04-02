@@ -17,6 +17,8 @@ public interface PlaceService {
 
 	List<Place> searchPlaces2(String contents, String nextPageToken);
 
+	PlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken);
+
 	PlaceDetailsResDto getPlaceDetails(String placeId);
 
 	List<String> getPlacePhotos(String placeId);

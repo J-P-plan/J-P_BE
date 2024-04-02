@@ -29,12 +29,13 @@ public class PlaceServiceImpl implements PlaceService {
 		this.googlePlacesConfig = googlePlacesConfig;
 	}
 
+	// textSearch 메서드
 	@Override
 	public PlaceSearchResDto searchPlaces(String contents, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.SEARCH_URL)
+			.fromUriString(GooglePlacesConfig.TEXT_SEARCH_URL)
 			.queryParam("query", contents)
 			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
@@ -59,14 +60,14 @@ public class PlaceServiceImpl implements PlaceService {
 		return response;
 	}
 
-	// 우리 입맛대로 Place list 로 반환하는 메서드
+	// 우리 입맛대로 Place list 로 만들어 반환하는 메서드
 	// TODO: 나중에 필요없으면 삭제
 	@Override
 	public List<Place> searchPlaces2(String contents, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.SEARCH_URL)
+			.fromUriString(GooglePlacesConfig.TEXT_SEARCH_URL)
 			.queryParam("query", contents)
 			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
@@ -95,13 +96,41 @@ public class PlaceServiceImpl implements PlaceService {
 				.name(placeDto.getName())
 				.location(location)
 				.formattedAddress(placeDto.getFormattedAddress())
-				.types(placeDto.getTypes())
 				.rating(placeDto.getRating()).build();
 
 			placeList.add(place);
 		}
 
 		return placeList;
+	}
+
+	@Override
+	public PlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
+		RestTemplate restTemplate = restTemplate();
+
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder
+			.fromUriString(GooglePlacesConfig.NEARBY_SEARCH_URL)
+			.queryParam("location", lat + "," + lng)
+			.queryParam("radius", radius)
+			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
+			.queryParam("language", "ko");
+
+		if (nextPageToken != null) {
+			uriBuilder.queryParam("pagetoken", nextPageToken);
+		}
+
+		URI uri = uriBuilder.build().toUri();
+
+		PlaceSearchResDto response = restTemplate.getForObject(uri, PlaceSearchResDto.class);
+
+		// 리뷰 개수 순으로 정렬
+		if (response != null && response.getResults() != null) {
+			response.getResults()
+				.sort(Comparator.comparing(PlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
+					.thenComparing(PlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+		}
+
+		return response;
 	}
 
 	// placeId로 장소 상세 정보 가져오는 메서드
