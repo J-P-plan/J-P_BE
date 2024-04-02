@@ -29,6 +29,8 @@ public class ScheduleUser {
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
+  private Boolean createrYn;
+
   @ManyToOne(fetch = FetchType.LAZY)
   private Schedule schedule;
 }

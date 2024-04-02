@@ -2,6 +2,8 @@ package com.jp.backend.domain.schedule.dto;
 
 import java.time.LocalDate;
 
+import com.jp.backend.domain.schedule.entity.Schedule;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,4 +24,11 @@ public class SchedulePostDto {
   private LocalDate startDate;
 
   private LocalDate endDate;
+
+  public Schedule toEntity() {
+    return Schedule.builder()
+      .startDate(startDate)
+      .endDate(endDate)
+      .build();
+  }
 }

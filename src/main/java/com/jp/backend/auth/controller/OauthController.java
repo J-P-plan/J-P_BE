@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @Validated
 @RequestMapping()
-@Tag(name = "1. [인증]")
+@Tag(name = "00. [인증]")
 public class OauthController {
 
 	@GetMapping("/oauth2/authorization/google")
