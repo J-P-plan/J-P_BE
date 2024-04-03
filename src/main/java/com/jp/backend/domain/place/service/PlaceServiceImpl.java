@@ -1,10 +1,6 @@
 package com.jp.backend.domain.place.service;
 
 import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -157,7 +153,6 @@ public class PlaceServiceImpl implements PlaceService {
 		URI uri = uriBuilder.build().toUri();
 
 		PlaceDetailsResDto response = restTemplate.getForObject(uri, PlaceDetailsResDto.class);
-		convertTimestampToFormattedString(response); // 리뷰 작성 시간 형식 변경
 		return response;
 	}
 
@@ -209,35 +204,6 @@ public class PlaceServiceImpl implements PlaceService {
 		restTemplate.getMessageConverters().add(0, messageConverter);
 
 		return restTemplate;
-	}
-
-	// yyyy년 MM월 dd일 HH:mm로 시간 형식을 변경하는 메서드
-	// TODO : 시간 변경 로직이 다른 곳에도 사용된다면 따로 빼서 리팩토링
-	private void convertTimestampToFormattedString(PlaceDetailsResDto response) {
-		if (response != null && response.getResult().getReviews() != null) {
-			for (PlaceDetailsResDto.Review review : response.getResult().getReviews()) {
-				String unixTimestampStr = review.getTime();
-				if (unixTimestampStr != null) {
-					try {
-						// String 타입의 unixTimestamp를 Long 타입으로 파싱
-						long unixTimestamp = Long.parseLong(unixTimestampStr);
-
-						// 유닉스 타임스탬프를 LocalDateTime으로 변환
-						LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTimestamp),
-							ZoneId.systemDefault());
-
-						// 날짜 및 시간 포매팅
-						String formattedDate = dateTime.format(
-							DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm"));
-
-						review.setTime(formattedDate);
-					} catch (NumberFormatException e) {
-						// unixTimestampStr이 Long으로 파싱되지 않는 경우의 예외 처리
-						System.err.println("Unix timestamp parsing error: " + e.getMessage());
-					}
-				}
-			}
-		}
 	}
 
 	// TODO : 리팩토링 - place api에 요청하는 uri builder 따로 빼기

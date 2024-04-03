@@ -1,8 +1,11 @@
 package com.jp.backend.domain.place.dto;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jp.backend.global.serializers.CustomDateSerializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,7 +80,8 @@ public class PlaceDetailsResDto {
 		private String authorUrl;
 		private String profilePhotoUrl;
 		private Long rating;
-		private String time;
+		@JsonSerialize(using = CustomDateSerializer.class)
+		private Date time;
 		private String relativeTimeDescription;
 		private String text;
 	}
