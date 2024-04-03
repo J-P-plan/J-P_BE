@@ -2,6 +2,8 @@ package com.jp.backend.domain.place.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +22,7 @@ public class PlaceDetailsResDto {
 
 	@Getter
 	@Setter
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Result {
 		private String placeId;
 		private String name;

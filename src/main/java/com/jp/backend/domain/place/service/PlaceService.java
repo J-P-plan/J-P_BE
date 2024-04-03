@@ -19,7 +19,7 @@ public interface PlaceService {
 
 	PlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken);
 
-	PlaceDetailsResDto getPlaceDetails(String placeId);
+	PlaceDetailsResDto getPlaceDetails(String placeId, String fields);
 
 	List<String> getPlacePhotos(String placeId);
 

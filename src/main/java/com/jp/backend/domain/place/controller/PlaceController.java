@@ -54,9 +54,11 @@ public class PlaceController {
 
 	// 장소 세부 정보 가져오기
 	@GetMapping("/details")
-	@Operation(summary = "해당 장소의 상세 정보를 가져옵니다.")
-	public ResponseEntity<PlaceDetailsResDto> getPlaceDetails(@RequestParam String placeId) {
-		PlaceDetailsResDto placeDetails = placeService.getPlaceDetails(placeId);
+	@Operation(summary = "해당 장소의 상세 정보를 가져옵니다."
+		+ "리뷰만 가져오고 싶다면, 파라미터의 fields 값에 reviews를 넣어 요청하세요.")
+	public ResponseEntity<PlaceDetailsResDto> getPlaceDetails(@RequestParam String placeId,
+		@RequestParam(required = false) String fields) {
+		PlaceDetailsResDto placeDetails = placeService.getPlaceDetails(placeId, fields);
 		return new ResponseEntity(placeDetails, HttpStatus.OK);
 	}
 

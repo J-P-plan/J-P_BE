@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -135,7 +136,7 @@ public class PlaceServiceImpl implements PlaceService {
 
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
-	public PlaceDetailsResDto getPlaceDetails(String placeId) {
+	public PlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
@@ -144,10 +145,20 @@ public class PlaceServiceImpl implements PlaceService {
 			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
+		// 리뷰 가져오기
+		if (Objects.equals(fields, "reviews")) {
+			uriBuilder.queryParam("fields", fields + ",user_ratings_total");
+		}
+
 		URI uri = uriBuilder.build().toUri();
 
 		PlaceDetailsResDto response = restTemplate.getForObject(uri, PlaceDetailsResDto.class);
 		return response;
+	}
+
+	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩 --> 유연성, 확장성 증가
+	public PlaceDetailsResDto getPlaceDetails(String placeId) {
+		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
 	}
 
 	//
