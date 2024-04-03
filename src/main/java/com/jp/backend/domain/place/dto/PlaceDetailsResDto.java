@@ -77,6 +77,7 @@ public class PlaceDetailsResDto {
 		private String authorUrl;
 		private String profilePhotoUrl;
 		private Long rating;
+		private String time;
 		private String relativeTimeDescription;
 		private String text;
 	}
