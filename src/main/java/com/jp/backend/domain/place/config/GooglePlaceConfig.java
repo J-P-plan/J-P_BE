@@ -7,12 +7,14 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class GooglePlacesConfig {
+public class GooglePlaceConfig {
 
 	@Value("${google.places.api-key}")
 	private String googlePlacesApiKey;
 
-	public static final String SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
+	public static final String TEXT_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
+
+	public static final String NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
 	public static final String DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json";
 
