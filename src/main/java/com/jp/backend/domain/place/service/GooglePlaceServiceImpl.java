@@ -14,31 +14,30 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.jp.backend.domain.place.config.GooglePlacesConfig;
-import com.jp.backend.domain.place.dto.PlaceDetailsResDto;
-import com.jp.backend.domain.place.dto.PlaceSearchResDto;
-import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.config.GooglePlaceConfig;
+import com.jp.backend.domain.place.dto.GooglePlaceDetailsResDto;
+import com.jp.backend.domain.place.dto.GooglePlaceSearchResDto;
 
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class PlaceServiceImpl implements PlaceService {
-	private final GooglePlacesConfig googlePlacesConfig;
+public class GooglePlaceServiceImpl implements GooglePlaceService {
+	private final GooglePlaceConfig googlePlaceConfig;
 
-	public PlaceServiceImpl(GooglePlacesConfig googlePlacesConfig) {
-		this.googlePlacesConfig = googlePlacesConfig;
+	public GooglePlaceServiceImpl(GooglePlaceConfig googlePlaceConfig) {
+		this.googlePlaceConfig = googlePlaceConfig;
 	}
 
 	// textSearch 메서드
 	@Override
-	public PlaceSearchResDto searchPlaces(String contents, String nextPageToken) {
+	public GooglePlaceSearchResDto searchPlaces(String contents, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.TEXT_SEARCH_URL)
+			.fromUriString(googlePlaceConfig.TEXT_SEARCH_URL)
 			.queryParam("query", contents)
-			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
+			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
 		if (nextPageToken != null) { // 다음 페이지 토큰이 존재하면, 이것도 껴서 요청
@@ -48,72 +47,30 @@ public class PlaceServiceImpl implements PlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		PlaceSearchResDto response = restTemplate.getForObject(uri, PlaceSearchResDto.class);
+		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
 
 		// TODO : 나중에 내 장소와 가까운 순으로 정렬도 추가하게되면 메서드 따로 빼기
 		// userRatingsTotal 순으로 내림차순 정렬 / 사용자 평점 수가 같을 경우엔 Rating 순으로 내림차순 정렬
 		if (response != null && response.getResults() != null) {
 			response.getResults()
-				.sort(Comparator.comparing(PlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
-					.thenComparing(PlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+				.sort(
+					Comparator.comparing(GooglePlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
+						.thenComparing(GooglePlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
 		}
 
 		return response;
 	}
 
-	// 우리 입맛대로 Place list 로 만들어 반환하는 메서드
-	// TODO: 나중에 필요없으면 삭제
+	// nearbySearch 메서드
 	@Override
-	public List<Place> searchPlaces2(String contents, String nextPageToken) {
+	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.TEXT_SEARCH_URL)
-			.queryParam("query", contents)
-			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
-			.queryParam("language", "ko");
-
-		if (nextPageToken != null) { // 다음 페이지 토큰이 존재하면, 이것도 껴서 요청
-			uriBuilder.queryParam("pagetoken", nextPageToken);
-			// pageToken 나 page_token 으로 요청하면 작동 X
-		}
-
-		URI uri = uriBuilder.build().toUri();
-
-		PlaceSearchResDto response = restTemplate.getForObject(uri, PlaceSearchResDto.class);
-		List<Place> places = convertToPlaceList(response);
-
-		return places;
-	}
-
-	// PlaceSearchDto를 Place list로 바꾸는 로직
-	public List<Place> convertToPlaceList(PlaceSearchResDto response) {
-		List<Place> placeList = new ArrayList<>();
-
-		for (PlaceSearchResDto.Place placeDto : response.getResults()) {
-			Place.Location location = new Place.Location(placeDto.getGeometry().getLocation().getLat(),
-				placeDto.getGeometry().getLocation().getLng());
-			Place place = Place.builder()
-				.name(placeDto.getName())
-				.location(location)
-				.formattedAddress(placeDto.getFormattedAddress())
-				.rating(placeDto.getRating()).build();
-
-			placeList.add(place);
-		}
-
-		return placeList;
-	}
-
-	@Override
-	public PlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
-		RestTemplate restTemplate = restTemplate();
-
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.NEARBY_SEARCH_URL)
+			.fromUriString(googlePlaceConfig.NEARBY_SEARCH_URL)
 			.queryParam("location", lat + "," + lng)
 			.queryParam("radius", radius)
-			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
+			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
 		if (nextPageToken != null) {
@@ -122,13 +79,14 @@ public class PlaceServiceImpl implements PlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		PlaceSearchResDto response = restTemplate.getForObject(uri, PlaceSearchResDto.class);
+		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
 
 		// 리뷰 개수 순으로 정렬
 		if (response != null && response.getResults() != null) {
 			response.getResults()
-				.sort(Comparator.comparing(PlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
-					.thenComparing(PlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+				.sort(
+					Comparator.comparing(GooglePlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
+						.thenComparing(GooglePlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
 		}
 
 		return response;
@@ -136,13 +94,13 @@ public class PlaceServiceImpl implements PlaceService {
 
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
-	public PlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
+	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlacesConfig.DETAILS_URL)
+			.fromUriString(googlePlaceConfig.DETAILS_URL)
 			.queryParam("placeid", placeId)
-			.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey())
+			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
 		// 리뷰 가져오기
@@ -152,33 +110,33 @@ public class PlaceServiceImpl implements PlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		PlaceDetailsResDto response = restTemplate.getForObject(uri, PlaceDetailsResDto.class);
+		GooglePlaceDetailsResDto response = restTemplate.getForObject(uri, GooglePlaceDetailsResDto.class);
 		return response;
 	}
 
 	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩 --> 유연성, 확장성 증가
-	public PlaceDetailsResDto getPlaceDetails(String placeId) {
+	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
 		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
 	}
 
-	//
+	// placeId로 장소 사진 url들 가져오는 메서드
 	@Override
 	public List<String> getPlacePhotos(String placeId) {
-		PlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
+		GooglePlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
 
 		List<String> photoUrls = new ArrayList<>();
 
-		for (PlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
+		for (GooglePlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
 			int maxWidth = photo.getWidth();
 			int maxHeight = photo.getHeight();
 			String photoReference = photo.getPhotoReference();
 
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder
-				.fromUriString(GooglePlacesConfig.PHOTO_URL)
+				.fromUriString(googlePlaceConfig.PHOTO_URL)
 				.queryParam("maxwidth", maxWidth)
 				.queryParam("maxheight", maxHeight)
 				.queryParam("photo_reference", photoReference)
-				.queryParam("key", googlePlacesConfig.getGooglePlacesApiKey());
+				.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey());
 
 			String uri = uriBuilder.toUriString();
 

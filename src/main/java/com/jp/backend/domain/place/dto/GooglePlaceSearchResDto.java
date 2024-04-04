@@ -17,7 +17,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class PlaceSearchResDto {
+public class GooglePlaceSearchResDto {
 	private String nextPageToken;
 	private List<Place> results;
 
