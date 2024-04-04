@@ -1,4 +1,4 @@
-package com.jp.backend.domain.place.config;
+package com.jp.backend.domain.googleplace.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
