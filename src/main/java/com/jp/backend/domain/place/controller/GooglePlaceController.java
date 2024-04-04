@@ -38,7 +38,6 @@ public class GooglePlaceController {
 	public ResponseEntity<GooglePlaceSearchResDto> searchPlaces(@RequestParam String contents,
 		@RequestParam(required = false) String nextPageToken) {
 		GooglePlaceSearchResDto places = googlePlaceService.searchPlaces(contents, nextPageToken);
-		// List<Place> places = placeService.searchPlaces2(contents, nextPageToken);
 		return new ResponseEntity(places, HttpStatus.OK);
 	}
 

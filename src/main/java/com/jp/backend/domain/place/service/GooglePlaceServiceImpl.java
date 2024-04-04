@@ -61,6 +61,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
+	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
 		RestTemplate restTemplate = restTemplate();
