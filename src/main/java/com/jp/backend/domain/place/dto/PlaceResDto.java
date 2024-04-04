@@ -1,14 +1,10 @@
-package com.jp.backend.domain.place.entity;
+package com.jp.backend.domain.place.dto;
 
 import com.jp.backend.domain.place.enums.PlaceType;
 
-import jakarta.persistence.Entity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,29 +13,33 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@Table(name = "plcae")
-public class Place {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+@AllArgsConstructor
+public class PlaceResDto {
+	@Schema(description = "아이디")
 	private Long id;
 
+	@Schema(description = "장소 아이디")
 	private String placeId;
 
-	private String intx;
+	@Schema(description = "위도")
+	private double lat;
 
-	private String inty;
+	@Schema(description = "경도")
+	private double lng;
 
 	@Enumerated(EnumType.STRING)
+	@Schema(description = "장소 타입")
 	private PlaceType placeType;
 
+	@Schema(description = "장소명")
 	private String name;
 
+	@Schema(description = "서브 장소명")
 	private String subName;
 
+	@Schema(description = "설명")
 	private String description;
 
 }

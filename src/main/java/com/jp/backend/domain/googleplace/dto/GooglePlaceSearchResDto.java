@@ -1,6 +1,8 @@
-package com.jp.backend.domain.place.dto;
+package com.jp.backend.domain.googleplace.dto;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +17,8 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class PlaceSearchResDto {
+public class GooglePlaceSearchResDto {
+	private String nextPageToken;
 	private List<Place> results;
 
 	@Getter
@@ -23,11 +26,13 @@ public class PlaceSearchResDto {
 	public static class Place {
 		private String placeId;
 		private String name;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String formattedAddress;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
+		private String vicinity;
 		private Geometry geometry;
 		private double rating;
-		private List<String> types;
-		private String businessStatus;
+		private int userRatingsTotal;
 	}
 
 	@Getter

@@ -1,6 +1,11 @@
-package com.jp.backend.domain.place.dto;
+package com.jp.backend.domain.googleplace.dto;
 
+import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jp.backend.global.serializers.CustomDateSerializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +20,12 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class PlaceDetailsResDto {
+public class GooglePlaceDetailsResDto {
 	private Result result;
 
 	@Getter
 	@Setter
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Result {
 		private String placeId;
 		private String name;
@@ -31,6 +37,7 @@ public class PlaceDetailsResDto {
 		private List<String> types;
 		private List<Photo> photos;
 		private Double rating;
+		private int userRatingsTotal;
 		private List<Review> reviews;
 		private String url;
 		private String website;
@@ -73,6 +80,8 @@ public class PlaceDetailsResDto {
 		private String authorUrl;
 		private String profilePhotoUrl;
 		private Long rating;
+		@JsonSerialize(using = CustomDateSerializer.class)
+		private Date time;
 		private String relativeTimeDescription;
 		private String text;
 	}
