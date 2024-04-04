@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class GooglePlacesConfig {
+public class GooglePlaceConfig {
 
 	@Value("${google.places.api-key}")
 	private String googlePlacesApiKey;

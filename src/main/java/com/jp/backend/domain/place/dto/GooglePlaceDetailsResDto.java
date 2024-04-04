@@ -20,7 +20,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class PlaceDetailsResDto {
+public class GooglePlaceDetailsResDto {
 	private Result result;
 
 	@Getter
