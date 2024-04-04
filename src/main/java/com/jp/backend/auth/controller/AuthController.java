@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @Validated
 @RequestMapping("/auth")
-@Tag(name = "1. [인증]")
+@Tag(name = "00. [인증]")
 public class AuthController {
 	private final AuthService authService;
 	private final RefreshService refreshService;

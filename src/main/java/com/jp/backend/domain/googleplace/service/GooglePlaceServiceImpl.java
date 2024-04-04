@@ -1,4 +1,4 @@
-package com.jp.backend.domain.place.service;
+package com.jp.backend.domain.googleplace.service;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -14,9 +14,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.jp.backend.domain.place.config.GooglePlaceConfig;
-import com.jp.backend.domain.place.dto.GooglePlaceDetailsResDto;
-import com.jp.backend.domain.place.dto.GooglePlaceSearchResDto;
+import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 
 import jakarta.transaction.Transactional;
 

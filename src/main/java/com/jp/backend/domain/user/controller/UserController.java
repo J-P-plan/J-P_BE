@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/user")
 @Validated
-@Tag(name = "2. [유저]")
+@Tag(name = "01. [유저]")
 public class UserController {
 	private final UserService userService;
 	private final UserMapper userMapper;

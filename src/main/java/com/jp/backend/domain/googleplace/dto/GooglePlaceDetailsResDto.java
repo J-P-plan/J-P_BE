@@ -1,4 +1,4 @@
-package com.jp.backend.domain.place.dto;
+package com.jp.backend.domain.googleplace.dto;
 
 import java.util.Date;
 import java.util.List;

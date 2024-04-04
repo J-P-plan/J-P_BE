@@ -63,3 +63,9 @@ google:
   server:
     port: 8080
 
+spring-doc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: method #DELETE → GET → PATCH → POST → PUT
+    doc-expansion: none
+
