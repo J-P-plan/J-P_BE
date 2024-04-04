@@ -13,11 +13,13 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public interface PlaceService {
-	PlaceSearchResDto searchPlaces(String contents);
+	PlaceSearchResDto searchPlaces(String contents, String nextPageToken);
 
-	List<Place> searchPlaces2(String contents);
+	List<Place> searchPlaces2(String contents, String nextPageToken);
 
-	PlaceDetailsResDto getPlaceDetails(String placeId);
+	PlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken);
+
+	PlaceDetailsResDto getPlaceDetails(String placeId, String fields);
 
 	List<String> getPlacePhotos(String placeId);
 
