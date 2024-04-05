@@ -51,29 +51,15 @@ dependencies {
     //oauth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-//    //queryDsl
-//    // queryDSL 설정
-//    // api 'mysql:mysql-connector-java:5.1.49'
-//    api 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-//    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
-//    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-//    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    // Querydsl 추가
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
 
 }
-//// Querydsl 설정 시작
-//def generated = 'src/main/generated'
-//sourceSets {
-//    main.java.srcDirs += [generated]
-//}
-//
-//tasks.withType(JavaCompile) {
-//    options.getGeneratedSourceOutputDirectory().set(file(generated))
-//}
-//
-//clean.doLast {
-//    file(generated).deleteDir()
-//}
-//// Querydsl 설정 종료
+
 
 tasks.named('test') {
     useJUnitPlatform()

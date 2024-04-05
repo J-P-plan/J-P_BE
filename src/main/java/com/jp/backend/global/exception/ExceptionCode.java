@@ -18,7 +18,10 @@ public enum ExceptionCode {
 
 	INVALID_ELEMENT(400, "INVALID_ELEMENT"),
 
-	ALREADY_INVITED(409, "ALREADY_INVITED");
+	ALREADY_INVITED(409, "ALREADY_INVITED"),
+
+	//Place
+	PLACE_NONE(404, "PLACE_NONE");
 
 	@Getter
 	private final int code;
