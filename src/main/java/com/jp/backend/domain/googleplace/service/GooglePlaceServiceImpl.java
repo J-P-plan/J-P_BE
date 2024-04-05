@@ -35,7 +35,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(googlePlaceConfig.TEXT_SEARCH_URL)
+			.fromUriString(GooglePlaceConfig.TEXT_SEARCH_URL)
 			.queryParam("query", contents)
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
@@ -49,7 +49,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
 
-		// TODO : 나중에 내 장소와 가까운 순으로 정렬도 추가하게되면 메서드 따로 빼기
 		// userRatingsTotal 순으로 내림차순 정렬 / 사용자 평점 수가 같을 경우엔 Rating 순으로 내림차순 정렬
 		if (response != null && response.getResults() != null) {
 			response.getResults()
@@ -67,7 +66,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(googlePlaceConfig.NEARBY_SEARCH_URL)
+			.fromUriString(GooglePlaceConfig.NEARBY_SEARCH_URL)
 			.queryParam("location", lat + "," + lng)
 			.queryParam("radius", radius)
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
@@ -98,7 +97,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		RestTemplate restTemplate = restTemplate();
 
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(googlePlaceConfig.DETAILS_URL)
+			.fromUriString(GooglePlaceConfig.DETAILS_URL)
 			.queryParam("placeid", placeId)
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
@@ -132,7 +131,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			String photoReference = photo.getPhotoReference();
 
 			UriComponentsBuilder uriBuilder = UriComponentsBuilder
-				.fromUriString(googlePlaceConfig.PHOTO_URL)
+				.fromUriString(GooglePlaceConfig.PHOTO_URL)
 				.queryParam("maxwidth", maxWidth)
 				.queryParam("maxheight", maxHeight)
 				.queryParam("photo_reference", photoReference)
