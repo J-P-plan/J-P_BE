@@ -35,7 +35,7 @@ public class PlaceController {
 				"placeType : 장소 타입 (인기 도시/인기 여행지/테마별 여행지), 선택 안할시 전체조회 <br>" +
 				"searchString : 검색어 <br>" +
 				"elementCnt : 10 (default) <br>" +
-				"}")
+				"} <br> Response에 File은 추후 추가예정")
 	public ResponseEntity<PageResDto<PlaceCompactResDto>> findPlacePage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "placeType") PlaceType placeType,
@@ -46,7 +46,8 @@ public class PlaceController {
 	}
 
 	@GetMapping("/place/{placeId}")
-	@Operation(summary = "장소 상세조회 API")
+	@Operation(summary = "장소 상세조회 API",
+		description = "Response에 File은 추후 추가예정")
 	public ResponseEntity<PlaceResDto> findPlace(
 		@PathVariable("placeId") Long placeId
 	) throws Exception {
