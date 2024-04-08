@@ -73,3 +73,15 @@ spring-doc:
     operations-sorter: method #DELETE → GET → PATCH → POST → PUT
     doc-expansion: none
 
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY} # IAM 엑세스 키
+      secretKey: ${AWS_S3_SECRET_KEY} # IAM 시크릿 키
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: jandp-bucket-files # 버킷 이름
+    stack:
+      auto: false
+
