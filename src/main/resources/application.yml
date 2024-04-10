@@ -73,10 +73,3 @@ spring-doc:
     operations-sorter: method #DELETE → GET → PATCH → POST → PUT
     doc-expansion: none
 
-
-spring-doc:
-  swagger-ui:
-    tags-sorter: alpha
-    operations-sorter: method #DELETE → GET → PATCH → POST → PUT
-    doc-expansion: none
-

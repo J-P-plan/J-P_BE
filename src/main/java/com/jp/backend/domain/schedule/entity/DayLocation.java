@@ -25,7 +25,7 @@ public class DayLocation {
 	//순서
 	private Integer locationIndex;
 	//description
-	private String description;
+	private String memo;
 
 	private Point location; //위도, 경도
 

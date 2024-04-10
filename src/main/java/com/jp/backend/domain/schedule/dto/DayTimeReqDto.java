@@ -1,6 +1,8 @@
 package com.jp.backend.domain.schedule.dto;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,16 +11,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class ScheduleUpdateDto {
-	private LocalDate startDate;
-
-	private LocalDate endDate;
-
-	//DayLocationReqDto List
+public class DayTimeReqDto {
+	private Integer timeIndex;
+	//시간
+	@JsonFormat(pattern = "HH:mm")
+	private LocalTime time;
 }

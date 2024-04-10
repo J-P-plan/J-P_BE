@@ -1,6 +1,6 @@
 package com.jp.backend.domain.schedule.dto;
 
-import java.time.LocalDate;
+import java.awt.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,16 +9,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class ScheduleUpdateDto {
-	private LocalDate startDate;
-
-	private LocalDate endDate;
-
-	//DayLocationReqDto List
+public class DayLocationReqDto {
+	//순서
+	private Integer Index;
+	//description
+	private String memo;
+	private Point location; //위도, 경도
+	private String placeId; //restaurant, cafe
+	private String name;
 }

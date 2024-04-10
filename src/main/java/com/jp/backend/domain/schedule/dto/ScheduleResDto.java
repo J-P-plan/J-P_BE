@@ -3,7 +3,7 @@ package com.jp.backend.domain.schedule.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.jp.backend.domain.schedule.entity.Day;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.schedule.entity.ScheduleUser;
 import com.jp.backend.domain.schedule.enums.Status;
 
@@ -20,19 +20,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class ScheduleResponseDto {
-  private Long id;
+public class ScheduleResDto {
+	private Long id;
 
-  private String title;
+	private String title;
 
-  private LocalDate startDate;
+	@JsonFormat(pattern = "yyyy년 MM월 dd일")
+	private LocalDate startDate;
 
-  private LocalDate endDate;
+	@JsonFormat(pattern = "yyyy년 MM월 dd일")
+	private LocalDate endDate;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  private List<ScheduleUser> member;
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<ScheduleUser> member;
 
-  private Status status;
+	private Status status;
 
-  private List<DayResponseDto> dayResponseDtoList;
+	private List<DayResDto> dayResDtoList;
 }
