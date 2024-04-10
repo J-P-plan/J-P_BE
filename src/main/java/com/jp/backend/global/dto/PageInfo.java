@@ -2,6 +2,7 @@ package com.jp.backend.global.dto;
 
 import static io.swagger.v3.oas.annotations.media.Schema.RequiredMode.*;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @Schema(name = "pageInfo")
-public class PageInfo {
+public class PageInfo<T> {
 
 	@Schema(description = "현재 페이지 번호", requiredMode = REQUIRED)
 	private final int page;
@@ -26,14 +27,15 @@ public class PageInfo {
 	@Builder
 	public PageInfo(
 		Pageable pageable,
-		Long totalElements,
-		boolean hasNext,
-		Integer totalPages
+		Page<T> pageDto
+		// Long totalElements,
+		// boolean hasNext,
+		// Integer totalPages
 	) {
 		this.page = pageable.getPageNumber() + 1;
-		this.hasNext = hasNext;
+		this.hasNext = pageDto.hasNext();
 		this.hasPrevious = pageable.hasPrevious();
-		this.totalElements = totalElements;
-		this.totalPages = totalPages;
+		this.totalElements = pageDto.getTotalElements();
+		this.totalPages = pageDto.getTotalPages();
 	}
 }

@@ -21,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "plcae")
+@Table(name = "PLACE")
 public class Place {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +29,16 @@ public class Place {
 
 	private String placeId;
 
-	private String intx;
+	private Double lat;
 
-	private String inty;
+	private Double lng;
 
 	@Enumerated(EnumType.STRING)
 	private PlaceType placeType;
 
 	private String name;
+
+	private Integer sort;
 
 	private String subName;
 

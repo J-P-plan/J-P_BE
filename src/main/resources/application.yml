@@ -1,4 +1,7 @@
 spring:
+  sql:
+    init:
+      mode: always
   h2:
     console:
       settings:
@@ -12,6 +15,7 @@ spring:
       enabled: always
 
   jpa:
+    defer-datasource-initialization: true
     show_sql: true
     generate-ddl: true
     hibernate:
