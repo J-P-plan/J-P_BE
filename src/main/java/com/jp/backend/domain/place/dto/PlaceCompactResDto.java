@@ -1,6 +1,7 @@
 package com.jp.backend.domain.place.dto;
 
 import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.enums.PlaceType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,9 @@ public class PlaceCompactResDto {
 	@Schema(description = "장소 아이디")
 	private String placeId;
 
+	@Schema(description = "장소 타입")
+	private PlaceType placeType;
+
 	@Schema(description = "장소명")
 	private String name;
 
@@ -31,6 +35,7 @@ public class PlaceCompactResDto {
 	public PlaceCompactResDto(Place entity) {
 		this.name = entity.getName();
 		this.id = entity.getId();
+		this.placeType = entity.getPlaceType();
 		this.placeId = entity.getPlaceId();
 		this.subName = entity.getSubName();
 	}
