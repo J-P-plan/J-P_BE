@@ -57,8 +57,7 @@ public class FileServiceImpl implements FileService {
 		return uploader.upload(file);
 	}
 
-	// TODO 리뷰/여행기 등의 파일 업로드 - 리뷰/여행기 기능 완료 후 수정
-	//  update 한다면, 각 id랑 s3Url에 따라 url 삭제 or 교체 로직도
+	// TODO 리뷰/여행기 등의 파일 업로드 및 업데이트 - 리뷰/여행기 기능 완료 후 수정
 	@Override
 	public String uploadFile(MultipartFile file, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
