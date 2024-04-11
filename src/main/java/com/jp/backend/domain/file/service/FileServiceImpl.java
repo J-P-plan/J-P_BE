@@ -66,13 +66,17 @@ public class FileServiceImpl implements FileService {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
 		}
 
+		User user = userService.verifyUser(email);
+
 		File.FileType fileType = determineFileType(file.getContentType());
 		String[] info = uploader.upload(file);
 
 		File fileEntity = File.builder()
 			.bucket(info[1])
 			.url(info[0])
-			.fileType(fileType).build();
+			.fileType(fileType)
+			.user(user)
+			.build();
 
 		// 파일 정보 저장
 		jpaFileRepository.save(fileEntity);

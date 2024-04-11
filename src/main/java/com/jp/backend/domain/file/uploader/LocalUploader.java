@@ -26,7 +26,7 @@ public class LocalUploader implements Uploader {
 	}
 
 	private String uploadToLocal(File uploadFile, String dirName) {
-		String fileName = dirName + "/" + FileUploadUtil.generateFileName(uploadFile.getName());
+		String fileName = dirName + "/" + uploadFile.getName();
 		String uploadImageUrl = putLocal(fileName);
 
 		return uploadImageUrl; // 업로드된 파일의 URL 주소 반환
@@ -48,7 +48,8 @@ public class LocalUploader implements Uploader {
 			directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
 		}
 
-		File convertFile = new File(directory, Objects.requireNonNull(file.getOriginalFilename()));
+		String fileName = FileUploadUtil.generateFileName(Objects.requireNonNull(file.getOriginalFilename()));
+		File convertFile = new File(directory, fileName);
 		if (convertFile.createNewFile()) {
 			try (FileOutputStream fos = new FileOutputStream(convertFile)) {
 				fos.write(file.getBytes());

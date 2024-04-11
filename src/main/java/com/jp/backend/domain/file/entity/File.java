@@ -27,12 +27,9 @@ import lombok.NoArgsConstructor;
 public class File {
 	@Id
 	@GeneratedValue(generator = "uuid2")
-	@GenericGenerator(name = "uuid2", strategy = "uuid2") // TODO 여기 strategy deprecated
+	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	@Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
 	private UUID id;
-	// @Id
-	// @Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
-	// private UUID id = UUID.randomUUID();
 
 	private String bucket;
 
@@ -52,7 +49,7 @@ public class File {
 		@Getter
 		private final String value;
 
-		private FileType(String value) {
+		FileType(String value) {
 			this.value = value;
 		}
 	}
