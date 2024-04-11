@@ -22,9 +22,12 @@ import lombok.NoArgsConstructor;
 public class File {
 	@Id
 	@GeneratedValue(generator = "uuid2")
-	@GenericGenerator(name = "uuid2") // TODO 여기 전략 다시 보기
-	@Column(columnDefinition = "BINARY(16)")
+	@GenericGenerator(name = "uuid2", strategy = "uuid2") // TODO 여기 strategy deprecated
+	@Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
 	private UUID id;
+	// @Id
+	// @Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
+	// private UUID id = UUID.randomUUID();
 
 	private String bucket;
 	private String url;
@@ -33,7 +36,8 @@ public class File {
 
 	public enum FileType {
 		IMAGE("이미지"),
-		VIDEO("비디오");
+		VIDEO("비디오"),
+		PDF(" pdf");
 
 		@Getter
 		private final String value;

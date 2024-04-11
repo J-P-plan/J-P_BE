@@ -10,11 +10,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 public class S3BucketConfig {
-	@Value("cloud.aws.credentials.accessKey")
+	@Value("${cloud.aws.credentials.accessKey}")
 	private String accessKey;
-	@Value("cloud.aws.credentials.secretKey")
+	@Value("${cloud.aws.credentials.secretKey}")
 	private String secretKey;
-	@Value("cloud.aws.region.static")
+	@Value("${cloud.aws.region.static}")
 	private String region;
 
 	// AWS S3 서비스에 접근하기 위한 Amazon S3 클라이언트 객체를 생성 --> 애플리케이션 전반에서 AWS S3 서비스 사용 가능
