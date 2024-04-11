@@ -40,7 +40,10 @@ public class FileController {
 	}
 
 	// TODO 리뷰/여행기 파일 업로드 - 리뷰/여행기 기능 구현 후 수정 ( 다중 업로드 가능 )
-	@PostMapping("/files")
+	@PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "파일을 업로드합니다.",
+		description = "이미지, 영상, pdf 업로드가 가능합니다.<br>"
+			+ "현재는 하나의 파일만 올릴 수 있도록 되어있고, 리뷰 기능이 구현되면 여러 파일을 업로드 및 업데이트할 수 있도록 수정할 예정입니다.")
 	public ResponseEntity uploadFiles(@RequestParam MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {

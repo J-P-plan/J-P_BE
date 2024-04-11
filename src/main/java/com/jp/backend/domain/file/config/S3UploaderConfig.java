@@ -1,6 +1,7 @@
 package com.jp.backend.domain.file.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.service.FileService;
@@ -9,7 +10,7 @@ import com.jp.backend.domain.file.uploader.S3Uploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.user.service.UserService;
 
-// @Configuration
+@Configuration
 // TODO @Profile("prod")
 public class S3UploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
