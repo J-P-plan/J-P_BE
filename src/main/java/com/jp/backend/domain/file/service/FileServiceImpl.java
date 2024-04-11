@@ -40,21 +40,13 @@ public class FileServiceImpl implements FileService {
 			.fileType(File.FileType.IMAGE)
 			.build();
 
-		// User user = userService.verifyUser(email);
-		// if (user.getProfileUrl() != null) {
-		// 	jpaFileRepository.delete(user.getProfileUrl());
-		// }
-		//
-		// jpaFileRepository.save(fileEntity);
-		// user.setProfileUrl(fileEntity);
-		// return fileEntity.getUrl();
 		User user = userService.verifyUser(email);
-		if (user.getPicture() != null) {
-			jpaFileRepository.deleteByUrl(user.getPicture());
+		if (user.getProfileUrl() != null) {
+			jpaFileRepository.delete(user.getProfileUrl());
 		}
 
 		jpaFileRepository.save(fileEntity);
-		user.setPicture(fileEntity.getUrl());
+		user.setProfileUrl(fileEntity);
 		return fileEntity.getUrl();
 	}
 
@@ -66,7 +58,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	// TODO 리뷰/여행기 등의 파일 업로드 - 리뷰/여행기 기능 완료 후 수정
-	//  update 한다면, 각 id에 따라 url 삭제 or 교체 로직도
+	//  update 한다면, 각 id랑 s3Url에 따라 url 삭제 or 교체 로직도
 	@Override
 	public String uploadFile(MultipartFile file, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
@@ -83,7 +75,7 @@ public class FileServiceImpl implements FileService {
 
 		// 파일 정보 저장
 		jpaFileRepository.save(fileEntity);
-		User user = userService.verifyUser(email);
+		// User user = userService.verifyUser(email);
 
 		return fileEntity.getUrl();
 	}

@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,8 @@ public class FileController {
 	}
 
 	@PostMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "유저의 프로필 사진을 업로드합니다.")
+	@Operation(summary = "유저의 프로필 사진을 업로드합니다.",
+		description = "이미지만 업로드 가능합니다.")
 	public ResponseEntity uploadProfile(@RequestParam MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
@@ -40,8 +40,9 @@ public class FileController {
 	}
 
 	// TODO 리뷰/여행기 파일 업로드 - 리뷰/여행기 기능 구현 후 수정 ( 다중 업로드 가능 )
-	// @PostMapping("/files")
-	public ResponseEntity uploadFiles(@RequestParam MultipartFile file, @AuthenticationPrincipal User principal) throws
+	@PostMapping("/files")
+	public ResponseEntity uploadFiles(@RequestParam MultipartFile file,
+		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
 		return ResponseEntity.ok().body(new SingleResponse<>(fileService.uploadFile(file, principal.getUsername())));
 	}
