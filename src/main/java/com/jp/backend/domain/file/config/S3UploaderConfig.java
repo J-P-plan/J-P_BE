@@ -35,6 +35,4 @@ public class S3UploaderConfig {
 	public S3BucketConfig s3BucketConfig() {
 		return new S3BucketConfig();
 	}
-
-	// TODO multipartResolver()
 }

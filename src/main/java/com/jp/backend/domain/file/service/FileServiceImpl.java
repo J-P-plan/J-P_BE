@@ -33,20 +33,22 @@ public class FileServiceImpl implements FileService {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
 		}
 
+		User user = userService.verifyUser(email);
+
 		String[] info = uploadImage(file);
 		File fileEntity = File.builder()
 			.bucket(info[1])
 			.url(info[0])
 			.fileType(File.FileType.IMAGE)
+			.user(user)
 			.build();
 
-		User user = userService.verifyUser(email);
-		if (user.getProfileUrl() != null) {
-			jpaFileRepository.delete(user.getProfileUrl());
+		if (user.getProfileId() != null) {
+			jpaFileRepository.delete(user.getProfileId());
 		}
 
 		jpaFileRepository.save(fileEntity);
-		user.setProfileUrl(fileEntity);
+		user.setProfileId(fileEntity);
 		return fileEntity.getUrl();
 	}
 

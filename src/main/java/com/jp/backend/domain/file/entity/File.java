@@ -4,11 +4,16 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.jp.backend.domain.user.entity.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,14 +35,19 @@ public class File {
 	// private UUID id = UUID.randomUUID();
 
 	private String bucket;
+
 	private String url;
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	private FileType fileType;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	public enum FileType {
 		IMAGE("이미지"),
 		VIDEO("비디오"),
-		PDF(" pdf");
+		PDF("pdf");
 
 		@Getter
 		private final String value;

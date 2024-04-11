@@ -7,7 +7,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,15 +26,10 @@ public class LocalUploader implements Uploader {
 	}
 
 	private String uploadToLocal(File uploadFile, String dirName) {
-		String fileName = dirName + "/" + generateFileName(uploadFile.getName());
+		String fileName = dirName + "/" + FileUploadUtil.generateFileName(uploadFile.getName());
 		String uploadImageUrl = putLocal(fileName);
 
 		return uploadImageUrl; // 업로드된 파일의 URL 주소 반환
-	}
-
-	private String generateFileName(String originalFileName) {
-		String uuid = UUID.randomUUID().toString();
-		return uuid + "_" + originalFileName.replaceAll("\\s", "_");
 	}
 
 	private String putLocal(String fileName) {
@@ -45,19 +39,15 @@ public class LocalUploader implements Uploader {
 		return baseUrl + encodedFileName;
 	}
 
-	private void removeNewFile(File targetFile) {
-		if (targetFile.delete()) {
-			log.info("파일이 삭제되었습니다.");
-		} else {
-			log.info("파일이 삭제되지 않았습니다..");
-		}
-	}
-
 	private Optional<File> convertFile(MultipartFile file) throws IOException {
-		File directory = new File("./src/main/resources/static/images/");
+		String basePath = "./src/main/resources/static/";
+		String folderName = FileUploadUtil.determinePathsBasedOnMimeType(file.getContentType());
+		File directory = new File(basePath + folderName + "/");
+
 		if (!directory.exists()) {
 			directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
 		}
+
 		File convertFile = new File(directory, Objects.requireNonNull(file.getOriginalFilename()));
 		if (convertFile.createNewFile()) {
 			try (FileOutputStream fos = new FileOutputStream(convertFile)) {

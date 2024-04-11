@@ -29,6 +29,4 @@ public class LocalUploaderConfig {
 	public Uploader uploader() {
 		return new LocalUploader();
 	}
-
-	// TODO multipartResolver
 }

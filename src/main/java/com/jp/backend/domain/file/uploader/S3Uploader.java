@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,13 +28,12 @@ public class S3Uploader implements Uploader {
 
 	public S3Uploader(AmazonS3 amazonS3Client) {
 		this.amazonS3Client = amazonS3Client;
-
 	}
 
 	// S3에 업로드 하는 메서드
 	@Override
 	public String[] upload(MultipartFile file) throws IOException {
-		String dirName = determinePathsBasedOnMimeType(file.getContentType());
+		String dirName = FileUploadUtil.determinePathsBasedOnMimeType(file.getContentType());
 		return new String[] {
 			upload(file, "jandp/" + dirName), bucket
 		};
@@ -51,30 +49,17 @@ public class S3Uploader implements Uploader {
 
 	private String uploadToS3(File uploadFile, String fileName) {
 		String uploadImageUrl = putS3(uploadFile, fileName);
-		removeNewFile(uploadFile); // 로컬에 생성된 임시파일 삭제
+		FileUploadUtil.removeNewFile(uploadFile); // 로컬에 생성된 임시파일 삭제
 
 		return uploadImageUrl; // 업로드된 파일의 S3 URL 주소 반환
 	}
 
-	// 파일 타입에 따라 디렉토리 정하는 로직
-	private String determinePathsBasedOnMimeType(String contentType) {
-		if (contentType != null && contentType.startsWith("image")) {
-			return "images";
-			// localDirPath = "tmp/images";
-		} else if (contentType != null && contentType.startsWith("video")) {
-			return "videos";
-			// localDirPath = "tmp/videos";
-		} else if (contentType != null && contentType.contains("pdf")) {
-			return "pdfs";
-			// localDirPath = "tmp/pdfs";
-		}
-
-		throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + contentType);
-	}
-
 	// MultipartFile을 File 객체로 변환하는 메서드
 	private Optional<File> convertFile(MultipartFile file) throws IOException {
-		File tmpDir = new File("tmp/");
+		String mimeType = file.getContentType();
+		String subDir = FileUploadUtil.determinePathsBasedOnMimeType(mimeType); // MIME 타입에 따른 하위 디렉토리 결정
+		File tmpDir = new File("tmp/" + subDir + "/"); // 결정된 하위 디렉토리를 포함한 경로로 tmpDir 설정
+
 		if (!tmpDir.exists()) {
 			boolean wasSuccessful = tmpDir.mkdirs(); // 디렉토리가 존재하지 않으면 생성
 			if (!wasSuccessful) {
@@ -83,7 +68,7 @@ public class S3Uploader implements Uploader {
 			}
 		}
 
-		String safeFileName = generateFileName(Objects.requireNonNull(file.getOriginalFilename()));
+		String safeFileName = FileUploadUtil.generateFileName(Objects.requireNonNull(file.getOriginalFilename()));
 
 		File convertFile = new File(tmpDir, safeFileName);
 		if (convertFile.createNewFile()) { // 파일 생성에 성공하면
@@ -95,14 +80,6 @@ public class S3Uploader implements Uploader {
 			log.error("임시 파일 생성 실패: " + convertFile.getAbsolutePath()); // 생성 실패 시 로그
 			return Optional.empty(); // 파일 생성에 실패하면 빈 Optional 반환
 		}
-	}
-
-	// 파일의 새 이름 생성하는 메서드 - 고유 식별자(UUID)와 원본 파일 이름에서 공백을 밑줄로 바꾼 이름 조합
-	private String generateFileName(String originalFileName) {
-		String uuid = UUID.randomUUID().toString();
-		// 원본 파일 이름에서 공백과 특수문자를 밑줄로 치환
-		String safeFileName = originalFileName.replaceAll("\\s", "_").replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
-		return uuid + "_" + safeFileName;
 	}
 
 	// 지정된 파일을 S3에 업로드하는 메서드 / 업로드 후 파일 Url 반환
@@ -117,15 +94,6 @@ public class S3Uploader implements Uploader {
 		} catch (AmazonClientException e) {
 			log.error("AmazonClientException: " + e.getMessage());
 			throw e;
-		}
-	}
-
-	// 임시 파일을 시스템에서 삭제하는 메서드
-	private void removeNewFile(File targetFile) {
-		if (targetFile.delete()) {
-			log.info("임시 파일이 삭제되었습니다.");
-		} else {
-			log.info("임시 파일이 삭제되지 못했습니다.");
 		}
 	}
 

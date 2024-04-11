@@ -52,7 +52,7 @@ public class User extends Auditable {
 	private String nickname;
 
 	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
-	private File profileUrl;
+	private File profileId; // 프로필 이미지 Id
 
 	private String picture; // google 프로필
 
