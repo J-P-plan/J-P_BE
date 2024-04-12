@@ -2,6 +2,7 @@ package com.jp.backend.domain.user.dto;
 
 import java.util.List;
 
+import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;
 
@@ -29,8 +30,8 @@ public class UserResDto {
 	private User.UserStatus userStatus;
 	@Schema(description = "역할")
 	private List<String> roles;
-
-	// TODO : file
+	@Schema(description = "프로필 이미지 id")
+	private File profileId;
 	// TODO : badge
 
 	@Builder

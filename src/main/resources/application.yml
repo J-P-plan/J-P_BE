@@ -1,35 +1,7 @@
 spring:
-  sql:
-    init:
-      mode: always
-  h2:
-    console:
-      settings:
-        web-allow-others: true #배포환경에서 h2 적용
-      enabled: true  # 여기까지만 해도 H2 Browser 생성됨
-      path: /h2  # 추가 - Context path 변경
-  datasource: # 추가
-    url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
-
-  jpa:
-    defer-datasource-initialization: true
-    show_sql: true
-    generate-ddl: true
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        auto_quote_keyword: true
-        jdbc:
-          batch_size: 1000
-        order_insert: true
-        default_batch_fetch_size: 1000
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
 
   security:
     oauth2:
@@ -42,13 +14,6 @@ spring:
               - email
               - profile
             redirect-uri: "http://jandp-travel.kro.kr:8080/login/oauth2/code/google"
-
-logging:
-  level:
-    org:
-      springframework:
-        orm:
-          jpa: DEBUG
 
 jwt:
   secret: randomTestValueItisNotUsedInProdEnv
@@ -72,4 +37,16 @@ spring-doc:
     tags-sorter: alpha
     operations-sorter: method #DELETE → GET → PATCH → POST → PUT
     doc-expansion: none
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_S3_ACCESS_KEY} # IAM 엑세스 키
+      secretKey: ${AWS_S3_SECRET_KEY} # IAM 시크릿 키
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: jandp-bucket-files # 버킷 이름
+    stack:
+      auto: false
 
