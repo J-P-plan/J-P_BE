@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Validated
 @RequestMapping("/googleplace")
-@Tag(name = "03. [구글 플레이스]")
+@Tag(name = "04. [구글 플레이스]")
 public class GooglePlaceController {
 	private final GooglePlaceService googlePlaceService;
 

@@ -34,6 +34,4 @@ public class UserPostDto {
 	@NotNull
 	@Schema(description = "mbti")
 	private User.Mbti mbti;
-
-	// TODO : file
 }
