@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
