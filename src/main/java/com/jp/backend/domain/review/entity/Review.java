@@ -1,6 +1,7 @@
 package com.jp.backend.domain.review.entity;
 
 import com.jp.backend.domain.user.entity.User;
+import com.jp.backend.global.audit.Auditable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "review")
-public class Review {
+public class Review extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -39,12 +40,23 @@ public class Review {
 
 	private String placeId; //장소 위경도가 필요할까 ,,,?_?
 
+	// private Double lat;
+	//
+	// private Double lng;
+
 	private Double star;
+
+	private Integer viewCnt;
 
 	private Boolean visitedYn;
 
 	//TODO 인기리뷰기준 스코어 : 찜 1점 댓글 2점 조회수 0.1점,
 	//댓글, 찜
 	private Double score;
+
+	public Review addViewCnt() {
+		this.viewCnt++;
+		return this;
+	}
 
 }

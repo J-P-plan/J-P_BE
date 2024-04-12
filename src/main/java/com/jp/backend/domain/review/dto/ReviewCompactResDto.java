@@ -14,8 +14,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewResDto {
-	private String id;
+public class ReviewCompactResDto {
+
+	//대표사진
 	@Schema(description = "제목")
 	private String subject;
 
@@ -25,26 +26,15 @@ public class ReviewResDto {
 	@Schema(description = "작성자 정보")
 	private UserCompactResDto userCompactResDto;
 
-	@Schema(description = "장소아이디")
-	private String placeId; //장소 위경도가 필요할까 ,,,?_?
-
-	@Schema(description = "별점")
-	private Double star;
-
-	@Schema(description = "실제 방문여부")
-	private Boolean visitedYn;
-
-	@Schema(description = "조회수")
-	private Integer viewCnt;
+	@Schema(description = "댓글 갯수")
+	private Integer commentCnt;
 
 	@Builder
-	public ReviewResDto(Review review) {
-		this.content = review.getContent();
-		this.placeId = review.getPlaceId();
-		this.star = review.getStar();
+	public ReviewCompactResDto(Review review) {
 		this.subject = review.getSubject();
+		this.content = review.getContent();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
-		this.visitedYn = true;
-		this.viewCnt = review.getViewCnt();
+		this.commentCnt = 10; //todo 바꾸기
 	}
+
 }
