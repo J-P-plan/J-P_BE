@@ -21,7 +21,11 @@ public enum ExceptionCode {
 	ALREADY_INVITED(409, "ALREADY_INVITED"),
 
 	//Place
-	PLACE_NONE(404, "PLACE_NONE");
+	PLACE_NONE(404, "PLACE_NONE"),
+
+	//Review
+	REVIEW_NONE(404, "REVIEW_NONE"),
+	FORBIDDEN(403, "권한이 없습니다.");
 
 	@Getter
 	private final int code;

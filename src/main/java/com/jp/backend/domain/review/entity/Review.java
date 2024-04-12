@@ -30,11 +30,21 @@ public class Review {
 	//장소에대한 총 별점 불러오기
 	//제목, 내용 , 작성자, 장소 아이디,장소이름, 장소 상세주소,장소 위경도, 댓글, 별점
 
-	private String name;
+	private String subject;
 
 	private String content;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+
+	private String placeId; //장소 위경도가 필요할까 ,,,?_?
+
+	private Double star;
+
+	private Boolean visitedYn;
+
+	//TODO 인기리뷰기준 스코어 : 찜 1점 댓글 2점 조회수 0.1점,
+	//댓글, 찜
+	private Double score;
 
 }
