@@ -1,6 +1,8 @@
 package com.jp.backend.domain.file.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.service.FileService;
@@ -9,8 +11,8 @@ import com.jp.backend.domain.file.uploader.LocalUploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.user.service.UserService;
 
-// @Configuration
-// TODO @Profile("local")
+@Configuration
+@Profile("local")
 public class LocalUploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
 	private final UserService userService;

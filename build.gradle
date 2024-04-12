@@ -54,12 +54,10 @@ dependencies {
 
     // aws s3 cloud
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-//    implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.0.0-M1'
 
     // multipart file io
-    implementation 'commons-io:commons-io:2.16.0' // 파일 업로드 처리
+//    implementation 'commons-io:commons-io:2.16.0' // 파일 업로드 처리
     implementation 'commons-fileupload:commons-fileupload:1.4'
-//    implementation 'commons-fileupload:commons-fileupload:2.0.0-M2' // 파일 I/O 작업
 
     // Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
