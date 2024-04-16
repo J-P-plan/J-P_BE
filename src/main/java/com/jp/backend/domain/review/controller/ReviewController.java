@@ -36,7 +36,7 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 작성 API")
 	@PostMapping("/review")
-	public ResponseEntity<Boolean> postReview(
+	public ResponseEntity<ReviewResDto> postReview(
 		@Valid @RequestBody ReviewReqDto reqDto,
 		@AuthenticationPrincipal UserPrincipal principal
 	) throws Exception {
@@ -45,7 +45,7 @@ public class ReviewController {
 
 	@Operation(summary = "리뷰 수정 API")
 	@PatchMapping("/review/{reviewId}")
-	public ResponseEntity<Boolean> postReview(
+	public ResponseEntity<ReviewResDto> postReview(
 		@PathVariable(value = "reviewId") Long reviewId,
 		@Valid @RequestBody ReviewUpdateDto updateDto,
 		@AuthenticationPrincipal UserPrincipal principal

@@ -1,5 +1,11 @@
 package com.jp.backend.domain.review.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jp.backend.domain.comment.dto.CommentResDto;
+import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
@@ -15,6 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewResDto {
+	@Schema(description = "아이디")
 	private String id;
 	@Schema(description = "제목")
 	private String subject;
@@ -37,8 +44,15 @@ public class ReviewResDto {
 	@Schema(description = "조회수")
 	private Integer viewCnt;
 
+	@Schema(description = "작성일자")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
+	private LocalDateTime createdAt;
+
+	@Schema(description = "댓글 리스트")
+	private List<CommentResDto> commentResDtoList;
+
 	@Builder
-	public ReviewResDto(Review review) {
+	public ReviewResDto(Review review, List<Comment> commentList) {
 		this.content = review.getContent();
 		this.placeId = review.getPlaceId();
 		this.star = review.getStar();
@@ -46,5 +60,9 @@ public class ReviewResDto {
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.visitedYn = true;
 		this.viewCnt = review.getViewCnt();
+		this.createdAt = review.getCreatedAt();
+		this.commentResDtoList = commentList.stream()
+			.map(comment -> CommentResDto.builder().comment(comment).build())
+			.toList();
 	}
 }

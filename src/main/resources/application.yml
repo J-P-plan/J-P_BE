@@ -1,8 +1,6 @@
 spring:
   profiles:
-    active:
-      - local
-      - prod
+    active: local
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
@@ -54,6 +52,3 @@ cloud:
     stack:
       auto: false
 
-
-  main:
-    allow-bean-definition-overriding: true

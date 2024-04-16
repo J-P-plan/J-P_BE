@@ -25,7 +25,11 @@ public enum ExceptionCode {
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),
-	FORBIDDEN(403, "권한이 없습니다.");
+	FORBIDDEN(403, "권한이 없습니다."),
+
+	//Comment
+	COMMENT_NONE(404, "COMMENT_NONE"),
+	TYPE_NONE(401, "타입이 없습니다.");
 
 	@Getter
 	private final int code;

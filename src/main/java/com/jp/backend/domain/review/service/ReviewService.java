@@ -5,9 +5,9 @@ import com.jp.backend.domain.review.dto.ReviewResDto;
 import com.jp.backend.domain.review.dto.ReviewUpdateDto;
 
 public interface ReviewService {
-	Boolean createReview(ReviewReqDto reqDto, String username);
+	ReviewResDto createReview(ReviewReqDto reqDto, String username);
 
-	Boolean updateReview(Long reviewId, ReviewUpdateDto updateDto, String username);
+	ReviewResDto updateReview(Long reviewId, ReviewUpdateDto updateDto, String username);
 
 	ReviewResDto findReview(Long reviewId);
 

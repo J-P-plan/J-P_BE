@@ -1,11 +1,16 @@
 package com.jp.backend.domain.review.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jp.backend.domain.comment.entity.Comment;
+import com.jp.backend.domain.comment.enums.CommentType;
+import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
@@ -31,22 +36,23 @@ public class ReviewServiceImpl implements ReviewService {
 	private final UserService userService;
 	private final JpaReviewRepository reviewRepository;
 	private final CustomBeanUtils<Review> beanUtils;
+	private final JpaCommentRepository commentRepository;
 
 	@Override
 	@Transactional
-	public Boolean createReview(ReviewReqDto reqDto, String username) {
+	public ReviewResDto createReview(ReviewReqDto reqDto, String username) {
 
 		User user = userService.verifyUser(username);
 
 		//todo 방문여부 계산
 		Boolean visitedYn = true;
-		reviewRepository.save(reqDto.toEntity(user, visitedYn));
-		return true;
+		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
+		return ReviewResDto.builder().review(savedReview).build();
 	}
 
 	@Override
 	@Transactional
-	public Boolean updateReview(
+	public ReviewResDto updateReview(
 		Long reviewId,
 		ReviewUpdateDto updateDto,
 		String username) {
@@ -59,7 +65,8 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		return true;
+
+		return ReviewResDto.builder().review(updatingReview).build();
 	}
 
 	@Override
@@ -67,7 +74,9 @@ public class ReviewServiceImpl implements ReviewService {
 	public ReviewResDto findReview(Long reviewId) {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
-		return ReviewResDto.builder().review(review).build();
+		ReviewResDto reviewResDto = ReviewResDto.builder().review(review).build();
+		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
+		return ReviewResDto.builder().review(review).commentList(commentList).build();
 	}
 
 	public PageResDto<ReviewCompactResDto> findReviewPage(
@@ -93,7 +102,6 @@ public class ReviewServiceImpl implements ReviewService {
 	public Review verifyReview(Long reviewId) {
 		return reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));
-
 	}
 
 }
