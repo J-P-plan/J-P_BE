@@ -16,9 +16,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
-public class UserResponseDto {
+public class UserResDto {
 	@Schema(description = "이메일")
 	private String email;
 	@Schema(description = "닉네임")
@@ -34,4 +33,13 @@ public class UserResponseDto {
 	@Schema(description = "프로필 이미지 id")
 	private File profileId;
 	// TODO : badge
+
+	@Builder
+	public UserResDto(User user) {
+		this.mbti = user.getMbti();
+		this.email = user.getEmail();
+		this.userStatus = user.getUserStatus();
+		this.nickname = user.getNickname();
+		this.providerType = user.getProviderType();
+	}
 }
