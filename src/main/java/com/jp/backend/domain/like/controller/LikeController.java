@@ -1,6 +1,7 @@
 package com.jp.backend.domain.like.controller;
 
 import com.jp.backend.auth.entity.UserPrincipal;
+import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,9 +62,9 @@ public class LikeController {
     @GetMapping("/favoriteList/{likeType}")
     @Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
             description = "likeType - REVIEW/TRIP_JOURNAL/PLACE")
-    public ResponseEntity<List<Like>> getFavoriteList(@PathVariable Like.LikeType likeType,
+    public ResponseEntity<List<LikeResDto>> getFavoriteList(@PathVariable Like.LikeType likeType,
                                                       @AuthenticationPrincipal UserPrincipal principal) {
-        List<Like> favoriteList = likeService.getFavoriteList(likeType, principal.getUsername());
+        List<LikeResDto> favoriteList = likeService.getFavoriteList(likeType, principal.getUsername());
 
         return new ResponseEntity<>(favoriteList, HttpStatus.OK);
     }
