@@ -21,7 +21,11 @@ public enum ExceptionCode {
 	ALREADY_INVITED(409, "ALREADY_INVITED"),
 
 	//Place
-	PLACE_NONE(404, "PLACE_NONE");
+	PLACE_NONE(404, "PLACE_NONE"),
+
+	// Like
+	ALREADY_LIKED(409, "ALREADY_LIKED"),
+	LIKE_NONE(404, "LIKE_NONE");
 
 	@Getter
 	private final int code;
