@@ -61,11 +61,11 @@ public class LikeController {
     @GetMapping("/list/{targetType}") // TODO 엔드포인트에 userId 추가할까 아니면 principal로 그냥 가져올까 / 엔드포인트 수정
     @Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
             description = "likeType - ooo / targetId - ")
-    public ResponseEntity<List<Like>> getFavorites(@PathVariable Like.LikeType likeType,
-                                                   @AuthenticationPrincipal UserPrincipal principal) {
-        List<Like> likeList = likeService.getUserLikes(likeType, principal.getUsername());
+    public ResponseEntity<List<Like>> getFavoriteList(@PathVariable Like.LikeType likeType,
+                                                      @AuthenticationPrincipal UserPrincipal principal) {
+        List<Like> favoriteList = likeService.getUserLikes(likeType, principal.getUsername());
 
-        return new ResponseEntity<>(likeList, HttpStatus.OK);
+        return new ResponseEntity<>(favoriteList, HttpStatus.OK);
     }
 
 }

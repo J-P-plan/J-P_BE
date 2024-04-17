@@ -1,5 +1,6 @@
 package com.jp.backend.domain.like.service;
 
+import com.jp.backend.domain.googleplace.service.GooglePlaceService;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.user.entity.User;
@@ -14,40 +15,41 @@ import java.util.List;
 public class LikeServiceImpl implements LikeService {
     private final UserService userService;
     private final JpaLikeRepository jpaLikeRepository;
+    private final GooglePlaceService googlePlaceService;
 
-    public LikeServiceImpl(UserService userService, JpaLikeRepository jpaLikeRepository) {
+    public LikeServiceImpl(UserService userService, JpaLikeRepository jpaLikeRepository, GooglePlaceService googlePlaceService) {
         this.userService = userService;
         this.jpaLikeRepository = jpaLikeRepository;
+        this.googlePlaceService = googlePlaceService;
     }
 
     // 좋아요/찜 누르기 - 리뷰/여행기/장소
     @Override
     public void addLike(Like.LikeType likeType, String targetId, String email) {
+        // TODO 그냥 리뷰/여행기/장소 다 Like 테이블에 타입 / id / userId 넣어서 저장해놓으면 됨
 
-        // TODO 장소 좋아요는 어떻게 하지 흠 - 프론트에서 placeId도 파라미터로 넣어주면 그걸로 가져와서 저장해야하나
-        //  그런데 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
         // TODO targetId 존재 여부 확인 - 리뷰/여행기 구현 완료 후 수정
-//        boolean targetExists;
-//        switch (likeType) {
+        boolean targetExists;
+        switch (likeType) {
 //            case REVIEW:
-//                targetExists = reviewRepository.existsById(targetId);
+//                targetExists = reviewRepository.findById(targetId);
 //                break;
 //            case TRIP_JOURNAL:
 //                targetExists =
 //                break;
-//            case PLACE:
-//                targetExists =
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
-//        }
-//
-//        if (!targetExists) {
-//            throw new CustomLogicException(ExceptionCode.TARGET_NOT_FOUND);
-//        }
+            case PLACE:
+                targetExists = googlePlaceService.verifyPlaceId(targetId);
+                break;
+            default:
+                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
+        }
+
+        if (!targetExists) {
+            throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+        }
 
         // 좋아요 존재 여부 검사 - 존재하면 에러
         if (jpaLikeRepository.existLike(likeType, targetId, user.getId())) {
@@ -103,6 +105,7 @@ public class LikeServiceImpl implements LikeService {
     // 좋아요/찜 개수 반환 - 리뷰/여행기 - TODO 리뷰에는 나중에 없어질 수도 있음 - 마이페이지에서 사라지게되면 모든 좋아요 기능에 리뷰 사라짐
     @Override
     public Long countLike(Like.LikeType likeType, String targetId) {
+        // TODO 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
         // 대상에 대한 좋아요 수 조회
         // TODO 리뷰/여행기 나오고 likeCount 가져오기
 
@@ -115,10 +118,8 @@ public class LikeServiceImpl implements LikeService {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
-
         // 사용자가 누른 targetType에 해당하는 좋아요 목록 조회
-//        return jpaLikeRepository.findByTargetTypeAndUserId(likeType, email);
-        return null;
+        return jpaLikeRepository.getFavoriteList(likeType, user.getId());
     }
 
     @Override

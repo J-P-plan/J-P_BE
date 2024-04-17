@@ -163,5 +163,16 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return restTemplate;
 	}
 
+	// placeId 존재하는지 검증
+	@Override
+	public boolean verifyPlaceId(String placeId) {
+		try {
+			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
+			return response != null && response.getResult() != null;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	// TODO : 리팩토링 - place api에 요청하는 uri builder 따로 빼기
 }
