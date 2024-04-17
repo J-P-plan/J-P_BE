@@ -27,30 +27,30 @@ public class LikeController {
     // 좋아요/찜 누르기
     @PostMapping("/{likeType}/{targetId}")
     @Operation(summary = "좋아요를 누릅니다.",
-            description = "likeType - ooo / targetId - ")
-    public ResponseEntity postLike(@PathVariable Like.LikeType likeType, @PathVariable String targetId,
+            description = "likeType - REVIEW/PLACE/TRIP_JOURNAL<br>" +
+                    "targetId - reviewId/PlaceId/TripJournalId")
+    public ResponseEntity<String> postLike(@PathVariable Like.LikeType likeType, @PathVariable String targetId,
                                    @AuthenticationPrincipal UserPrincipal principal) {
-        likeService.addLike(likeType, targetId, principal.getUsername());
+        String result = likeService.addLike(likeType, targetId, principal.getUsername());
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     // 좋아요/찜 취소
-    @DeleteMapping("/{likeType}/{targetId}/{likeId}")
-    @Operation(summary = "좋아요를 취소합니다.",
-            description = "likeType - ooo / targetId - ")
-    public ResponseEntity removeLike(@PathVariable Like.LikeType likeType, @PathVariable String targetId,
-                                     @PathVariable Long likeId,
+    @DeleteMapping("/{likeId}")
+    @Operation(summary = "좋아요를 취소합니다.")
+    public ResponseEntity removeLike(@PathVariable Long likeId,
                                      @AuthenticationPrincipal UserPrincipal principal) {
-        likeService.removeLike(likeType, targetId, likeId, principal.getUsername());
+        likeService.removeLike(likeId, principal.getUsername());
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // 좋아요/찜 개수 반환
     @GetMapping("/{likeType}/{targetId}")
     @Operation(summary = "리뷰, 여행기, 장소등의 좋아요를 조회합니다.",
-            description = "likeType - ooo / targetId - ")
+            description = "likeType - REVIEW/PLACE/TRIP_JOURNAL<br>" +
+                    "targetId - reviewId/PlaceId/TripJournalId")
     public ResponseEntity<Long> getLikes(@PathVariable Like.LikeType likeType, @PathVariable String targetId) {
         Long likeCount = likeService.countLike(likeType, targetId);
 
@@ -58,9 +58,9 @@ public class LikeController {
     }
 
     // 마이페이지 찜목록
-    @GetMapping("/list/{targetType}") // TODO 엔드포인트에 userId 추가할까 아니면 principal로 그냥 가져올까 / 엔드포인트 수정
+    @GetMapping("/favoriteList/{likeType}")
     @Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
-            description = "likeType - ooo / targetId - ")
+            description = "likeType - REVIEW/TRIP_JOURNAL/PLACE")
     public ResponseEntity<List<Like>> getFavoriteList(@PathVariable Like.LikeType likeType,
                                                       @AuthenticationPrincipal UserPrincipal principal) {
         List<Like> favoriteList = likeService.getFavoriteList(likeType, principal.getUsername());

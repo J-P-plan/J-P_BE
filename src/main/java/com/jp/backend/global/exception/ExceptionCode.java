@@ -25,7 +25,8 @@ public enum ExceptionCode {
 
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),
-	LIKE_NONE(404, "LIKE_NONE");
+	LIKE_NONE(404, "LIKE_NONE"),
+	TARGET_NONE(404, "TARGET_NONE");
 
 	@Getter
 	private final int code;

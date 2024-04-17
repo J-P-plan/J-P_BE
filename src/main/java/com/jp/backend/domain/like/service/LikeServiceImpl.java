@@ -25,7 +25,7 @@ public class LikeServiceImpl implements LikeService {
 
     // 좋아요/찜 누르기 - 리뷰/여행기/장소
     @Override
-    public void addLike(Like.LikeType likeType, String targetId, String email) {
+    public String addLike(Like.LikeType likeType, String targetId, String email) {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
@@ -44,16 +44,15 @@ public class LikeServiceImpl implements LikeService {
         like.setUser(user);
 
         jpaLikeRepository.save(like);
+
+        return "좋아요 완료. likeId : " + like.getId();
     }
 
     // 좋아요/찜 취소 - 리뷰/여행기/장소
     @Override
-    public void removeLike(Like.LikeType likeType, String targetId, Long likeId, String email) {
+    public void removeLike(Long likeId, String email) {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
-
-        // targetId 존재 여부 확인
-        verifyTargetId(likeType, targetId);
 
         // 좋아요 존재 여부 검사
         Like like = verifyLike(likeId);
@@ -65,9 +64,8 @@ public class LikeServiceImpl implements LikeService {
     // TODO 리뷰에는 나중에 없어질 수도 있음 - 마이페이지에서 사라지게되면 모든 좋아요 기능에 리뷰 사라짐
     @Override
     public Long countLike(Like.LikeType likeType, String targetId) {
-        // TODO 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
-        // 대상에 대한 좋아요 수 조회
-        // TODO 리뷰/여행기 나오고 likeCount 가져오기
+        // 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
+        // TODO 리뷰/여행기 구현된 후, likeCount 가져오기
 
         return null;
     }
@@ -99,17 +97,17 @@ public class LikeServiceImpl implements LikeService {
                 targetExists = googlePlaceService.verifyPlaceId(targetId);
                 break;
             default:
-                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
+                throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
         }
 
         if (!targetExists) {
-            throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+            throw new CustomLogicException(ExceptionCode.TARGET_NONE);
         }
     }
     @Override
     public Like verifyLike(Long likeId) {
         return jpaLikeRepository.findById(likeId)
-                .orElseThrow(() -> new CustomLogicException(ExceptionCode.USER_NONE));
+                .orElseThrow(() -> new CustomLogicException(ExceptionCode.LIKE_NONE));
     }
 
 }
