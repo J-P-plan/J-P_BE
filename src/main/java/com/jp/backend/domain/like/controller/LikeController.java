@@ -63,7 +63,7 @@ public class LikeController {
             description = "likeType - ooo / targetId - ")
     public ResponseEntity<List<Like>> getFavoriteList(@PathVariable Like.LikeType likeType,
                                                       @AuthenticationPrincipal UserPrincipal principal) {
-        List<Like> favoriteList = likeService.getUserLikes(likeType, principal.getUsername());
+        List<Like> favoriteList = likeService.getFavoriteList(likeType, principal.getUsername());
 
         return new ResponseEntity<>(favoriteList, HttpStatus.OK);
     }

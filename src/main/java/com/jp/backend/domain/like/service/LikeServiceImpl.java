@@ -26,30 +26,11 @@ public class LikeServiceImpl implements LikeService {
     // 좋아요/찜 누르기 - 리뷰/여행기/장소
     @Override
     public void addLike(Like.LikeType likeType, String targetId, String email) {
-        // TODO 그냥 리뷰/여행기/장소 다 Like 테이블에 타입 / id / userId 넣어서 저장해놓으면 됨
-
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
-        // TODO targetId 존재 여부 확인 - 리뷰/여행기 구현 완료 후 수정
-        boolean targetExists;
-        switch (likeType) {
-//            case REVIEW:
-//                targetExists = reviewRepository.findById(targetId);
-//                break;
-//            case TRIP_JOURNAL:
-//                targetExists =
-//                break;
-            case PLACE:
-                targetExists = googlePlaceService.verifyPlaceId(targetId);
-                break;
-            default:
-                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
-        }
-
-        if (!targetExists) {
-            throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
-        }
+        // targetId 존재 여부 확인
+        verifyTargetId(likeType, targetId);
 
         // 좋아요 존재 여부 검사 - 존재하면 에러
         if (jpaLikeRepository.existLike(likeType, targetId, user.getId())) {
@@ -71,30 +52,8 @@ public class LikeServiceImpl implements LikeService {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
-        // TODO targetId 존재 여부 확인 - 리뷰/여행기 구현 완료 후 수정
-//        boolean targetExists;
-//        switch (likeType) {
-//            case REVIEW:
-//                targetExists = reviewRepository.existsById(targetId);
-//                break;
-//            case TRIP_JOURNAL:
-//                targetExists =
-//                break;
-//            case PLACE:
-//                targetExists =
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
-//        }
-//
-//        if (!targetExists) {
-//            throw new CustomLogicException(ExceptionCode.TARGET_NOT_FOUND);
-//        }
-
-        // 좋아요 존재 여부 검사 - 존재하지 않으면 에러
-        if (jpaLikeRepository.existLike(likeType, targetId, user.getId())) {
-            throw new CustomLogicException(ExceptionCode.LIKE_NONE);
-        }
+        // targetId 존재 여부 확인
+        verifyTargetId(likeType, targetId);
 
         // 좋아요 존재 여부 검사
         Like like = verifyLike(likeId);
@@ -102,7 +61,8 @@ public class LikeServiceImpl implements LikeService {
         jpaLikeRepository.delete(like);
     }
 
-    // 좋아요/찜 개수 반환 - 리뷰/여행기 - TODO 리뷰에는 나중에 없어질 수도 있음 - 마이페이지에서 사라지게되면 모든 좋아요 기능에 리뷰 사라짐
+    // 좋아요/찜 개수 반환 - 리뷰/여행기
+    // TODO 리뷰에는 나중에 없어질 수도 있음 - 마이페이지에서 사라지게되면 모든 좋아요 기능에 리뷰 사라짐
     @Override
     public Long countLike(Like.LikeType likeType, String targetId) {
         // TODO 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
@@ -114,7 +74,7 @@ public class LikeServiceImpl implements LikeService {
 
     // 마이페이지 찜목록 - 리뷰/여행기/장소 - TODO 리뷰 없어질 수도 있음
     @Override
-    public List<Like> getUserLikes(Like.LikeType likeType, String email) {
+    public List<Like> getFavoriteList(Like.LikeType likeType, String email) {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
@@ -122,6 +82,30 @@ public class LikeServiceImpl implements LikeService {
         return jpaLikeRepository.getFavoriteList(likeType, user.getId());
     }
 
+    // TODO targetId 존재 여부 확인 - 리뷰/여행기 구현 완료 후 수정
+    //  리뷰/여행기의 경우 Long으로 변환 후 검증
+    // targetId가 존재하는지 검증
+    @Override
+    public void verifyTargetId(Like.LikeType likeType, String targetId) {
+        boolean targetExists;
+        switch (likeType) {
+            // case REVIEW:
+            //     targetExists = reviewRepository.findById(targetId).isPresent();
+            //     break;
+            // case TRIP_JOURNAL:
+            //     targetExists = // 여행기 구현 완료 후 로직 추가
+            //     break;
+            case PLACE:
+                targetExists = googlePlaceService.verifyPlaceId(targetId);
+                break;
+            default:
+                throw new IllegalArgumentException("Id가 존재하지 않습니다.");
+        }
+
+        if (!targetExists) {
+            throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+        }
+    }
     @Override
     public Like verifyLike(Long likeId) {
         return jpaLikeRepository.findById(likeId)

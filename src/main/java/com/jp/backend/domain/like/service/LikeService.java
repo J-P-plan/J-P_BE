@@ -11,7 +11,9 @@ public interface LikeService {
 
     Long countLike(Like.LikeType likeType, String targetId);
 
-    List<Like> getUserLikes(Like.LikeType likeType, String email);
+    List<Like> getFavoriteList(Like.LikeType likeType, String email);
+
+    void verifyTargetId(Like.LikeType likeType, String targetId);
 
     Like verifyLike(Long likeId);
 }
