@@ -78,6 +78,8 @@ public class LikeServiceImpl implements LikeService {
 
         // 사용자가 누른 targetType에 해당하는 좋아요 목록 조회
         return jpaLikeRepository.getFavoriteList(likeType, user.getId());
+
+        // TODO 정렬 방식 - 최신순?
     }
 
     // TODO targetId 존재 여부 확인 - 리뷰/여행기 구현 완료 후 수정

@@ -23,6 +23,14 @@ public enum ExceptionCode {
 	//Place
 	PLACE_NONE(404, "PLACE_NONE"),
 
+	//Review
+	REVIEW_NONE(404, "REVIEW_NONE"),
+	FORBIDDEN(403, "권한이 없습니다."),
+
+	//Comment
+	COMMENT_NONE(404, "COMMENT_NONE"),
+	TYPE_NONE(401, "타입이 없습니다."),
+
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),
 	LIKE_NONE(404, "LIKE_NONE"),

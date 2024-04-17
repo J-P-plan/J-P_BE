@@ -2,6 +2,17 @@ spring:
   sql:
     init:
       mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 521878069403-pe47h04vdr0bceboq7fm9430bahsae13.apps.googleusercontent.com
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
 
   h2:
     console:
