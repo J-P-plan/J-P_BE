@@ -12,8 +12,4 @@ public interface LikeService {
     Long countLike(Like.LikeType likeType, String targetId);
 
     PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, String email, Integer page, Integer elementCnt);
-
-    void verifyTargetId(Like.LikeType likeType, String targetId);
-
-    Like verifyLike(Long likeId);
 }

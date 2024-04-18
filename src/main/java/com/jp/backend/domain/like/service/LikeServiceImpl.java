@@ -92,30 +92,23 @@ public class LikeServiceImpl implements LikeService {
 
     // TODO targetId 존재 여부 확인 - 여행기 구현 완료 후 수정
     // targetId 존재 여부 검증
-    @Override
-    public void verifyTargetId(Like.LikeType likeType, String targetId) {
-        boolean targetExists;
-        switch (likeType) {
-             case REVIEW:
-                 targetExists = reviewRepository.existsById(Long.valueOf(targetId));
-                 break;
-            // case TRIP_JOURNAL:
-            //     targetExists = // 여행기 구현 완료 후 로직 추가
-            //     break;
-            case PLACE:
-                targetExists = googlePlaceService.verifyPlaceId(targetId);
-                break;
-            default:
-                throw new CustomLogicException(ExceptionCode.TYPE_NONE);
-        }
+    private void verifyTargetId(Like.LikeType likeType, String targetId) {
+        boolean targetExists =
+                switch (likeType) {
+                    case REVIEW -> reviewRepository.existsById(Long.valueOf(targetId));
+                    // case TRIP_JOURNAL:
+                    //     targetExists = // 여행기 구현 완료 후 로직 추가
+                    //     break;
+                    case PLACE -> googlePlaceService.verifyPlaceId(targetId);
+                    default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
+                };
 
         if (!targetExists) {
             throw new CustomLogicException(ExceptionCode.TARGET_NONE);
         }
     }
 
-    @Override
-    public Like verifyLike(Long likeId) {
+    private Like verifyLike(Long likeId) {
         return jpaLikeRepository.findById(likeId)
                 .orElseThrow(() -> new CustomLogicException(ExceptionCode.LIKE_NONE));
     }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Validated
 @RequestMapping("/like")
-@Tag(name = "20. [좋아요]")
+@Tag(name = "18. [좋아요]")
 public class LikeController {
     private final LikeService likeService;
 
@@ -26,9 +26,10 @@ public class LikeController {
 
     // 좋아요/찜 누르기
     @PostMapping("/{likeType}/{targetId}")
-    @Operation(summary = "좋아요를 누릅니다.",
-            description = "likeType - REVIEW/PLACE/TRIP_JOURNAL<br>" +
-                    "targetId - reviewId/PlaceId/TripJournalId")
+    @Operation(summary = "좋아요/찜을 누릅니다.",
+            description = "여행기 기능은 아직 구현되어있지 않아, 현재는 장소, 리뷰만 가능합니다.<br>" +
+                    "likeType - PLACE/REVIEW/TRIP_JOURNAL<br>" +
+                    "targetId - PlaceId/reviewId/TripJournalId")
     public ResponseEntity<String> postLike(@PathVariable Like.LikeType likeType,
                                            @PathVariable String targetId,
                                            @AuthenticationPrincipal UserPrincipal principal) {
@@ -39,7 +40,7 @@ public class LikeController {
 
     // 좋아요/찜 취소
     @DeleteMapping("/{likeId}")
-    @Operation(summary = "좋아요를 취소합니다.")
+    @Operation(summary = "좋아요/찜을 취소합니다.")
     public ResponseEntity removeLike(@PathVariable Long likeId,
                                      @AuthenticationPrincipal UserPrincipal principal) {
         likeService.removeLike(likeId, principal.getUsername());
@@ -51,8 +52,8 @@ public class LikeController {
     @GetMapping("/{likeType}/{targetId}")
     @Operation(summary = "장소, 리뷰, 여행기의 좋아요 개수를 조회합니다.",
             description = "여행기 기능은 아직 구현되어있지 않아, 현재는 장소, 리뷰만 가능합니다.<br>" +
-                    "likeType - REVIEW/PLACE/TRIP_JOURNAL <br>" +
-                    "targetId - reviewId/PlaceId/TripJournalId")
+                    "likeType - PLACE/REVIEW/TRIP_JOURNAL <br>" +
+                    "(String) targetId - placeId/reviewId/tripJournalId")
     public ResponseEntity<Long> getLikes(@PathVariable Like.LikeType likeType,
                                          @PathVariable String targetId) {
         Long likeCount = likeService.countLike(likeType, targetId);
