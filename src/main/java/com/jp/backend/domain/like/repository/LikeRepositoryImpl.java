@@ -1,12 +1,16 @@
 package com.jp.backend.domain.like.repository;
 
 import com.jp.backend.domain.like.dto.LikeResDto;
+import com.jp.backend.domain.like.dto.QLikeResDto;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.entity.QLike;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -34,19 +38,38 @@ public class LikeRepositoryImpl implements LikeRepository {
     }
 
     @Override
-    public List<LikeResDto> getFavoriteList(Like.LikeType likeType, Long userId) {
+    public Page<LikeResDto> getFavoriteList(Like.LikeType likeType, Long userId, Pageable pageable) {
         List<LikeResDto> favoriteList = jpaQueryFactory
-                .select(Projections.constructor(LikeResDto.class,
-                        qLike.id,
+                .select(new QLikeResDto(qLike.id,
                         qLike.targetId,
                         qLike.user.id,
                         qLike.likeType,
                         qLike.createdAt))
                 .from(qLike)
-                .where(qLike.user.id.eq(userId).and(qLike.likeType.eq(likeType)))
+                .where(getLikeCondition(likeType, userId))
                 .orderBy(qLike.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
-        return favoriteList;
+        Long totalCount = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(qLike)
+                .where(getLikeCondition(likeType, userId))
+                .fetchOne();
+
+
+        return new PageImpl<>(favoriteList, pageable, totalCount);
     }
+
+    private BooleanExpression getLikeCondition(Like.LikeType likeType, Long userId) {
+        BooleanExpression condition = qLike.likeType.eq(likeType);
+
+        if (userId != null) {
+            condition = condition.and(qLike.user.id.eq(userId));
+        }
+
+        return condition;
+    }
+
 }

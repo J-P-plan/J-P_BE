@@ -5,16 +5,18 @@ import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
-import com.jp.backend.domain.review.service.ReviewService;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.service.UserService;
+import com.jp.backend.global.dto.PageInfo;
+import com.jp.backend.global.dto.PageResDto;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -72,11 +74,20 @@ public class LikeServiceImpl implements LikeService {
 
     // 마이페이지 찜목록 - 리뷰/여행기/장소
     @Override
-    public List<LikeResDto> getFavoriteList(Like.LikeType likeType, String email) {
+    public PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, String email, Integer page, Integer elementCnt) {
         // 유저 존재 여부 확인
         User user = userService.verifyUser(email);
 
-        return jpaLikeRepository.getFavoriteList(likeType, user.getId());
+        Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
+        Page<LikeResDto> likePage =
+                jpaLikeRepository.getFavoriteList(likeType, user.getId(), pageable);
+
+        PageInfo<LikeResDto> pageInfo = PageInfo.<LikeResDto>builder()
+                .pageable(pageable)
+                .pageDto(likePage)
+                .build();
+
+        return new PageResDto<>(pageInfo, likePage.getContent());
     }
 
     // TODO targetId 존재 여부 확인 - 여행기 구현 완료 후 수정

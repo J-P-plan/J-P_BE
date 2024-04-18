@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.auth.dto.LoginDto;
 import com.jp.backend.auth.service.AuthService;
 import com.jp.backend.auth.service.RefreshService;
-import com.jp.backend.global.response.SingleResponse;
+import com.jp.backend.global.dto.SingleResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

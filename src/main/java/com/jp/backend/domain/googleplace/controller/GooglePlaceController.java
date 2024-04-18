@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
-import com.jp.backend.global.response.ListResponse;
+import com.jp.backend.global.dto.ListResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
