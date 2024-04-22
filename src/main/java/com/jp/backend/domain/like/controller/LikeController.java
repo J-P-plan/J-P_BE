@@ -48,19 +48,6 @@ public class LikeController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // 좋아요/찜 개수 반환
-    @GetMapping("/{likeType}/{targetId}")
-    @Operation(summary = "장소, 리뷰, 여행기의 좋아요 개수를 조회합니다.",
-            description = "여행기 기능은 아직 구현되어있지 않아, 현재는 장소, 리뷰만 가능합니다.<br>" +
-                    "likeType - PLACE/REVIEW/TRIP_JOURNAL <br>" +
-                    "(String) targetId - placeId/reviewId/tripJournalId")
-    public ResponseEntity<Long> getLikes(@PathVariable Like.LikeType likeType,
-                                         @PathVariable String targetId) {
-        Long likeCount = likeService.countLike(likeType, targetId);
-
-        return new ResponseEntity<>(likeCount, HttpStatus.OK);
-    }
-
     // 마이페이지 찜목록
     @GetMapping("/favoriteList")
     @Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",

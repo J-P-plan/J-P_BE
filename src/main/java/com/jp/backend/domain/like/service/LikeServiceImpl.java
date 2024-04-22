@@ -64,14 +64,6 @@ public class LikeServiceImpl implements LikeService {
         jpaLikeRepository.delete(like);
     }
 
-    // 좋아요/찜 개수 반환 - 리뷰/여행기
-    // 장소 좋아요는 찜 기능만 하므로 유저 찜 목록에 보이기만 하면 되기 때문에, likeCount는 보여줄 필요 없음
-    @Override
-    public Long countLike(Like.LikeType likeType, String targetId) {
-        // 장소 좋아요는 그냥 찜 기능만 함 - 그냥 유저 찜 목록에 보이기만 하면 되고 likeCount는 보여줄 필요 없음
-        return jpaLikeRepository.countLike(likeType, targetId, null);
-    }
-
     // 마이페이지 찜목록 - 리뷰/여행기/장소
     @Override
     public PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, String email, Integer page, Integer elementCnt) {

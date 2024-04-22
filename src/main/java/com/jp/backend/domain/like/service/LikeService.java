@@ -9,7 +9,5 @@ public interface LikeService {
 
     void removeLike(Long likeId, String email);
 
-    Long countLike(Like.LikeType likeType, String targetId);
-
     PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, String email, Integer page, Integer elementCnt);
 }

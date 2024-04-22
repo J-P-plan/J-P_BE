@@ -21,13 +21,8 @@ public class LikeRepositoryImpl implements LikeRepository {
 
     @Override
     public long countLike(Like.LikeType likeType, String targetId, Long userId) {
-        BooleanExpression condition = qLike.likeType.eq(likeType)
+        BooleanExpression condition = getLikeCondition(likeType, userId) // userId는 필수 X --> userId가 주어진 경우에는 해당 유저가 좋아요를 눌렀는지 판별할 수 있음
                 .and(qLike.targetId.eq(targetId));
-
-        // userId가 제공된 경우, 해당 조건 추가
-        if (userId != null) {
-            condition = condition.and(qLike.user.id.eq(userId));
-        }
 
         long count = jpaQueryFactory
                 .selectFrom(qLike)
