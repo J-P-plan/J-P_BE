@@ -21,6 +21,7 @@ public enum ExceptionCode {
 	ALREADY_INVITED(409, "ALREADY_INVITED"),
 
 	//Place
+	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
 	PLACE_NONE(404, "PLACE_NONE"),
 
 	//Review

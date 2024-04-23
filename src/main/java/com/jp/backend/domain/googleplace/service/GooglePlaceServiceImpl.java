@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,10 +18,14 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
+import com.jp.backend.global.exception.CustomLogicException;
+import com.jp.backend.global.exception.ExceptionCode;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -44,7 +49,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
+		// google places api 요청 중 네트워크 에러 등으로 오류 발생 시 catch
+		GooglePlaceSearchResDto response;
+		try {
+			response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
+		} catch (RestClientException e) {
+			log.info("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
+			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
+		}
 
 		if (response != null && response.getResults() != null) {
 			setPhotoUrls(response);
@@ -54,6 +66,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
+	// TODO 리팩토링 - 응답 반환까지 시간 좀 걸
 	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
@@ -62,7 +75,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.NEARBY_SEARCH_URL)
 			.queryParam("location", lat + "," + lng)
-			.queryParam("radius", radius)
+			.queryParam("radius", radius * 1000)
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
@@ -72,7 +85,13 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
+		GooglePlaceSearchResDto response;
+		try {
+			response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
+		} catch (RestClientException e) {
+			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
+			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
+		}
 
 		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
@@ -120,7 +139,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsResDto response = restTemplate.getForObject(uri, GooglePlaceDetailsResDto.class);
 
-		// 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함
+		// TODO 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함
 		// if (response != null && response.getResult() != null) {
 		// 	response.getResult().setPhotos(null);
 		// }
@@ -140,21 +159,23 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		List<String> photoUrls = new ArrayList<>();
 
-		for (GooglePlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
-			int maxWidth = photo.getWidth();
-			int maxHeight = photo.getHeight();
-			String photoReference = photo.getPhotoReference();
+		if (placeDetails.getResult().getPhotos() != null) { // 사진 정보가 null이 아닐 때만 가져오기
+			for (GooglePlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
+				int maxWidth = photo.getWidth();
+				int maxHeight = photo.getHeight();
+				String photoReference = photo.getPhotoReference();
 
-			UriComponentsBuilder uriBuilder = UriComponentsBuilder
-				.fromUriString(GooglePlaceConfig.PHOTO_URL)
-				.queryParam("maxwidth", maxWidth)
-				.queryParam("maxheight", maxHeight)
-				.queryParam("photo_reference", photoReference)
-				.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey());
+				UriComponentsBuilder uriBuilder = UriComponentsBuilder
+					.fromUriString(GooglePlaceConfig.PHOTO_URL)
+					.queryParam("maxwidth", maxWidth)
+					.queryParam("maxheight", maxHeight)
+					.queryParam("photo_reference", photoReference)
+					.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey());
 
-			String uri = uriBuilder.toUriString();
+				String uri = uriBuilder.toUriString();
 
-			photoUrls.add(uri);
+				photoUrls.add(uri);
+			}
 		}
 
 		return photoUrls;

@@ -44,7 +44,8 @@ public class GooglePlaceController {
 	@GetMapping("/nearby-search")
 	@Operation(summary = "반경을 선택하여, 해당 장소의 반경 내에 있는 인기 여행지들을 추천합니다.",
 		description = "일단 기준이 되는 위도, 경도, 반경을 파라미터에 넣어주는 것으로 구현했는데,<br>"
-			+ "일정 생성 기능이 완료되면 해당 스케줄에서 선택된 도시의 정보를 가져오는 방법으로 수정할 예정입니다.")
+			+ "일정 생성 기능이 완료되면 해당 스케줄에서 선택된 도시의 정보를 가져오는 방법으로 수정할 예정입니다.<br>"
+			+ "Ex. 반경 5km 내의 장소들을 반환하고 싶다면, radius에 5를 넣어 요청하세요. (소수는 불가능하게 구현하였습니다. Ex. 4.5)")
 	// TODO 일정 생성 기능 완료 되면 --> scheduleId만 받고 해당 스케줄 안의 도시의 위도 경도 list 가져와서 요청해서
 	//  그 세 도시의 추천 장소들을 모두 합해, 리뷰 개수 순으로 추천해주기
 	public ResponseEntity<GooglePlaceSearchResDto> searchNearbyPlaces(@RequestParam("lat") double lat,
