@@ -19,15 +19,13 @@ import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class GooglePlaceServiceImpl implements GooglePlaceService {
 	private final GooglePlaceConfig googlePlaceConfig;
-
-	public GooglePlaceServiceImpl(GooglePlaceConfig googlePlaceConfig) {
-		this.googlePlaceConfig = googlePlaceConfig;
-	}
 
 	// textSearch 메서드
 	@Override
@@ -40,21 +38,17 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
-		if (nextPageToken != null) { // 다음 페이지 토큰이 존재하면, 이것도 껴서 요청
+		if (nextPageToken != null) {
 			uriBuilder.queryParam("pagetoken", nextPageToken);
-			// pageToken 나 page_token 으로 요청하면 작동 X
 		}
 
 		URI uri = uriBuilder.build().toUri();
 
 		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
 
-		// userRatingsTotal 순으로 내림차순 정렬 / 사용자 평점 수가 같을 경우엔 Rating 순으로 내림차순 정렬
 		if (response != null && response.getResults() != null) {
-			response.getResults()
-				.sort(
-					Comparator.comparing(GooglePlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
-						.thenComparing(GooglePlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+			setPhotoUrls(response);
+			sortPlacesByPopularity(response);
 		}
 
 		return response;
@@ -80,15 +74,30 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceSearchResDto response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
 
-		// 리뷰 개수 순으로 정렬
+		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
-			response.getResults()
-				.sort(
-					Comparator.comparing(GooglePlaceSearchResDto.Place::getUserRatingsTotal, Comparator.reverseOrder())
-						.thenComparing(GooglePlaceSearchResDto.Place::getRating, Comparator.reverseOrder()));
+			setPhotoUrls(response);
+			sortPlacesByPopularity(response);
 		}
 
 		return response;
+	}
+
+	// placeId로 photoUrls를 가져와 dto에 넣어 반환
+	private void setPhotoUrls(GooglePlaceSearchResDto response) {
+		response.getResults().forEach(result -> {
+			List<String> photoUrls = getPlacePhotos(result.getPlaceId());
+			result.setPhotoUrls(photoUrls); // 각 Result 객체의 photoUrls 필드에 사진 URL 목록을 설정
+		});
+	}
+
+	// 장소 list 정렬
+	// userRatingsTotal 순으로 내림차순 정렬 / 사용자 평점 수가 같을 경우엔 Rating 순으로 내림차순 정렬
+	private void sortPlacesByPopularity(GooglePlaceSearchResDto response) {
+		response.getResults()
+			.sort(
+				Comparator.comparing(GooglePlaceSearchResDto.Result::getUserRatingsTotal, Comparator.reverseOrder())
+					.thenComparing(GooglePlaceSearchResDto.Result::getRating, Comparator.reverseOrder()));
 	}
 
 	// placeId로 장소 상세 정보 가져오는 메서드
@@ -110,10 +119,16 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		URI uri = uriBuilder.build().toUri();
 
 		GooglePlaceDetailsResDto response = restTemplate.getForObject(uri, GooglePlaceDetailsResDto.class);
+
+		// 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함
+		// if (response != null && response.getResult() != null) {
+		// 	response.getResult().setPhotos(null);
+		// }
+
 		return response;
 	}
 
-	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩 --> 유연성, 확장성 증가
+	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
 		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
 	}

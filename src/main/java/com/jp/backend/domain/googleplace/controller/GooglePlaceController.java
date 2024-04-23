@@ -40,7 +40,7 @@ public class GooglePlaceController {
 		return new ResponseEntity(places, HttpStatus.OK);
 	}
 
-	// 인기 여행지 상세 - 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
+	// 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
 	@GetMapping("/nearby-search")
 	@Operation(summary = "반경을 선택하여, 해당 장소의 반경 내에 있는 인기 여행지들을 추천합니다.",
 		description = "일단 기준이 되는 위도, 경도, 반경을 파라미터에 넣어주는 것으로 구현했는데,<br>"
