@@ -111,10 +111,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		// 응답 헤더에 토큰을 설정하여 클라이언트에게 반환
 		// 이 부분에서 targetUrl 대신에 response header에 직접 토큰을 설정해줍니다.
-		response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
+		//response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
 
 		//엑세스 토큰과 리프레시 토큰을 쿼리 매개변수로 하는 대상 url을 구성하여 반환
 		return UriComponentsBuilder.fromUriString(targetUrl)
+			.queryParam(AUTHORIZATION, accessToken.getToken())
 			.build().toUriString();
 	}
 
