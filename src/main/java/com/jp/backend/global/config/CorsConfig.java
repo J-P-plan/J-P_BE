@@ -18,8 +18,8 @@ public class CorsConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true); // 쿠키를 포함한 요청 허용
-		config.addAllowedOriginPattern("*"); // 모든 오리진 패턴 허용
-		// .allowedOriginPatterns("http://localhost:3000/, http://jandp-travel.kro.kr:8080")
+		// config.addAllowedOriginPattern("*"); // 모든 오리진 패턴 허용
+		config.addAllowedOriginPattern("http://localhost:3000/, http://jandp-travel.kro.kr:8080");
 		config.addAllowedHeader("*"); // 모든 헤더 허용
 		config.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		config.addExposedHeader(
