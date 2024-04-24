@@ -16,6 +16,6 @@ public class WebConfig implements WebMvcConfigurer {
 			.exposedHeaders("Authorization", "RefreshToken", "Access-Control-Allow-Origin",
 				"Access-Control-Allow-Credentials")
 			.allowCredentials(true);
-	}
+	}//엑세스 리프레시랑 엑세스
 
 }
