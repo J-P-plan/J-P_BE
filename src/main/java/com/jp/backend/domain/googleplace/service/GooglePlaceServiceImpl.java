@@ -35,8 +35,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// textSearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchPlaces(String contents, String nextPageToken) {
-		RestTemplate restTemplate = restTemplate();
-
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.TEXT_SEARCH_URL)
 			.queryParam("query", contents)
@@ -50,13 +48,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		URI uri = uriBuilder.build().toUri();
 
 		// google places api 요청 중 네트워크 에러 등으로 오류 발생 시 catch
-		GooglePlaceSearchResDto response;
-		try {
-			response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
-		} catch (RestClientException e) {
-			log.info("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
-			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
-		}
+		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		if (response != null && response.getResults() != null) {
 			setPhotoUrls(response);
@@ -70,8 +62,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
-		RestTemplate restTemplate = restTemplate();
-
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.NEARBY_SEARCH_URL)
 			.queryParam("location", lat + "," + lng)
@@ -85,13 +75,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceSearchResDto response;
-		try {
-			response = restTemplate.getForObject(uri, GooglePlaceSearchResDto.class);
-		} catch (RestClientException e) {
-			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
-			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
-		}
+		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
@@ -122,8 +106,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
-		RestTemplate restTemplate = restTemplate();
-
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.DETAILS_URL)
 			.queryParam("placeid", placeId)
@@ -137,9 +119,9 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceDetailsResDto response = restTemplate.getForObject(uri, GooglePlaceDetailsResDto.class);
+		GooglePlaceDetailsResDto response = handleGooglePlacesApiException(uri, GooglePlaceDetailsResDto.class);
 
-		// TODO 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함
+		// TODO 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함 이거 어케하지
 		// if (response != null && response.getResult() != null) {
 		// 	response.getResult().setPhotos(null);
 		// }
@@ -150,6 +132,17 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
 		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
+	}
+
+	// Google Places API 네트워크 에러 시 익셉션 처리 // TODO 메서드 명 수정
+	private <T> T handleGooglePlacesApiException(URI uri, Class<T> responseType) throws CustomLogicException {
+		RestTemplate restTemplate = restTemplate();
+		try {
+			return restTemplate.getForObject(uri, responseType);
+		} catch (RestClientException e) {
+			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
+			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
+		}
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드
