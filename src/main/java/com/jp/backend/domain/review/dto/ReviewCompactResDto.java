@@ -1,9 +1,13 @@
 package com.jp.backend.domain.review.dto;
 
+import java.util.List;
+
+import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,12 +35,12 @@ public class ReviewCompactResDto {
 	private Integer commentCnt;
 
 	@Builder
-	public ReviewCompactResDto(Review review) {
+	public ReviewCompactResDto(Review review, List<Comment> commentList) {
 		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
-		this.commentCnt = 10; //todo 바꾸기
+		this.commentCnt = commentList.size(); //todo 바꾸기
 	}
 
 }

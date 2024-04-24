@@ -88,7 +88,14 @@ public class ReviewServiceImpl implements ReviewService {
 
 		Page<ReviewCompactResDto> reviewPage =
 			reviewRepository.findReviewPage(placeId, sort, pageable)
-				.map(review -> ReviewCompactResDto.builder().review(review).build());
+				.map(review -> {
+					//todo 이거 댓글수 개선
+					List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, review.getId());
+					return ReviewCompactResDto.builder()
+						.review(review)
+						.commentList(commentList)
+						.build();
+				});
 
 		PageInfo pageInfo =
 			PageInfo.<ReviewCompactResDto>builder()
