@@ -3,7 +3,6 @@ package com.jp.backend.domain.googleplace.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jp.backend.global.serializers.CustomDateSerializer;
 
@@ -25,7 +24,6 @@ public class GooglePlaceDetailsResDto {
 
 	@Getter
 	@Setter
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class Result {
 		private String placeId;
 		private String name;
@@ -39,8 +37,8 @@ public class GooglePlaceDetailsResDto {
 		private Double rating;
 		private int userRatingsTotal;
 		private List<Review> reviews;
-		private String url;
-		private String website;
+		private String url; // 해당 장소에 대한 구글맵 url
+		private String website; // 장소의 웹사이트
 	}
 
 	@Getter
