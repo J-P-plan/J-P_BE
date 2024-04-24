@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CommentResDto {
 	@Schema(description = "아이디")
-	private String id;
+	private Long id;
 
 	@Schema(description = "내용")
 	private String content;
@@ -38,10 +38,12 @@ public class CommentResDto {
 
 	@Builder
 	public CommentResDto(Comment comment) {
+		this.id = comment.getId();
 		this.content = comment.getContent();
 		this.createdAt = comment.getCreatedAt();
 		this.userCompactResDto = UserCompactResDto.builder().user(comment.getUser()).build();
 		this.createdAt = comment.getCreatedAt();
+		if(comment.getReplyList() !=null)
 		this.replyList = comment.getReplyList().stream().map(reply -> ReplyResDto.builder().reply(reply).build()).toList();
 	}
 

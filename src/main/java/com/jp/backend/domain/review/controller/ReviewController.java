@@ -74,7 +74,7 @@ public class ReviewController {
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "placeId", required = false) Long placeId,
 		@RequestParam(value = "sort") ReviewSort sort,
-		@RequestParam(required = false, defaultValue = "10") Integer elementCnt
+		@RequestParam(required = false, defaultValue = "10",value = "elementCnt") Integer elementCnt
 	) throws Exception {
 		return ResponseEntity.ok(null);
 	}

@@ -50,9 +50,9 @@ public class Review extends Auditable {
 
 	private Boolean visitedYn;
 
-	//TODO 인기리뷰기준 스코어 : 찜 1점 댓글 2점 조회수 0.1점,
-	//댓글, 찜
-	private Double score;
+	// //TODO 인기리뷰기준 스코어 : 찜 1점 댓글 2점 조회수 0.1점,
+	// //댓글, 찜
+	// private Double score;
 
 	public Review addViewCnt() {
 		this.viewCnt++;

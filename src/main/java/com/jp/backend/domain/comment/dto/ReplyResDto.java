@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReplyResDto {
   @Schema(description = "아이디")
-  private String id;
+  private Long id;
 
   @Schema(description = "내용")
   private String content;
@@ -34,6 +34,7 @@ public class ReplyResDto {
 
   @Builder
   public ReplyResDto(Reply reply) {
+    this.id = reply.getId();
     this.content = reply.getContent();
     this.createdAt = reply.getCreatedAt();
     this.userCompactResDto = UserCompactResDto.builder().user(reply.getUser()).build();

@@ -15,7 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewCompactResDto {
-
+	@Schema(description = "아이디")
+	private Long id;
 	//대표사진
 	@Schema(description = "제목")
 	private String subject;
@@ -31,6 +32,7 @@ public class ReviewCompactResDto {
 
 	@Builder
 	public ReviewCompactResDto(Review review) {
+		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();

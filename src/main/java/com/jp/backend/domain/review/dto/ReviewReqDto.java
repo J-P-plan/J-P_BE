@@ -32,6 +32,7 @@ public class ReviewReqDto {
 			.content(content)
 			.placeId(placeId)
 			.star(star)
+			.viewCnt(0)
 			.visitedYn(visitidYn)
 			.user(user)
 			.build();
