@@ -20,6 +20,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class GooglePlaceDetailsResDto {
+	// TODO 피그마에 상세 정보 보여줄 것 정한 후에 필요한 것만 받도록 수정
 	private Result result;
 
 	@Getter
@@ -33,9 +34,9 @@ public class GooglePlaceDetailsResDto {
 		private String businessStatus; // 현재 영업 상태 - OPERATIONAL: 장소가 현재 영업 중 / CLOSED_TEMPORARILY: 장소가 일시적으로 문을 닫았음 / CLOSED_PERMANENTLY: 장소가 영구적으로 폐업했음
 		private OpeningHours openingHours;
 		private List<String> types;
-		private List<Photo> photos;
 		private Double rating;
 		private int userRatingsTotal;
+		private List<String> photoUrls;
 		private List<Review> reviews;
 		private String url; // 해당 장소에 대한 구글맵 url
 		private String website; // 장소의 웹사이트
@@ -60,15 +61,6 @@ public class GooglePlaceDetailsResDto {
 		private boolean openNow;
 		private List<String> weekdayText;
 
-	}
-
-	@Getter
-	@Setter
-	public static class Photo {
-		private int height;
-		private List<String> htmlAttributions; // 사진 출처나 저작권 정보를 HTML 형식의 문자열 배열로 제공
-		private String photoReference; // 사진 요청 시 사용할 수 있는 고유 식별자
-		private int width;
 	}
 
 	@Getter
