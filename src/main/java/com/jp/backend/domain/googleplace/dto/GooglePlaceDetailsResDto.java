@@ -1,10 +1,6 @@
 package com.jp.backend.domain.googleplace.dto;
 
-import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jp.backend.global.serializers.CustomDateSerializer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,59 +16,14 @@ import lombok.ToString;
 @Getter
 @Setter
 public class GooglePlaceDetailsResDto {
-	// TODO 피그마에 상세 정보 보여줄 것 정한 후에 필요한 것만 받도록 수정
-	private Result result;
+	private String placeId;
+	private String name;
+	private String formattedAddress;
+	private String formattedPhoneNumber;
+	private String businessStatus; // 현재 영업 상태 - OPERATIONAL: 장소가 현재 영업 중 / CLOSED_TEMPORARILY: 장소가 일시적으로 문을 닫았음 / CLOSED_PERMANENTLY: 장소가 영구적으로 폐업했음
+	private boolean openNow;
+	private List<String> weekdayText;
+	private List<String> photoUrls;
+	private String website; // 장소의 웹사이트
 
-	@Getter
-	@Setter
-	public static class Result {
-		private String placeId;
-		private String name;
-		private String formattedAddress;
-		private Geometry geometry;
-		private String formattedPhoneNumber;
-		private String businessStatus; // 현재 영업 상태 - OPERATIONAL: 장소가 현재 영업 중 / CLOSED_TEMPORARILY: 장소가 일시적으로 문을 닫았음 / CLOSED_PERMANENTLY: 장소가 영구적으로 폐업했음
-		private OpeningHours openingHours;
-		private List<String> types;
-		private Double rating;
-		private int userRatingsTotal;
-		private List<String> photoUrls;
-		private List<Review> reviews;
-		private String url; // 해당 장소에 대한 구글맵 url
-		private String website; // 장소의 웹사이트
-	}
-
-	@Getter
-	@Setter
-	public static class Geometry {
-		private Location location;
-	}
-
-	@Getter
-	@Setter
-	public static class Location {
-		private double lat;
-		private double lng;
-	}
-
-	@Getter
-	@Setter
-	public static class OpeningHours {
-		private boolean openNow;
-		private List<String> weekdayText;
-
-	}
-
-	@Getter
-	@Setter
-	public static class Review {
-		private String authorName;
-		private String authorUrl;
-		private String profilePhotoUrl;
-		private Long rating;
-		@JsonSerialize(using = CustomDateSerializer.class)
-		private Date time;
-		private String relativeTimeDescription;
-		private String text;
-	}
 }

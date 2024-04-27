@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlacePhotosResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
@@ -56,7 +57,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
-	// TODO 리팩토링 - 응답 반환까지 시간 좀 걸
+	// TODO 리팩토링 - 응답 반환까지 시간이 좀 걸림
 	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
@@ -117,26 +118,19 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceDetailsResDto response = handleGooglePlacesApiException(uri, GooglePlaceDetailsResDto.class);
+		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		response.getResult().setPhotoUrls(getPlacePhotos(placeId)); // 사진 urls 넣
-
-		return response;
-	}
-
-	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩
-	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
-		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
-	}
-
-	// Google Places API 네트워크 에러 시 익셉션 처리
-	private <T> T handleGooglePlacesApiException(URI uri, Class<T> responseType) throws CustomLogicException {
-		try {
-			return restTemplate.getForObject(uri, responseType);
-		} catch (RestClientException e) {
-			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
-			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
-		}
+		return GooglePlaceDetailsResDto.builder()
+			.placeId(apiResponse.getResult().getPlaceId())
+			.name(apiResponse.getResult().getName())
+			.formattedAddress(apiResponse.getResult().getFormattedAddress())
+			.formattedPhoneNumber(apiResponse.getResult().getFormattedPhoneNumber())
+			.businessStatus(apiResponse.getResult().getBusinessStatus())
+			.openNow(apiResponse.getResult().getOpeningHours().isOpenNow())
+			.weekdayText(apiResponse.getResult().getOpeningHours().getWeekdayText())
+			.photoUrls(getPlacePhotos(placeId))
+			.website(apiResponse.getResult().getWebsite())
+			.build();
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드
@@ -169,6 +163,16 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		}
 
 		return photoUrls;
+	}
+
+	// Google Places API 네트워크 에러 시 익셉션 처리
+	private <T> T handleGooglePlacesApiException(URI uri, Class<T> responseDto) throws CustomLogicException {
+		try {
+			return restTemplate.getForObject(uri, responseDto);
+		} catch (RestClientException e) {
+			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
+			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
+		}
 	}
 
 	// TODO : 리팩토링 - place api에 요청하는 uri builder 따로 빼기
