@@ -159,4 +159,8 @@ public class GoogleService {
 			(int)(System.currentTimeMillis() + jwtConfig.getRefreshTokenValidTime()));
 	}
 
+	public String getGoogleRedirectUri() {
+		return LOGIN_REDIRECT_URL;
+	}
+
 }
