@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class GooglePlaceDetailsResDto {
+public class GooglePlaceDetailsResDto { // 프론트에게 넘겨줄 장소 상세 정보 response
 	private String placeId;
 	private String name;
 	private String formattedAddress;

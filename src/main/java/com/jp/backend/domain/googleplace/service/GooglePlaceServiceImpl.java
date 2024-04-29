@@ -174,6 +174,4 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
 		}
 	}
-
-	// TODO : 리팩토링 - place api에 요청하는 uri builder 따로 빼기
 }

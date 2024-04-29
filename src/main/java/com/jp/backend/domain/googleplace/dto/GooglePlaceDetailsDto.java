@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class GooglePlaceDetailsDto { // 장소의 상세 정보 response
+public class GooglePlaceDetailsDto { // api에서 받아올 장소의 상세 정보 response
 	private Result result;
 
 	@Getter
