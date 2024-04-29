@@ -30,7 +30,8 @@ public enum ExceptionCode {
 
 	//Comment
 	COMMENT_NONE(404, "COMMENT_NONE"),
-	TYPE_NONE(401, "타입이 없습니다.");
+	TYPE_NONE(401, "타입이 없습니다."),
+	AUTH_FAILED(401, "인증실패");
 
 	@Getter
 	private final int code;
