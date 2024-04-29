@@ -6,17 +6,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
+import com.jp.backend.domain.googleplace.dto.GooglePlacePhotosResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
@@ -31,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class GooglePlaceServiceImpl implements GooglePlaceService {
 	private final GooglePlaceConfig googlePlaceConfig;
+	private final RestTemplate restTemplate;
 
 	// textSearch 메서드
 	@Override
@@ -58,7 +57,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
-	// TODO 리팩토링 - 응답 반환까지 시간 좀 걸
+	// TODO 리팩토링 - 응답 반환까지 시간이 좀 걸림
 	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
@@ -119,78 +118,60 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI uri = uriBuilder.build().toUri();
 
-		GooglePlaceDetailsResDto response = handleGooglePlacesApiException(uri, GooglePlaceDetailsResDto.class);
+		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		// TODO 프론트에서는 photos 정보가 안보이도록 null 로 설정 --> 밑에 사진 가져오는 걸 못함 이거 어케하지
-		// if (response != null && response.getResult() != null) {
-		// 	response.getResult().setPhotos(null);
-		// }
-
-		return response;
-	}
-
-	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩
-	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
-		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
-	}
-
-	// Google Places API 네트워크 에러 시 익셉션 처리 // TODO 메서드 명 수정
-	private <T> T handleGooglePlacesApiException(URI uri, Class<T> responseType) throws CustomLogicException {
-		RestTemplate restTemplate = restTemplate();
-		try {
-			return restTemplate.getForObject(uri, responseType);
-		} catch (RestClientException e) {
-			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
-			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
-		}
+		return GooglePlaceDetailsResDto.builder()
+			.placeId(apiResponse.getResult().getPlaceId())
+			.name(apiResponse.getResult().getName())
+			.formattedAddress(apiResponse.getResult().getFormattedAddress())
+			.formattedPhoneNumber(apiResponse.getResult().getFormattedPhoneNumber())
+			.businessStatus(apiResponse.getResult().getBusinessStatus())
+			.openNow(apiResponse.getResult().getOpeningHours().isOpenNow())
+			.weekdayText(apiResponse.getResult().getOpeningHours().getWeekdayText())
+			.photoUrls(getPlacePhotos(placeId))
+			.website(apiResponse.getResult().getWebsite())
+			.build();
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드
 	@Override
 	public List<String> getPlacePhotos(String placeId) {
-		GooglePlaceDetailsResDto placeDetails = getPlaceDetails(placeId); // 해당 장소의 상세 정보 가져오기
+		// details 가져오기
+		UriComponentsBuilder detailsUriBuilder = UriComponentsBuilder
+			.fromUriString(GooglePlaceConfig.DETAILS_URL)
+			.queryParam("placeid", placeId)
+			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
+			.queryParam("language", "ko");
 
+		URI detailsUri = detailsUriBuilder.build().toUri();
+		GooglePlacePhotosResDto response = handleGooglePlacesApiException(detailsUri, GooglePlacePhotosResDto.class);
+
+		// photo Url 만들기
 		List<String> photoUrls = new ArrayList<>();
-
-		if (placeDetails.getResult().getPhotos() != null) { // 사진 정보가 null이 아닐 때만 가져오기
-			for (GooglePlaceDetailsResDto.Photo photo : placeDetails.getResult().getPhotos()) {
-				int maxWidth = photo.getWidth();
-				int maxHeight = photo.getHeight();
-				String photoReference = photo.getPhotoReference();
-
-				UriComponentsBuilder uriBuilder = UriComponentsBuilder
+		if (response.getResult().getPhotos() != null) { // 사진 정보가 null이 아닐 때만 가져오기
+			for (GooglePlacePhotosResDto.Photo photo : response.getResult().getPhotos()) {
+				String photoUri = UriComponentsBuilder
 					.fromUriString(GooglePlaceConfig.PHOTO_URL)
-					.queryParam("maxwidth", maxWidth)
-					.queryParam("maxheight", maxHeight)
-					.queryParam("photo_reference", photoReference)
-					.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey());
+					.queryParam("maxwidth", photo.getWidth())
+					.queryParam("maxheight", photo.getHeight())
+					.queryParam("photo_reference", photo.getPhotoReference())
+					.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
+					.toUriString();
 
-				String uri = uriBuilder.toUriString();
-
-				photoUrls.add(uri);
+				photoUrls.add(photoUri);
 			}
 		}
 
 		return photoUrls;
 	}
 
-	// places api는 응답 필드가 snake_case로 들어오는데, 우리 프젝의 경우 responseDto가 CamelCase이기 때문에 / RestTemplate을 재정의하여 CamelCase로 받도록 설정
-	public RestTemplate restTemplate() {
-		RestTemplate restTemplate = new RestTemplate();
-
-		ObjectMapper objectMapper = new ObjectMapper(); // Jackson ObjectMapper 인스턴스 생성
-		objectMapper.setPropertyNamingStrategy(
-			PropertyNamingStrategies.SNAKE_CASE); // 응답 데이터의 snake_case --> camelCase 변환
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-			false); // 알려지지 않은 JSON 필드를 무시하도록 설정 (옵션)
-
-		// ObjectMapper를 사용하는 메시지 컨버터 생성 및 추가
-		MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-		messageConverter.setObjectMapper(objectMapper);
-		restTemplate.getMessageConverters().add(0, messageConverter);
-
-		return restTemplate;
+	// Google Places API 네트워크 에러 시 익셉션 처리
+	private <T> T handleGooglePlacesApiException(URI uri, Class<T> responseDto) throws CustomLogicException {
+		try {
+			return restTemplate.getForObject(uri, responseDto);
+		} catch (RestClientException e) {
+			log.error("Google Places API 요청 중 오류가 발생하였습니다: " + e.getMessage());
+			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
+		}
 	}
-
-	// TODO : 리팩토링 - place api에 요청하는 uri builder 따로 빼기
 }

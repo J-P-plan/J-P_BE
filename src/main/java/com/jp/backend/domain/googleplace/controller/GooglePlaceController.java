@@ -1,7 +1,5 @@
 package com.jp.backend.domain.googleplace.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
-import com.jp.backend.global.response.ListResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +34,7 @@ public class GooglePlaceController {
 	public ResponseEntity<GooglePlaceSearchResDto> searchPlaces(@RequestParam("contents") String contents,
 		@RequestParam(required = false, name = "nextPageToken") String nextPageToken) {
 		GooglePlaceSearchResDto places = googlePlaceService.searchPlaces(contents, nextPageToken);
-		return new ResponseEntity(places, HttpStatus.OK);
+		return new ResponseEntity<>(places, HttpStatus.OK);
 	}
 
 	// 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
@@ -53,25 +50,17 @@ public class GooglePlaceController {
 		@RequestParam("radius") Long radius,
 		@RequestParam(required = false, name = "nextPageToken") String nextPageToken) {
 		GooglePlaceSearchResDto places = googlePlaceService.searchNearbyPlaces(lat, lng, radius, nextPageToken);
-		return new ResponseEntity(places, HttpStatus.OK);
+		return new ResponseEntity<>(places, HttpStatus.OK);
 	}
 
 	// 장소 세부 정보 가져오기
 	@GetMapping("/details")
 	@Operation(summary = "해당 장소의 상세 정보를 가져옵니다.",
-		description = "특정 정보만 가져오고 싶다면, fields 파라미터에 해당 필드명을 넣으세요.")
+		description = "리뷰 정보만 가져오고 싶다면, fields 파라미터에 <reviews>를 넣어 요청하세요.")
 	public ResponseEntity<GooglePlaceDetailsResDto> getPlaceDetails(@RequestParam("placeId") String placeId,
 		@RequestParam(required = false, name = "fields") String fields) {
 		GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(placeId, fields);
-		return new ResponseEntity(placeDetails, HttpStatus.OK);
-	}
-
-	// 장소의 사진 url list 가져오기
-	@GetMapping("/photos")
-	@Operation(summary = "해당 장소의 사진 url들을 가져옵니다.")
-	public ResponseEntity<ListResponse<String>> getPlacePhoto(@RequestParam("placeId") String placeId) {
-		List<String> photoUrls = googlePlaceService.getPlacePhotos(placeId);
-		return new ResponseEntity<>(new ListResponse<>(photoUrls), HttpStatus.OK);
+		return new ResponseEntity<>(placeDetails, HttpStatus.OK);
 	}
 
 }
