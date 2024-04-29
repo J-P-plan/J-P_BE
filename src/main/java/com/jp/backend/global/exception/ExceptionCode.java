@@ -22,6 +22,7 @@ public enum ExceptionCode {
 
 	//Place
 	PLACE_NONE(404, "PLACE_NONE"),
+	PLACE_DETAIL_NONE(404, "PLACE_DETAIL_NONE"),
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),

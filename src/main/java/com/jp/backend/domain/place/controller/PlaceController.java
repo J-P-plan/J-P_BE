@@ -1,5 +1,7 @@
 package com.jp.backend.domain.place.controller;
 
+import com.jp.backend.domain.place.dto.PlaceDetailResDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,4 +55,15 @@ public class PlaceController {
 	) throws Exception {
 		return ResponseEntity.ok(placeService.findPlace(placeId));
 	}
+
+	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
+	@GetMapping("/place-details/{placeType}/{placeId}")
+	@Operation(summary = "장소 상세 페이지를 조회합니다.",
+			description = "")
+	public ResponseEntity<PlaceDetailResDto> findPlacePage(@PathVariable("placeType") PlaceType placeType, @PathVariable("placeId") String placeId){
+		PlaceDetailResDto details = placeService.getPlaceDetails(placeType, placeId);
+
+		return ResponseEntity.ok(details);
+	}
+
 }

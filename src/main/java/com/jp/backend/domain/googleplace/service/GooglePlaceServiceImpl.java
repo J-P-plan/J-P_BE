@@ -89,6 +89,12 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
+	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩 --> 유연성, 확장성 증가
+	@Override
+	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
+		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
+	}
+
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
@@ -109,11 +115,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsResDto response = restTemplate.getForObject(uri, GooglePlaceDetailsResDto.class);
 		return response;
-	}
-
-	// placeId만 넣어도 상세 정보를 가져올 수 있도록 오버로딩 --> 유연성, 확장성 증가
-	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
-		return getPlaceDetails(placeId, null); // fields를 null로 전달하여 내부적으로 호출
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드

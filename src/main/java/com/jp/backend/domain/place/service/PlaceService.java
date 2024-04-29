@@ -1,6 +1,7 @@
 package com.jp.backend.domain.place.service;
 
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
+import com.jp.backend.domain.place.dto.PlaceDetailResDto;
 import com.jp.backend.domain.place.dto.PlaceResDto;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.global.dto.PageResDto;
@@ -10,4 +11,6 @@ public interface PlaceService {
 		Integer elementCnt);
 
 	PlaceResDto findPlace(Long placeId);
+
+	PlaceDetailResDto getPlaceDetails(PlaceType placeType, String placeId);
 }
