@@ -74,8 +74,8 @@ public class GoogleService {
 		// 	System.out.println("Response Status: " + ex.getStatusCode());
 		// 	System.out.println("Response Body: " + ex.getResponseBodyAsString());
 		// 	// 필요한 추가 조치
-		// }
-
+		//}
+		//
 		if (responseEntity.getStatusCode() == HttpStatus.OK) {
 			String jsonResponse = responseEntity.getBody();
 

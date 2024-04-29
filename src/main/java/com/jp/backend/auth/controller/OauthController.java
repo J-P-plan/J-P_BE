@@ -1,6 +1,5 @@
 package com.jp.backend.auth.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +22,32 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "00. [인증]")
 public class OauthController {
 	private final GoogleService googleService;
-	@Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-	private String LOGIN_REDIRECT_URL;
+
+	// @GetMapping("/oauth2/authorization/google")
+	// @Operation(
+	// 	summary = "Google 로그인 API",
+	// 	description = "Access Token은 URL으로, Refresh Token은 cookie로 전송<br>"
+	// 		+ "swagger로 요청시 Cors 에러가 나더라구요 ㅠㅠ 테스트시 아래 url로 요청<br>"
+	// 		+ "local : <b><a href='http://localhost:8080/oauth2/authorization/google'> http://localhost:8080/oauth2/authorization/google </a></b> <br> "
+	// 		+ "prod : <b><a href='http://jandp-travel.kro.kr:8080/oauth2/authorization/google'> http://jandp-travel.kro.kr:8080/oauth2/authorization/google </a></b> <br> "
+	// 		+ "응답URL : http://jandp-travel.kro.kr:8080/?token={토큰트콘} "
+	//
+	// )
+	// public ResponseEntity signinGoogle(
+	// 	HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+	// 	return ResponseEntity.ok(response);
+	// }
+
+	//id: 사용자의 고유 식별자
+	// email: 사용자의 이메일 주소
+	// verified_email: 이메일이 검증되었는지 여부
+	// name: 사용자의 전체 이름
 
 	@GetMapping("/login/oauth2/code/google")
 	@Operation(
 		summary = "Google 로그인 API",
 		description = " "
-			+ " 요청 url 형식 https://accounts.google.com/o/oauth2/v2/auth?scope=profile&response_type=code&client_id=521878069403-pe47h04vdr0bceboq7fm9430bahsae13.apps.googleusercontent.com&redirect_uri=http://localhost:8080/login/oauth2/code/google"
+			+ " 요청 url 형식 https://accounts.google.com/o/oauth2/v2/auth?scope=profile+email&response_type=code&client_id=521878069403-pe47h04vdr0bceboq7fm9430bahsae13.apps.googleusercontent.com&redirect_uri=http://localhost:8080/login/oauth2/code/google <br>"
 			+ "헤더에 AccessToken 부여 + Cookie에 refreshToken 부여"
 			+ "id: 사용자의 고유 식별자 <br>"
 			+ "email: 사용자의 이메일 주소 <br>"
