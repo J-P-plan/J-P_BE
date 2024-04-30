@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class GooglePlacePhotosResDto {
+public class GooglePlacePhotosResDto { // 장소의 photo 정보 response
 	private Result result;
 
 	@Getter
