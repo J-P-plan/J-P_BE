@@ -1,6 +1,7 @@
 package com.jp.backend.domain.place.entity;
 
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,10 +23,9 @@ public class PlaceDetail {
 
     private String description;
 
-    // TODO Tag 엔티티 만들기 - data.sql도 수정
-    @Builder.Default
-    @ElementCollection
-    private List<String> tags = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "place_detail_id")
+    private List<Tag> tags = new ArrayList<>();
 
     @Builder.Default
     @ElementCollection

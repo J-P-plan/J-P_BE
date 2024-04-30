@@ -29,7 +29,7 @@ public class Like extends Auditable {
 
     public enum LikeType {
         REVIEW("리뷰"),
-        TRIP_JOURNAL("여행기"),
+        TRAVEL_DIARY("여행기"),
         PLACE("여행지");
 
         @Getter

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
 
+import java.util.Optional;
+
 public interface PlaceRepository {
 	Page<Place> findPlacePage(
 		PlaceType placeType,
@@ -14,4 +16,6 @@ public interface PlaceRepository {
 		//TODO 인기순 추가
 		Pageable pageable
 	);
+
+	Optional<Place> findByPlaceId(String placeId);
 }

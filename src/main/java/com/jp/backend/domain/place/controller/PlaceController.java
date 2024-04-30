@@ -57,14 +57,16 @@ public class PlaceController {
 	}
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
-	@GetMapping("/place-details/{placeType}/{placeId}")
+
+	@GetMapping("/place-details/{placeType}/{placeId}") // TODO 타입도 받을까 말까
 	@Operation(summary = "장소 상세 페이지를 조회합니다.",
-			description = "") // TODO 이것도 해
+			description = "placeType - TRAVEL_PLACE (인기 여행지) / CITY (인기 도시) / THEME (테마 여행지) <br>" +
+					"placeId - 해당 장소의 String 타입의 placeId"
+	)
 	public ResponseEntity<PlaceDetailResDto> findPlacePage(@PathVariable("placeType") PlaceType placeType, @PathVariable("placeId") String placeId){
 		PlaceDetailResDto details = placeService.getPlaceDetails(placeType, placeId);
 
 		return ResponseEntity.ok(details);
 	}
-	// TODO 엔드포인트 다 수정하기 s붙이지 말고 page나 list 붙여서
 
 }

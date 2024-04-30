@@ -26,13 +26,13 @@ VALUES (12, 'ChIJ9SUiOHBOZjUR_YnH8Lbjzt0', '동궁과 월지(안압지)', '경�
         129.2265835);
 
 INSERT INTO place_detail (id, place_id, description, place_type)
-VALUES (1, 'ChIJ9SUiOHBOZjUR_YnH8Lbjzt0', '첫 번째 장소임', 'TRAVEL');
+VALUES (1, 'ChIJ9SUiOHBOZjUR_YnH8Lbjzt0', '첫 번째 장소임', 'TRAVEL_PLACE');
 
 INSERT INTO place_detail (id, place_id, description, place_type)
 VALUES (2, 'ChIJNc0j6G3raDURpwhxJHTL2DU', '두 번째 장소 부산', 'CITY');
 
 INSERT INTO place_detail (id, place_id, description, place_type)
-VALUES (3, 'ChIJoTpGnwaxfDUR6kl-yfyy6R0', '세 번째 장소 구리', 'TRAVEL');
+VALUES (3, 'ChIJoTpGnwaxfDUR6kl-yfyy6R0', '세 번째 장소 구리', 'TRAVEL_PLACE');
 
 INSERT INTO place_detail (id, place_id, description, place_type)
 VALUES (4, 'ChIJWw9PleHlYTURRh09nFHGt4A', '네 번째 장소 강릉', 'CITY');
