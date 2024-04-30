@@ -23,9 +23,11 @@ public class PlaceDetail {
     private String description;
 
     // TODO Tag 엔티티 만들기 - data.sql도 수정
+    @Builder.Default
     @ElementCollection
     private List<String> tags = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection
     private List<String> photoUrls = new ArrayList<>();
 

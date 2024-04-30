@@ -39,6 +39,8 @@ public class User extends Auditable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String sub; //oauth2 식별아이디
+
 	private String name;
 
 	@Email

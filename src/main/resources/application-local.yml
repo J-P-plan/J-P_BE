@@ -12,7 +12,7 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            redirect-uri: "http://localhost:3000/login/oauth2/code/google"
 
   h2:
     console:

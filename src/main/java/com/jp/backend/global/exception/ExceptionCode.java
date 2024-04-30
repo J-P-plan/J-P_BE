@@ -21,6 +21,7 @@ public enum ExceptionCode {
 	ALREADY_INVITED(409, "ALREADY_INVITED"),
 
 	//Place
+	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
 	PLACE_NONE(404, "PLACE_NONE"),
 	PLACE_DETAIL_NONE(404, "PLACE_DETAIL_NONE"),
 
@@ -31,6 +32,7 @@ public enum ExceptionCode {
 	//Comment
 	COMMENT_NONE(404, "COMMENT_NONE"),
 	TYPE_NONE(401, "타입이 없습니다."),
+	AUTH_FAILED(401, "인증실패"),
 
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),

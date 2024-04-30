@@ -32,7 +32,7 @@ public class PlaceDetailResDto {
     private List<String> photoUrls;
 
     @Schema(description = "Google places api에서 가져온 상세 정보")
-    private GooglePlaceDetailsResDto.Result detailsByGoogle;
+    private GooglePlaceDetailsResDto detailsByGoogle;
 
     @Enumerated(EnumType.STRING)
     @Schema(description = "장소 상세 페이지 타입")
