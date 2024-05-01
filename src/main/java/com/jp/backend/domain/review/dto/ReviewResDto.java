@@ -22,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReviewResDto {
 	@Schema(description = "아이디")
-	private String id;
+	private Long id;
 	@Schema(description = "제목")
 	private String subject;
 
@@ -38,8 +38,8 @@ public class ReviewResDto {
 	@Schema(description = "별점")
 	private Double star;
 
-	@Schema(description = "실제 방문여부")
-	private Boolean visitedYn;
+	// @Schema(description = "실제 방문여부")
+	// private Boolean visitedYn;
 
 	@Schema(description = "조회수")
 	private Integer viewCnt;
@@ -53,16 +53,17 @@ public class ReviewResDto {
 
 	@Builder
 	public ReviewResDto(Review review, List<Comment> commentList) {
+		this.id = review.getId();
 		this.content = review.getContent();
 		this.placeId = review.getPlaceId();
 		this.star = review.getStar();
 		this.subject = review.getSubject();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
-		this.visitedYn = true;
 		this.viewCnt = review.getViewCnt();
 		this.createdAt = review.getCreatedAt();
-		this.commentResDtoList = commentList.stream()
-			.map(comment -> CommentResDto.builder().comment(comment).build())
-			.toList();
+		if (commentList != null)
+			this.commentResDtoList = commentList.stream()
+				.map(comment -> CommentResDto.builder().comment(comment).build())
+				.toList();
 	}
 }
