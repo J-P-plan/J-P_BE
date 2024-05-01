@@ -1,0 +1,48 @@
+spring:
+  sql:
+    init:
+      mode: always
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 521878069403-pe47h04vdr0bceboq7fm9430bahsae13.apps.googleusercontent.com
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "http://localhost:3000/login/oauth2/code/google"
+
+  h2:
+    console:
+      settings:
+        web-allow-others: true #배포환경에서 h2 적용
+      enabled: true  # 여기까지만 해도 H2 Browser 생성됨
+      path: /h2  # 추가 - Context path 변경
+  datasource: # 추가
+    url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
+
+  jpa:
+    defer-datasource-initialization: true
+    show_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        auto_quote_keyword: true
+        jdbc:
+          batch_size: 1000
+        order_insert: true
+        default_batch_fetch_size: 1000
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa: DEBUG
