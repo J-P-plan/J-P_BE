@@ -24,21 +24,26 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Schedule {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  private String title;
+	private String title;
 
-  private LocalDate startDate;
+	private LocalDate startDate;
 
-  private LocalDate endDate;
+	private LocalDate endDate;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  private List<ScheduleUser> member;
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<ScheduleUser> member;
 
-  private Status status;
+	private Status status;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  private List<Day> dayList;
+	@OneToMany(fetch = FetchType.LAZY)
+	private List<Day> dayList;
+
+	public void addDay(Day day) {
+		dayList.add(day);
+		//day.setSchedule(this); //양방향 연결 해야할까?_?
+	}
 }

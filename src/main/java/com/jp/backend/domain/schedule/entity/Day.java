@@ -37,8 +37,9 @@ public class Day {
 	@OneToMany(fetch = FetchType.LAZY)
 	private List<DayLocation> dayLocationList;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<DayTime> dayTimeList;
-
 	private PlanType planType;
+
+	// public void setSchedule(Schedule schedule){
+	// 	this.sc
+	// }
 }

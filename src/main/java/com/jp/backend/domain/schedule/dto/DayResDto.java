@@ -13,6 +13,5 @@ public class DayResDto {
 	private Integer dayIndex;
 	private PlanType planType;
 	private List<DayLocationResDto> dayLocationResDtoList;
-	private List<DayTimeResDto> dayTimeResDtoList;
 
 }

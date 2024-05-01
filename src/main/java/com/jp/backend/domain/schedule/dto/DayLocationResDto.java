@@ -2,6 +2,8 @@ package com.jp.backend.domain.schedule.dto;
 
 import java.awt.*;
 
+import com.jp.backend.domain.schedule.enums.Mobility;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +27,12 @@ public class DayLocationResDto {
 	private Point location; //위도, 경도
 
 	private String placeId; //restaurant, cafe
+
+	//비용
+	private Integer expense;
+
+	//이동수단
+	private Mobility mobility;
 
 	private String name;
 }

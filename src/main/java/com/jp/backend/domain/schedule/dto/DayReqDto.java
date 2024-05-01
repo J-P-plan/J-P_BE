@@ -21,5 +21,4 @@ public class DayReqDto {
 	private Integer dayIndex;
 	private PlanType planType;
 	private List<DayLocationReqDto> dayLocationReqDtoList;
-	private List<DayTimeReqDto> dayTimeReqDtoList;
 }
