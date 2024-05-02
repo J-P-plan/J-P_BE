@@ -102,6 +102,11 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 					.thenComparing(GooglePlaceSearchResDto.Result::getRating, Comparator.reverseOrder()));
 	}
 
+	@Override
+	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
+		return getPlaceDetails(placeId, null);
+	}
+
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
@@ -174,4 +179,16 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			throw new CustomLogicException(ExceptionCode.PLACES_API_REQUEST_FAILED);
 		}
 	}
+
+	// placeId 존재하는지 검증
+	@Override
+	public boolean verifyPlaceId(String placeId) {
+		try {
+			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
+			return response != null;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 }
