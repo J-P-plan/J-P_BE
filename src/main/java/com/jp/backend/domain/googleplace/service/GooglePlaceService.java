@@ -20,6 +20,4 @@ public interface GooglePlaceService {
 
 	List<String> getPlacePhotos(String placeId);
 
-	boolean verifyPlaceId(String placeId);
-
 }

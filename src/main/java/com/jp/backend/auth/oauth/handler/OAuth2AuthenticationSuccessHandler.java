@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
@@ -28,7 +27,6 @@ import com.jp.backend.auth.utils.CookieUtils;
 import com.jp.backend.domain.user.entity.ProviderType;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -68,16 +66,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) {
 		//요청 쿠키에서 리디렉션 url 매개변수가 있는지 확인
-		Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
-			.map(Cookie::getValue);
+
+		String redirectUri = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
+
+		// Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+		// 	.map(Cookie::getValue);
 
 		//매개변수가 있다면, 인가된 리디렉션 url인지 확인, 인가되지 않은 경우 예외
-		if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-			throw new IllegalArgumentException(
-				"Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
-		}
-
-		String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
+		// if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+		// 	throw new IllegalArgumentException(
+		// 		"Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+		// }
+		//getDefaultTargetUrl()
+		String targetUrl = redirectUri != null ? redirectUri : getDefaultTargetUrl();
 
 		//인증 토큰에서 사용자의 이메일, 역할 등의 정보를 추출, 액세스 토큰과 리프레시 토큰 생성
 		OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken)authentication;
@@ -111,10 +112,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		// 응답 헤더에 토큰을 설정하여 클라이언트에게 반환
 		// 이 부분에서 targetUrl 대신에 response header에 직접 토큰을 설정해줍니다.
-		response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
+		//response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
 
 		//엑세스 토큰과 리프레시 토큰을 쿼리 매개변수로 하는 대상 url을 구성하여 반환
 		return UriComponentsBuilder.fromUriString(targetUrl)
+			.queryParam(AUTHORIZATION, accessToken.getToken())
 			.build().toUriString();
 	}
 
