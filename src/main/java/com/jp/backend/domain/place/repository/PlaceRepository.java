@@ -16,6 +16,4 @@ public interface PlaceRepository {
 		//TODO 인기순 추가
 		Pageable pageable
 	);
-
-	Optional<Place> findByPlaceId(String placeId);
 }

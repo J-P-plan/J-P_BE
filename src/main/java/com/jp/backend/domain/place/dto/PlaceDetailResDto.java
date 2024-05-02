@@ -1,7 +1,7 @@
 package com.jp.backend.domain.place.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
-import com.jp.backend.domain.place.entity.PlaceDetail;
 import com.jp.backend.domain.place.enums.PlaceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceDetailResDto {
     @Schema(description = "아이디")
     private Long id;
@@ -38,8 +39,10 @@ public class PlaceDetailResDto {
     @Schema(description = "장소 상세 페이지 타입")
     private PlaceType placeType;
 
-    // TODO 좋아요 눌렀는지 여부 어떻게 할지
-//    @Schema(description = "좋아요 눌렀는지 여부")
-//    private Boolean isLiked;
+    @Schema(description = "좋아요를 누른 유저의 id")
+    private Long userId;
+
+    @Schema(description = "좋아요 눌렀는지 여부")
+    private Boolean isLiked;
 
 }

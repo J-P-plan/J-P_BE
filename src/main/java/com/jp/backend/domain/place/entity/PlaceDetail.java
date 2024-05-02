@@ -1,7 +1,7 @@
 package com.jp.backend.domain.place.entity;
 
 import com.jp.backend.domain.place.enums.PlaceType;
-import com.jp.backend.domain.tag.entity.Tag;
+import com.jp.backend.domain.tag.entity.PlaceDetailTag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,13 +19,13 @@ public class PlaceDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String placeId;
 
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "place_detail_id")
-    private List<Tag> tags = new ArrayList<>();
+    @OneToMany(mappedBy = "placeDetail", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // TODO cascadeType 다시
+    private List<PlaceDetailTag> placeDetailTags;
 
     @Builder.Default
     @ElementCollection

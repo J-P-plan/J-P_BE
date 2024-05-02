@@ -16,11 +16,11 @@ public class Tag {
 
     @Column(unique = true)
     private String name;
-    // 이건 유니크하고 / 만약 다른 사용자가 같은 content의 태그를 만든다면 repo에서 존재하는지 검증 후 있으면 재사용할 수 있도록
+    // 만약 다른 사용자가 같은 name의 태그를 만든다면 레포에서 존재하는지 검증 후 있으면 재사용할 수 있도록
     // 존재하지 않으면 그 땐 새로 생성해서 db에 저장
 
     @Enumerated(EnumType.STRING)
-    private TagType tagType;
+    private TagType tagType; // TODO 이거 없어도 될 것 같음
 
     public enum TagType {
         TRAVEL_PLACE("여행지"),

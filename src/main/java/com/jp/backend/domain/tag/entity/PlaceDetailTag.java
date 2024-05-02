@@ -13,13 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceDetailTag {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "place_id", referencedColumnName = "id")
+    @JoinColumn(name = "place_detail_id", referencedColumnName = "id")
     private PlaceDetail placeDetail;
 
     @ManyToOne

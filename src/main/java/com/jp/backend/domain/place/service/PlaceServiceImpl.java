@@ -2,6 +2,7 @@ package com.jp.backend.domain.place.service;
 
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
+import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
 import com.jp.backend.domain.place.dto.PlaceResDto;
@@ -12,6 +13,8 @@ import com.jp.backend.domain.place.repository.JpaPlaceDetailRepository;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
 import com.jp.backend.domain.place.repository.PlaceRepository;
 import com.jp.backend.domain.tag.entity.Tag;
+import com.jp.backend.domain.user.entity.User;
+import com.jp.backend.domain.user.repository.JpaUserRepository;
 import com.jp.backend.global.dto.PageInfo;
 import com.jp.backend.global.dto.PageResDto;
 import com.jp.backend.global.exception.CustomLogicException;
@@ -28,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.jp.backend.domain.like.entity.Like.LikeType.PLACE;
+
 @Service
 @Slf4j
 @Transactional(readOnly = true)
@@ -36,6 +41,7 @@ public class PlaceServiceImpl implements PlaceService {
     private final JpaPlaceRepository placeRepository;
     private final JpaPlaceDetailRepository placeDetailRepository;
     private final GooglePlaceService googlePlaceService;
+    private final JpaLikeRepository likeRepository;
 
     /**
      * Place 전체 조회 - Pagination
@@ -79,7 +85,7 @@ public class PlaceServiceImpl implements PlaceService {
     // TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
 
     @Override
-    public PlaceDetailResDto getPlaceDetails(PlaceType placeType, String placeId) {
+    public PlaceDetailResDto getPlaceDetails(PlaceType placeType, String placeId, User user) {
         GooglePlaceDetailsResDto detailsByGoogle = googlePlaceService.getPlaceDetails(placeId);
 
         PlaceDetail placeDetail = verifyPlaceDetail(placeId);
@@ -96,15 +102,23 @@ public class PlaceServiceImpl implements PlaceService {
             List<String> additionalPhotoUrls = googlePlaceService.getPlacePhotos(placeId);
             photoUrls.addAll(additionalPhotoUrls);
         }
+        // TODO 여기 photoUrl 이거랑 google details에서 photoUrl 두개 들어옴
+        //  그냥 필드를 두개 만들어서 db에 있는 거랑 google에서 가져오는 거 따로 보여주게 할까 흠
+        //  그냥 다 byGoogle 하지 말고 한번에 보여줄까? 아예 필드를 다 만들어서
 
-        // 태그 가져오기
-        List<String> tagNames = placeDetail.getTags().stream()
-                .map(Tag::getName)
-                .toList();
+        // TODO 태그 가져오기
+//        List<String> tagNames = placeDetail.getTags().stream()
+//                .map(Tag::getName)
+//                .toList();
+        List<String> tagNames = null;
         PlaceDetailResDto dto = new PlaceDetailResDto();
         dto.setTags(tagNames);
 
         // TODO 좋아요 존재 여부 검사
+        boolean isLiked = false;
+        if (user != null) { // 사용자가 로그인한 경우
+            isLiked = likeRepository.countLike(PLACE, placeId, user.getId()) > 0;
+        }
 
         PlaceDetailResDto response = PlaceDetailResDto.builder()
                 .id(placeDetail.getId())
@@ -114,7 +128,8 @@ public class PlaceServiceImpl implements PlaceService {
                 .photoUrls(photoUrls)
                 .detailsByGoogle(detailsByGoogle)
                 .placeType(placeType)
-//				.isLiked(false) // TODO 좋아요 눌렀는지 여부 어떻게 할지
+                .userId(user != null ? user.getId() : null) // TODO 이게 왜 안나오징
+                .isLiked(isLiked)
                 .build();
 
 
