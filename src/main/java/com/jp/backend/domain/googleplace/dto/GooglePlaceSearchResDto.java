@@ -17,13 +17,14 @@ import lombok.ToString;
 @Builder
 @Getter
 @Setter
-public class GooglePlaceSearchResDto {
+public class GooglePlaceSearchResDto { // search 결과에 따른 장소 list response
 	private String nextPageToken;
-	private List<Place> results;
+	private List<Result> results;
 
 	@Getter
 	@Setter
-	public static class Place {
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class Result {
 		private String placeId;
 		private String name;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -33,6 +34,7 @@ public class GooglePlaceSearchResDto {
 		private Geometry geometry;
 		private double rating;
 		private int userRatingsTotal;
+		private List<String> photoUrls;
 	}
 
 	@Getter

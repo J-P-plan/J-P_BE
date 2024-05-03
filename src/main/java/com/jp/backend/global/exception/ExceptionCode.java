@@ -22,6 +22,7 @@ public enum ExceptionCode {
 
 	//Place
 	PLACE_NONE(404, "PLACE_NONE"),
+	PLACES_API_REQUEST_FAILED(500, "PLACES_API_REQUEST_FAILED"),
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),
@@ -30,6 +31,8 @@ public enum ExceptionCode {
 	//Comment
 	COMMENT_NONE(404, "COMMENT_NONE"),
 	TYPE_NONE(401, "타입이 없습니다."),
+	AUTH_FAILED(401, "인증실패"),
+	REPLY_NONE(404, "REPLY_NONE"),
 
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),

@@ -53,9 +53,9 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	@Transactional
 	public ReviewResDto updateReview(
-		Long reviewId,
-		ReviewUpdateDto updateDto,
-		String username) {
+			Long reviewId,
+			ReviewUpdateDto updateDto,
+			String username) {
 
 		User user = userService.verifyUser(username);
 		Review findReview = verifyReview(reviewId);
@@ -80,29 +80,40 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	public PageResDto<ReviewCompactResDto> findReviewPage(
-		Integer page,
-		String placeId,
-		ReviewSort sort,
-		Integer elementCnt) {
+			Integer page,
+			String placeId,
+			ReviewSort sort,
+			Integer elementCnt) {
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
 		Page<ReviewCompactResDto> reviewPage =
-			reviewRepository.findReviewPage(placeId, sort, pageable)
-				.map(review -> ReviewCompactResDto.builder().review(review).build());
+				reviewRepository.findReviewPage(placeId, sort, pageable)
+						.map(review -> {
+							//todo 이거 댓글수 개선
+							List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW,
+									review.getId());
+							int commentCnt = commentList.size();
+							for (Comment comment : commentList) {
+								commentCnt += comment.getReplyList().size();
+							}
+							return ReviewCompactResDto.builder()
+									.review(review)
+									.commentCnt(commentCnt)
+									.build();
+						});
 
 		PageInfo pageInfo =
-			PageInfo.<ReviewCompactResDto>builder()
-				.pageable(pageable)
-				.pageDto(reviewPage)
-				.build();
+				PageInfo.<ReviewCompactResDto>builder()
+						.pageable(pageable)
+						.pageDto(reviewPage)
+						.build();
 
 		return new PageResDto<>(pageInfo, reviewPage.getContent());
 	}
 
-	@Override
 	public Review verifyReview(Long reviewId) {
 		return reviewRepository.findById(reviewId)
-			.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));
+				.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));
 	}
 
 }
