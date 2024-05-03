@@ -112,10 +112,17 @@ public class PlaceServiceImpl implements PlaceService {
 		// 좋아요 여부 검사
 		boolean isLiked = false; // 로그인 안했으면 무조건 false
 		if (user != null) { // 로그인 했으면 좋아요 여부 가져오기
-			isLiked = likeRepository.countLike(PLACE, placeId, user.getId()) > 0;
+			isLiked = likeRepository.countLike(PLACE, placeId, user.getId()) > 0; // TODO like pull 받고 이거 수정
 		}
+		Long likeCount = likeRepository.countLike(PLACE, placeId, null);
+		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수랑 이거 합해서 보여줄까 고민
 
-		// TODO 이거 dto에 넣고 거기서 정의하고 가져올 수 있도록
+		// TODO !!!!!!!!! 리뷰 승인 후 / 노트북에서 좋아요 기능 pull 받고 거기서 develop pull 받은 후에
+		//  다시 push 하기 !!!!!! 그래야 리뷰까지 합쳐서 올라가니까
+
+		// TODO 리팩토링 - 이 부분 dto에 따로 toEntity 이런 식으로 따로 만들어서 할 수 있을지 확인하기
+		// TODO controller 엔드포인트도 다 수정해
+		// TODO data.sql에 데이터 제대로 넣기
 		PlaceDetailResDto response = PlaceDetailResDto.builder()
 			.id(placeDetail.getId())
 			.placeId(placeId)
@@ -129,8 +136,9 @@ public class PlaceServiceImpl implements PlaceService {
 			.tags(tagNames)
 			.photoUrls(photoUrls)
 			.placeType(placeType)
+			.likeCount(likeCount)
 			.userId(user.getId())
-			.isLiked(isLiked) // TODO 이거가 계속 false네
+			.isLiked(isLiked)
 			.build();
 
 		return response;

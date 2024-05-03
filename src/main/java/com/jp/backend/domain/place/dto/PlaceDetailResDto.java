@@ -49,6 +49,9 @@ public class PlaceDetailResDto {
 	@Schema(description = "장소 상세 페이지 타입")
 	private PlaceType placeType;
 
+	@Schema(description = "좋아요 총 개수")
+	private Long likeCount;
+
 	@Schema(description = "좋아요를 누른 유저의 id")
 	private Long userId;
 
