@@ -48,7 +48,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 	public OrderSpecifier<?> orderBySort(ReviewSort sort) {
 		return switch (sort) {
-			case HOT -> review.viewCnt.desc();
+			case HOT -> review.viewCnt.desc(); //todo 좋아요순
 			case STAR_HIGH -> review.star.desc();
 			case STAR_LOW -> review.star.asc();
 			default -> review.createdAt.desc();
