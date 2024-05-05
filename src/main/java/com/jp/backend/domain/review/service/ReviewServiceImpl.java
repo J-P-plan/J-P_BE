@@ -111,7 +111,6 @@ public class ReviewServiceImpl implements ReviewService {
 		return new PageResDto<>(pageInfo, reviewPage.getContent());
 	}
 
-	@Override
 	public Review verifyReview(Long reviewId) {
 		return reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));

@@ -1,5 +1,7 @@
 package com.jp.backend.domain.googleplace.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
