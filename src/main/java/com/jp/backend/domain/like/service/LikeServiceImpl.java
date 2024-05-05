@@ -1,5 +1,6 @@
 package com.jp.backend.domain.like.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -7,10 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
 import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
+import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.service.UserService;
@@ -59,21 +62,43 @@ public class LikeServiceImpl implements LikeService {
 
 	// 마이페이지 찜목록 - 리뷰/여행기/장소
 	@Override
-	public PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, String email, Integer page,
+	public PageResDto<LikeResDto> getFavoriteList(Like.LikeType likeType, PlaceType placeType, String email,
+		Integer page,
 		Integer elementCnt) {
 		// 유저 존재 여부 확인
 		User user = userService.verifyUser(email);
 
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 		Page<LikeResDto> likePage =
-			likeRepository.getFavoriteList(likeType, user.getId(), pageable);
+			likeRepository.getFavoriteList(likeType, placeType, user.getId(), pageable);
+
+		// Name 필드가 null인 경우 (PLACE 테이블에 저장된 정보가 없을 경우) --> api에서 가져오도록
+		// --> 이 경우는 여행지의 경우만 해당
+		List<LikeResDto> updatedContent = likePage.getContent().stream().map(like -> {
+			if (like.getTargetName() == null) {
+				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(like.getTargetId());
+
+				like.setTargetName(placeDetails.getName());
+				like.setTargetAddress(placeDetails.getFormattedAddress());
+
+				List<String> photoUrls = placeDetails.getPhotoUrls();
+				if (!photoUrls.isEmpty()) {
+					like.setPhotoUrl(photoUrls.get(0)); // 첫번째 사진으로
+				}
+
+				like.setPlaceType(PlaceType.TRAVEL_PLACE);
+				// TODO 사용자가 홈화면에 없는 도시 좋아요 누르면 그것도 TRAVEL_PLACE로 들어가게 / CITY 어떻게 구분하지?
+				//  아니 이거 이렇게 하니까 CITY 로
+			}
+			return like;
+		}).toList();
 
 		PageInfo<LikeResDto> pageInfo = PageInfo.<LikeResDto>builder()
 			.pageable(pageable)
 			.pageDto(likePage)
 			.build();
 
-		return new PageResDto<>(pageInfo, likePage.getContent());
+		return new PageResDto<>(pageInfo, updatedContent);
 	}
 
 	// TODO targetId 존재 여부 확인 - 여행기 구현 완료 후 수정

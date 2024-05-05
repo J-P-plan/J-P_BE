@@ -7,11 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.place.enums.PlaceType;
 
 public interface LikeRepository {
 	Optional<Like> findLike(Like.LikeType likeType, String targetId, Long userId);
 
-	long countLike(Like.LikeType likeType, String targetId);
-
-	Page<LikeResDto> getFavoriteList(Like.LikeType likeType, Long userId, Pageable pageable);
+	Page<LikeResDto> getFavoriteList(Like.LikeType likeType, PlaceType placeType, Long userId, Pageable pageable);
 }

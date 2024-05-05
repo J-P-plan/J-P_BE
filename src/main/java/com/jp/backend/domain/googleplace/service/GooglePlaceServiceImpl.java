@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -125,16 +126,32 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
+		// null 처리
+		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
+			.orElse(new GooglePlaceDetailsDto.Result());
+
+		boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
+			.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
+			.orElse(false);
+		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
+			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
+			.orElse(null);
+		String formattedPhoneNumber = result.getFormattedPhoneNumber();
+		String businessStatus = result.getBusinessStatus();
+		List<String> photoUrls = Optional.ofNullable(result.getPhotoUrls())
+			.orElseGet(() -> getPlacePhotos(placeId));
+		String website = result.getWebsite();
+
 		return GooglePlaceDetailsResDto.builder()
-			.placeId(apiResponse.getResult().getPlaceId())
-			.name(apiResponse.getResult().getName())
-			.formattedAddress(apiResponse.getResult().getFormattedAddress())
-			.formattedPhoneNumber(apiResponse.getResult().getFormattedPhoneNumber())
-			.businessStatus(apiResponse.getResult().getBusinessStatus())
-			.openNow(apiResponse.getResult().getOpeningHours().isOpenNow())
-			.weekdayText(apiResponse.getResult().getOpeningHours().getWeekdayText())
-			.photoUrls(getPlacePhotos(placeId))
-			.website(apiResponse.getResult().getWebsite())
+			.placeId(result.getPlaceId())
+			.name(result.getName())
+			.formattedAddress(result.getFormattedAddress())
+			.formattedPhoneNumber(formattedPhoneNumber)
+			.businessStatus(businessStatus)
+			.openNow(isOpenNow)
+			.weekdayText(weekdayText)
+			.photoUrls(photoUrls)
+			.website(website)
 			.build();
 	}
 
@@ -185,7 +202,8 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	public boolean verifyPlaceId(String placeId) {
 		try {
 			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
-			return response != null;
+			System.out.println(response); // TODO 지우고
+			return response != null && response.getPlaceId() != null;
 		} catch (Exception e) {
 			return false;
 		}
