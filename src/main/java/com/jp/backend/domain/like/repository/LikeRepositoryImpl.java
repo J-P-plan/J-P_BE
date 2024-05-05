@@ -15,6 +15,7 @@ import com.jp.backend.domain.place.entity.QPlace;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -44,9 +45,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 	public Page<LikeResDto> getFavoriteList(Like.LikeType likeType, PlaceType placeType, Long userId,
 		Pageable pageable) {
 		List<LikeResDto> favoriteList = getFavoriteListByLikeType(likeType, placeType, userId, pageable);
-		long totalCount = getTotalCount(likeType, userId);
-		// TODO 이것도 placeType 넣어서 placeType 별로 개수 다르게 가져올 수 있도록
-		//  그런데 likeType이 PLACE일 때만 placeType이 있어야해. 이거 어케하냐 하아
+		long totalCount = getTotalCount(likeType, placeType, userId);
 
 		return new PageImpl<>(favoriteList, pageable, totalCount);
 	}
@@ -66,13 +65,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(Like.LikeType.PLACE, userId, pageable);
 
 		// placeType에 따른 조건 추가
-		// --> 인자의 placeType와 저장된 placeType이 같은 장소 + placeType이 null인 장소 둘 다 가져오기
-		BooleanExpression placeTypeCondition;
-		if (placeType == PlaceType.TRAVEL_PLACE) { // 여행지의 경우에는 db에 없는 것도 있어서
-			placeTypeCondition = qPlace.placeType.eq(placeType).or(qPlace.placeType.isNull());
-		} else { // 도시 / 테마 여행지의 경우 무조건 db에만 저장되어있음
-			placeTypeCondition = qPlace.placeType.eq(placeType);
-		}
+		BooleanExpression placeTypeCondition = getPlaceTypeCondition(placeType);
 
 		return baseQuery
 			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId))
@@ -91,6 +84,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 			.fetch();
 	}
 
+	// 공통 쿼리
 	private JPAQuery<Tuple> createBaseFavoriteQuery(Like.LikeType likeType, Long userId, Pageable pageable) {
 		return jpaQueryFactory
 			.select(qLike.id, qLike.user.id, qLike.targetId, qLike.likeType, qLike.createdAt)
@@ -103,12 +97,29 @@ public class LikeRepositoryImpl implements LikeRepository {
 	}
 
 	// 찜 목록 개수 반환
-	private long getTotalCount(Like.LikeType likeType, Long userId) {
+	private long getTotalCount(Like.LikeType likeType, PlaceType placeType, Long userId) {
+		BooleanBuilder whereCondition = new BooleanBuilder(qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId)));
+
+		if (likeType == Like.LikeType.PLACE) {
+			BooleanExpression placeTypeCondition = getPlaceTypeCondition(placeType);
+			whereCondition.and(qLike.targetId.eq(qPlace.placeId)).and(placeTypeCondition);
+		}
+
 		return jpaQueryFactory
 			.selectFrom(qLike)
-			.where(qLike.likeType.eq(likeType)
-				.and(qLike.user.id.eq(userId)))
+			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId))
+			.where(whereCondition)
 			.fetchCount();
+	}
+
+	// PlaceType 별로 다른 장소들을 가져올 조건 return 메서드
+	private BooleanExpression getPlaceTypeCondition(PlaceType placeType) {
+		if (placeType == PlaceType.TRAVEL_PLACE) { // 여행지의 경우에는 db에 없는 것도 있어서
+			return qPlace.placeType.eq(placeType)
+				.or(qPlace.placeType.isNull()); // 인자의 placeType와 저장된 placeType이 같은 장소 + placeType이 null인 장소 둘 다 가져오기
+		} else { // 도시 / 테마 여행지의 경우 무조건 db에만 저장되어있음
+			return qPlace.placeType.eq(placeType);
+		}
 	}
 
 }

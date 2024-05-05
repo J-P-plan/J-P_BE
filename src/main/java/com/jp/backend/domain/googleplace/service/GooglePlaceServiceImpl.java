@@ -202,7 +202,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	public boolean verifyPlaceId(String placeId) {
 		try {
 			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
-			System.out.println(response); // TODO 지우고
 			return response != null && response.getPlaceId() != null;
 		} catch (Exception e) {
 			return false;

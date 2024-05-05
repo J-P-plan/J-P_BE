@@ -56,10 +56,10 @@ public class LikeController {
 	// 마이페이지 찜목록
 	@GetMapping("/page/my")
 	@Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
-		description = "- likeType - PLACE/TRIP_JOURNAL (넣지 않으면 전체 조회가 가능합니다.) <br>"
-			+ "- placeType - CITY (도시) / TRAVEL_PLACE (여행지) / THEME (테마 여행지) <br>"
-			+ "(likeType이 PLACE일 경우 placeType을 넣어야 해당 type의 찜목록 list가 반환됩니다.) <br>" +
-			"- page : 조회할 페이지 <br>" +
+		description = "- likeType - PLACE / TRIP_JOURNAL (넣지 않으면 전체 조회가 가능합니다.) <br>"
+			+ "(likeType이 PLACE일 경우 placeType을 넣어야 해당 type의 찜목록 list가 반환됩니다.) <br>"
+			+ "- placeType - CITY (도시) / TRAVEL_PLACE (여행지) <br>"
+			+ "- page : 조회할 페이지 <br>" +
 			"- elementCnt : 10 (default)")
 	public ResponseEntity<PageResDto<LikeResDto>> getFavoriteList(
 		@AuthenticationPrincipal UserPrincipal principal,

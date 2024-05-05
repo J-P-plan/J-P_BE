@@ -87,8 +87,9 @@ public class LikeServiceImpl implements LikeService {
 				}
 
 				like.setPlaceType(PlaceType.TRAVEL_PLACE);
-				// TODO 사용자가 홈화면에 없는 도시 좋아요 누르면 그것도 TRAVEL_PLACE로 들어가게 / CITY 어떻게 구분하지?
-				//  아니 이거 이렇게 하니까 CITY 로
+				// TODO 사용자가 도시 검색해서 좋아요 누르면 그것도 TRAVEL_PLACE로 들어감 / CITY를 따로 구분할 수가 없는데,,
+				//  그냥 PlaceType을 set하지 말까?
+				// TODO 이거 축제를 눌러도 여행지 찜 목록에 보여지는데 흠
 			}
 			return like;
 		}).toList();
