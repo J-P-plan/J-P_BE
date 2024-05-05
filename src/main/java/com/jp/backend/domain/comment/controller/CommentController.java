@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +19,6 @@ import com.jp.backend.domain.comment.dto.ReplyReqDto;
 import com.jp.backend.domain.comment.dto.ReplyResDto;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.service.CommentService;
-import com.jp.backend.domain.review.dto.ReviewResDto;
-import com.jp.backend.domain.review.dto.ReviewUpdateDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,7 +43,6 @@ public class CommentController {
 	) throws Exception {
 		return ResponseEntity.ok(commentService.createComment(targetId, commentType, reqDto, principal.getUsername()));
 	}
-
 
 	@Operation(summary = "댓글 수정 API")
 	@PatchMapping("/comment/{commentId}")
@@ -76,7 +72,6 @@ public class CommentController {
 	) throws Exception {
 		return ResponseEntity.ok(commentService.createReply(commentId, reqDto, principal.getUsername()));
 	}
-
 
 	@Operation(summary = "대댓글 수정 API")
 	@PatchMapping("/reply/{replyId}")
