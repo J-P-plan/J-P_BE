@@ -42,4 +42,6 @@ public class Place {
 
 	private String description;
 
+	private String photoUrl;
+
 }
