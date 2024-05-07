@@ -22,14 +22,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping
+@RequestMapping("/place")
 @Validated
 @Tag(name = "02. [장소]", description = "메인 페이지의 인기도시, 인기 여행지, 테마별 여행지를 조회할 수 있습니다.")
 @RequiredArgsConstructor
 public class PlaceController {
 	private final PlaceService placeService;
 
-	@GetMapping("/places")
+	@GetMapping("/page")
 	@Operation(summary = "장소 페이징 조회 API",
 		description =
 			"장소 정보를 elementCnt 개수 만큼 조회한다.<br>" +
@@ -49,7 +49,7 @@ public class PlaceController {
 	}
 
 	// TODO 이거 물어보기 - 삭제할지
-	@GetMapping("/place/{placeId}")
+	@GetMapping("/{placeId}")
 	@Operation(summary = "장소 상세조회 API",
 		description = "Response에 File은 추후 추가예정")
 	public ResponseEntity<PlaceResDto> findPlace(
@@ -60,7 +60,7 @@ public class PlaceController {
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
 
-	@GetMapping("/place-details/{placeType}/{placeId}") // TODO 타입 안받아도 될 것 같은뎅
+	@GetMapping("/details/{placeType}/{placeId}") // TODO 타입 안받아도 될 것 같은뎅
 	@Operation(summary = "장소 상세 페이지를 조회합니다.",
 		description = "placeType - TRAVEL_PLACE (인기 여행지) / CITY (인기 도시) / THEME (테마 여행지) <br>" +
 			"placeId - 해당 장소의 String 타입의 placeId"
@@ -73,5 +73,7 @@ public class PlaceController {
 
 		return ResponseEntity.ok(details);
 	}
+
+	// TODO 수지님 피그마 / 유저 플로우
 
 }

@@ -23,7 +23,6 @@ public enum ExceptionCode {
 	//Place
 	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
 	PLACE_NONE(404, "PLACE_NONE"),
-	PLACE_DETAIL_NONE(404, "PLACE_DETAIL_NONE"),
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),

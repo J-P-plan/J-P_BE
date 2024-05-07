@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.entity.QPlace;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.tag.entity.QPlaceTag;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -19,6 +20,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
 	private final JPAQueryFactory queryFactory;
 	private final QPlace place = QPlace.place;
+	private final QPlaceTag placeTag = QPlaceTag.placeTag;
 
 	@Override
 	public Page<Place> findPlacePage(
@@ -51,6 +53,16 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 				).fetchOne();
 
 		return new PageImpl<>(result, pageable, totalCount);
+	}
+
+	// TODO 변경 - 다시 살펴봐
+	public List<String> findTagNames(String placeId) {
+		return queryFactory
+			.select(placeTag.tag.name)
+			.from(place)
+			.join(place.placeTags, placeTag)
+			.where(place.placeId.eq(placeId))
+			.fetch();
 	}
 
 }
