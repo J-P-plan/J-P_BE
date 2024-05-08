@@ -18,8 +18,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 public class DayReqDto {
-	private Integer dayIndex;
+	private Integer index;
 	private PlanType planType;
 	private List<DayLocationReqDto> dayLocationReqDtoList;
-	private List<DayTimeReqDto> dayTimeReqDtoList;
 }

@@ -1,6 +1,9 @@
 package com.jp.backend.domain.schedule.dto;
 
 import java.awt.*;
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +20,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class DayLocationReqDto {
 	//순서
-	private Integer Index;
-	//description
+	private Integer index;
+	@JsonFormat(pattern = "HH:mm")
+	private LocalTime time;
 	private String memo;
 	private Point location; //위도, 경도
 	private String placeId; //restaurant, cafe

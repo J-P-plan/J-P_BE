@@ -1,7 +1,7 @@
 package com.jp.backend.domain.schedule.service;
 
-import com.jp.backend.domain.schedule.dto.SchedulePostDto;
+import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 
 public interface ScheduleService {
-  Boolean createSchedule(SchedulePostDto postDto, String username);
+  Boolean createSchedule(ScheduleReqDto postDto, String username);
 }
