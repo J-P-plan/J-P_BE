@@ -21,7 +21,23 @@ public enum ExceptionCode {
 	ALREADY_INVITED(409, "ALREADY_INVITED"),
 
 	//Place
-	PLACE_NONE(404, "PLACE_NONE");
+	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
+	PLACE_NONE(404, "PLACE_NONE"),
+
+	//Review
+	REVIEW_NONE(404, "REVIEW_NONE"),
+	FORBIDDEN(403, "권한이 없습니다."),
+
+	//Comment
+	COMMENT_NONE(404, "COMMENT_NONE"),
+	TYPE_NONE(401, "타입이 없습니다."),
+	AUTH_FAILED(401, "인증실패"),
+	REPLY_NONE(404, "REPLY_NONE"),
+
+	// Like
+	ALREADY_LIKED(409, "ALREADY_LIKED"),
+	LIKE_NONE(404, "LIKE_NONE"),
+	TARGET_NONE(404, "TARGET_NONE");
 
 	@Getter
 	private final int code;

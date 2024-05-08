@@ -3,6 +3,7 @@ package com.jp.backend.domain.user.entity;
 import java.util.List;
 
 import com.jp.backend.auth.entity.Authorities;
+import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.user.dto.UserUpdateDto;
 import com.jp.backend.global.audit.Auditable;
 
@@ -16,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,8 @@ public class User extends Auditable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	private String sub; //oauth2 식별아이디
+
 	private String name;
 
 	@Email
@@ -49,8 +53,10 @@ public class User extends Auditable {
 	@Column(nullable = true, length = 50)
 	private String nickname;
 
-	@Column
-	private String picture;
+	@OneToOne(orphanRemoval = true, cascade = CascadeType.ALL)
+	private File profileId; // 프로필 이미지 Id
+
+	private String picture; // google 프로필
 
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = true, length = 20)
@@ -70,9 +76,8 @@ public class User extends Auditable {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = true)
 	private UserRole role;
-	// TODO : file
+
 	// TODO : badge
-	// TODO : 다른 클래스와 연관관계 추가
 
 	public enum Mbti {
 		P("인식형 P"),

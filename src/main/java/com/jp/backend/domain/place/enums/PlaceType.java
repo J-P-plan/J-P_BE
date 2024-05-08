@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum PlaceType {
 	CITY("도시"),
-	TRAVEL("여행지"),
+	TRAVEL_PLACE("여행지"),
 	THEME("테마");
 
 	@Getter
