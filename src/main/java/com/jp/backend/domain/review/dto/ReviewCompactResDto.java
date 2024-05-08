@@ -38,6 +38,7 @@ public class ReviewCompactResDto {
 
 	//todo 좋아요 갯수
 
+
 	@Builder
 	public ReviewCompactResDto(Review review, Integer commentCnt) {
 		this.id = review.getId();

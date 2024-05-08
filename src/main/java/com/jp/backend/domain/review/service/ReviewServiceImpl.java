@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.like.repository.JpaLikeRepository;
+import com.jp.backend.domain.like.repository.LikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
@@ -37,6 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final JpaReviewRepository reviewRepository;
 	private final CustomBeanUtils<Review> beanUtils;
 	private final JpaCommentRepository commentRepository;
+	private final JpaLikeRepository likeRepository;
 
 	@Override
 	@Transactional
@@ -74,6 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public ReviewResDto findReview(Long reviewId) {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
+		likeRepository.countByLikeTypeAndTargetId(Like.LikeType.REVIEW,reviewId);
 		ReviewResDto reviewResDto = ReviewResDto.builder().review(review).build();
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 		return ReviewResDto.builder().review(review).commentList(commentList).build();
