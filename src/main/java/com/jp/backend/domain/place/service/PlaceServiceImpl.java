@@ -103,7 +103,7 @@ public class PlaceServiceImpl implements PlaceService {
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
 		// 유저 Id랑 좋아요 여부 가져오기
-		boolean isLiked = false; // 로그인 안했으면 무조건 false
+		boolean isLiked = false; // 로그인 안했으면 일단 false
 		Long userId = null;
 		if (user != null) { // 로그인 했으면
 			userId = user.getId();

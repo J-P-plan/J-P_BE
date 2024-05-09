@@ -55,7 +55,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 		return new PageImpl<>(result, pageable, totalCount);
 	}
 
-	// TODO 이거 위치 tag 쪽으로 할까?
+	// TODO 이거 위치 tag 쪽으로 할까 고민
 	public List<String> findTagNames(String placeId) {
 		return queryFactory
 			.select(placeTag.tag.name)

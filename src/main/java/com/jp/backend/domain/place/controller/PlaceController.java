@@ -53,7 +53,10 @@ public class PlaceController {
 
 	@GetMapping("/details/{placeId}")
 	@Operation(summary = "장소 상세 페이지를 조회합니다.",
-		description = "placeId - 해당 장소의 String 타입의 placeId"
+		description = "placeId - 해당 장소의 String 타입의 placeId <br>"
+			+ "- 유저 토큰을 넣지 않고 요청한 경우 --> 해당 장소의 상세페이지 정보만 나타납니다. <br>"
+			+ "- 유저의 토큰을 넣어 요청한 경우 -->  해당 장소의 상세 정보 + 유저의 좋아요 여부가 함께 나타납니다. <br>"
+			+ "( 현재 충분한 데이터를 넣어놓지 않아 response의 tag 정보는 []로 표시됩니다."
 	)
 	public ResponseEntity<PlaceDetailResDto> findPlaceDetailPage(@PathVariable("placeId") String placeId,
 		@AuthenticationPrincipal UserPrincipal principal) {
