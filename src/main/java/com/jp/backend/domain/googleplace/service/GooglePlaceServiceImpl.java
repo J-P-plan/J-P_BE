@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -125,21 +126,39 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		return GooglePlaceDetailsResDto.builder()
-			.placeId(apiResponse.getResult().getPlaceId())
-			.name(apiResponse.getResult().getName())
-			.formattedAddress(apiResponse.getResult().getFormattedAddress())
-			.location(GooglePlaceDetailsResDto.Location.builder()
-				.lat(apiResponse.getResult().getGeometry().getLocation().getLat())
-				.lng(apiResponse.getResult().getGeometry().getLocation().getLng())
-				.build())
-			.formattedPhoneNumber(apiResponse.getResult().getFormattedPhoneNumber())
-			.businessStatus(apiResponse.getResult().getBusinessStatus())
-			.openNow(apiResponse.getResult().getOpeningHours().isOpenNow())
-			.weekdayText(apiResponse.getResult().getOpeningHours().getWeekdayText())
-			.photoUrls(getPlacePhotos(placeId))
-			.website(apiResponse.getResult().getWebsite())
+		// null 처리
+		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
+			.orElse(new GooglePlaceDetailsDto.Result());
+
+		boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
+			.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
+			.orElse(false);
+		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
+			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
+			.orElse(null);
+		List<String> photoUrls = Optional.ofNullable(result.getPhotoUrls())
+			.orElseGet(() -> getPlacePhotos(placeId));
+		GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
+			.lat(result.getGeometry().getLocation().getLat())
+			.lng(result.getGeometry().getLocation().getLng())
 			.build();
+		
+		return GooglePlaceDetailsResDto.builder()
+			.placeId(result.getPlaceId())
+			.name(result.getName())
+			.formattedAddress(result.getFormattedAddress())
+			.location(location)
+			.formattedPhoneNumber(result.getFormattedPhoneNumber())
+			.businessStatus(result.getBusinessStatus())
+			.openNow(isOpenNow)
+			.weekdayText(weekdayText)
+			.photoUrls(photoUrls)
+			.website(result.getWebsite())
+			.build();
+	}
+
+	private void dealingNull(GooglePlaceDetailsDto.Result result) {
+
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드
@@ -189,7 +208,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	public boolean verifyPlaceId(String placeId) {
 		try {
 			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
-			return response != null;
+			return response != null && response.getPlaceId() != null;
 		} catch (Exception e) {
 			return false;
 		}

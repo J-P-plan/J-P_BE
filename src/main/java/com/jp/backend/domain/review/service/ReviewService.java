@@ -1,9 +1,11 @@
 package com.jp.backend.domain.review.service;
 
+import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
 import com.jp.backend.domain.review.dto.ReviewUpdateDto;
-import com.jp.backend.domain.review.entity.Review;
+import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.global.dto.PageResDto;
 
 public interface ReviewService {
 	ReviewResDto createReview(ReviewReqDto reqDto, String username);
@@ -12,6 +14,9 @@ public interface ReviewService {
 
 	ReviewResDto findReview(Long reviewId);
 
-	Review verifyReview(Long reviewId);
-
+	PageResDto<ReviewCompactResDto> findReviewPage(
+		Integer page,
+		String placeId,
+		ReviewSort sort,
+		Integer elementCnt);
 }

@@ -1,12 +1,18 @@
 package com.jp.backend.domain.like.repository;
 
-import com.jp.backend.domain.like.dto.LikeResDto;
-import com.jp.backend.domain.like.entity.Like;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface LikeRepository {
-    long countLike(Like.LikeType likeType, String targetId, Long userId);
+import com.jp.backend.domain.like.dto.LikeResDto;
+import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.place.enums.PlaceType;
 
-    Page<LikeResDto> getFavoriteList(Like.LikeType likeType, Long userId, Pageable pageable);
+public interface LikeRepository {
+	Optional<Like> findLike(Like.LikeType likeType, String targetId, Long userId);
+
+	long countLike(Like.LikeType likeType, String targetId, Long userId);
+
+	Page<LikeResDto> getFavoriteList(Like.LikeType likeType, PlaceType placeType, Long userId, Pageable pageable);
 }

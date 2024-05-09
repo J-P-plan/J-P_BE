@@ -1,9 +1,9 @@
 package com.jp.backend.domain.googleplace.service;
 
+import java.util.List;
+
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
-
-import java.util.List;
 
 public interface GooglePlaceService {
 	GooglePlaceSearchResDto searchPlaces(String contents, String nextPageToken);
@@ -17,5 +17,4 @@ public interface GooglePlaceService {
 	List<String> getPlacePhotos(String placeId);
 
 	boolean verifyPlaceId(String placeId);
-
 }

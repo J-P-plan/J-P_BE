@@ -1,5 +1,7 @@
 package com.jp.backend.domain.place.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
-import com.jp.backend.domain.place.dto.PlaceResDto;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.place.service.PlaceService;
 import com.jp.backend.global.dto.PageResDto;
@@ -37,8 +38,8 @@ public class PlaceController {
 				"page : 조회할 페이지 <br>" +
 				"placeType : 장소 타입 (인기 도시/인기 여행지/테마별 여행지), 선택 안할시 전체조회 <br>" +
 				"searchString : 검색어 <br>" +
-				"elementCnt : 10 (default) <br>" +
-				"} <br> Response에 File은 추후 추가예정")
+				"elementCnt : 10 (default) <br>"
+				+ "} ( 현재 response의 photoUrl은 아직 사진 데이터를 넣지 않아 null로 표시됩니다. )")
 	public ResponseEntity<PageResDto<PlaceCompactResDto>> findPlacePage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "placeType") PlaceType placeType,
@@ -48,32 +49,18 @@ public class PlaceController {
 		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, elementCnt));
 	}
 
-	// TODO 이거 물어보기 - 삭제할지
-	@GetMapping("/{placeId}")
-	@Operation(summary = "장소 상세조회 API",
-		description = "Response에 File은 추후 추가예정")
-	public ResponseEntity<PlaceResDto> findPlace(
-		@PathVariable("placeId") Long placeId
-	) throws Exception {
-		return ResponseEntity.ok(placeService.findPlace(placeId));
-	}
-
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
 
-	@GetMapping("/details/{placeType}/{placeId}") // TODO 타입 안받아도 될 것 같은뎅
+	@GetMapping("/details/{placeId}")
 	@Operation(summary = "장소 상세 페이지를 조회합니다.",
-		description = "placeType - TRAVEL_PLACE (인기 여행지) / CITY (인기 도시) / THEME (테마 여행지) <br>" +
-			"placeId - 해당 장소의 String 타입의 placeId"
+		description = "placeId - 해당 장소의 String 타입의 placeId"
 	)
-	public ResponseEntity<PlaceDetailResDto> findPlacePage(@PathVariable("placeType") PlaceType placeType,
-		@PathVariable("placeId") String placeId,
+	public ResponseEntity<PlaceDetailResDto> findPlaceDetailPage(@PathVariable("placeId") String placeId,
 		@AuthenticationPrincipal UserPrincipal principal) {
-		String username = principal != null ? principal.getUsername() : null;
-		PlaceDetailResDto details = placeService.getPlaceDetails(placeType, placeId, username);
+		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
+		PlaceDetailResDto details = placeService.getPlaceDetails(placeId, username);
 
 		return ResponseEntity.ok(details);
 	}
-
-	// TODO 수지님 피그마 / 유저 플로우
 
 }

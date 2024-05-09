@@ -35,7 +35,7 @@ public class FileServiceImpl implements FileService {
 
 		User user = userService.verifyUser(email);
 
-		String[] info = uploadImage(file);
+		String[] info = uploadImage(file); // 이미지 업로드 하고 버킷 이름이랑 url 받음
 		File fileEntity = File.builder()
 			.bucket(info[1])
 			.url(info[0])
@@ -43,12 +43,12 @@ public class FileServiceImpl implements FileService {
 			.user(user)
 			.build();
 
-		if (user.getProfileId() != null) {
-			jpaFileRepository.delete(user.getProfileId());
+		if (user.getProfile() != null) {
+			jpaFileRepository.delete(user.getProfile());
 		}
 
 		jpaFileRepository.save(fileEntity);
-		user.setProfileId(fileEntity);
+		user.setProfile(fileEntity);
 		return fileEntity.getUrl();
 	}
 

@@ -29,7 +29,7 @@ public class GooglePlaceController {
 	}
 
 	// 장소 검색하기
-	@GetMapping("/text-search")
+	@GetMapping("/text-search/page")
 	@Operation(summary = "장소를 검색합니다.",
 		description = "• 다음 페이지 -->  nextPageToken을 파라미터에 넣어 요청하세요.<br>"
 			+ "• 특정 도시 내 인기 여행지 추천 --> [도시명 + 인기 여행지]를 contents에 넣어 요청하세요.")
@@ -40,7 +40,7 @@ public class GooglePlaceController {
 	}
 
 	// 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
-	@GetMapping("/nearby-search")
+	@GetMapping("/nearby-search/page")
 	@Operation(summary = "반경을 선택하여, 해당 장소의 반경 내에 있는 인기 여행지들을 추천합니다.",
 		description = "일단 기준이 되는 위도, 경도, 반경을 파라미터에 넣어주는 것으로 구현했는데,<br>"
 			+ "일정 생성 기능이 완료되면 해당 스케줄에서 선택된 도시의 정보를 가져오는 방법으로 수정할 예정입니다.<br>"

@@ -2,11 +2,11 @@ package com.jp.backend.domain.place.entity;
 
 import java.util.List;
 
+import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.tag.entity.PlaceTag;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -47,12 +47,12 @@ public class Place {
 
 	private Double lng;
 
-	@ElementCollection // TODO 이거 왜 쓰는지
-	private List<String> photoUrls;
-
 	private Integer sort;
+	
+	@OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<File> files;
 
-	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // TODO cascadeType 다시 알아보기
+	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private List<PlaceTag> placeTags;
 
 }

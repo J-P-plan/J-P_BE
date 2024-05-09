@@ -3,6 +3,8 @@ package com.jp.backend.domain.place.dto;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -66,4 +68,20 @@ public class PlaceDetailResDto {
 		private double lng;
 	}
 
+	@Builder
+	public PlaceDetailResDto(Place place, String placeId, GooglePlaceDetailsResDto detailsByGoogle,
+		List<String> tagNames, List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {
+		this.id = place != null ? place.getId() : null;
+		this.placeId = placeId;
+		this.name = detailsByGoogle != null ? detailsByGoogle.getName() : null;
+		this.formattedAddress = detailsByGoogle != null ? detailsByGoogle.getFormattedAddress() : null;
+		this.location = detailsByGoogle != null && detailsByGoogle.getLocation() != null ?
+			new Location(detailsByGoogle.getLocation().getLat(), detailsByGoogle.getLocation().getLng()) : null;
+		this.description = place != null ? place.getDescription() : null;
+		this.tags = tagNames;
+		this.photoUrls = photoUrls;
+		this.likeCount = likeCount;
+		this.userId = userId;
+		this.isLiked = isLiked;
+	}
 }
