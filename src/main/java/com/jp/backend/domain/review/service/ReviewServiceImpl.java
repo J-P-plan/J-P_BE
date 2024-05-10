@@ -51,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
 		//todo 방문여부 계산
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
-		return ReviewResDto.builder().review(savedReview).build();
+		return ReviewResDto.builder().review(savedReview).likeCnt(0L).build();
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-
-		return ReviewResDto.builder().review(updatingReview).build();
+		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,review.getId().toString(),null);
+		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).build();
 	}
 
 	@Override
@@ -78,10 +78,10 @@ public class ReviewServiceImpl implements ReviewService {
 	public ReviewResDto findReview(Long reviewId) {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
-		likeRepository.countByLikeTypeAndTargetId(Like.LikeType.REVIEW,reviewId);
-		ReviewResDto reviewResDto = ReviewResDto.builder().review(review).build();
+		//todo null을 넣는게 조금 구런데 리팩토링 필요
+		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,reviewId.toString(),null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
-		return ReviewResDto.builder().review(review).commentList(commentList).build();
+		return ReviewResDto.builder().review(review).likeCnt(likeCnt).commentList(commentList).build();
 	}
 
 	public PageResDto<ReviewCompactResDto> findReviewPage(
@@ -94,16 +94,18 @@ public class ReviewServiceImpl implements ReviewService {
 		Page<ReviewCompactResDto> reviewPage =
 			reviewRepository.findReviewPage(placeId, sort, pageable)
 				.map(review -> {
-					//todo 이거 댓글수 개선
 					List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW,
 						review.getId());
 					int commentCnt = commentList.size();
+					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
+					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,review.getId().toString(),null);
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
+						.likeCnt(likeCnt)
 						.build();
 				});
 

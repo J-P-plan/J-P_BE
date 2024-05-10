@@ -39,7 +39,7 @@ public class ReviewResDto {
 	private Double star;
 
 	@Schema(description = "좋아요 갯수")
-	private Integer likeCnt; //장소 위경도가 필요할까 ,,,?_?
+	private Long likeCnt; //장소 위경도가 필요할까 ,,,?_?
 
 	// @Schema(description = "실제 방문여부")
 	// private Boolean visitedYn;
@@ -55,7 +55,7 @@ public class ReviewResDto {
 	private List<CommentResDto> commentResDtoList;
 
 	@Builder
-	public ReviewResDto(Review review, List<Comment> commentList, Integer likeCnt) {
+	public ReviewResDto(Review review, List<Comment> commentList, Long likeCnt) {
 		this.id = review.getId();
 		this.content = review.getContent();
 		this.placeId = review.getPlaceId();

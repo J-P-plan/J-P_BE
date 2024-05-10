@@ -30,6 +30,9 @@ public class ReviewCompactResDto {
 	@Schema(description = "댓글 갯수")
 	private Integer commentCnt;
 
+	@Schema(description = "좋아요 갯수")
+	private Long likeCnt;
+
 	@Schema(description = "별점")
 	private Double star;
 
@@ -40,11 +43,12 @@ public class ReviewCompactResDto {
 
 
 	@Builder
-	public ReviewCompactResDto(Review review, Integer commentCnt) {
+	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt) {
 		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
 		this.star = review.getStar();
+		this.likeCnt = likeCnt;
 		this.placeId = review.getPlaceId();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.commentCnt = commentCnt; //todo 바꾸기
