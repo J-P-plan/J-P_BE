@@ -12,5 +12,7 @@ import com.jp.backend.domain.place.enums.PlaceType;
 public interface LikeRepository {
 	Optional<Like> findLike(Like.LikeType likeType, String targetId, Long userId);
 
+	long countLike(Like.LikeType likeType, String targetId, Long userId);
+
 	Page<LikeResDto> getFavoriteList(Like.LikeType likeType, PlaceType placeType, Long userId, Pageable pageable);
 }

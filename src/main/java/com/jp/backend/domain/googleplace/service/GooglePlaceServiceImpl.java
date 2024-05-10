@@ -136,23 +136,29 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
 			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
 			.orElse(null);
-		String formattedPhoneNumber = result.getFormattedPhoneNumber();
-		String businessStatus = result.getBusinessStatus();
 		List<String> photoUrls = Optional.ofNullable(result.getPhotoUrls())
 			.orElseGet(() -> getPlacePhotos(placeId));
-		String website = result.getWebsite();
-
+		GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
+			.lat(result.getGeometry().getLocation().getLat())
+			.lng(result.getGeometry().getLocation().getLng())
+			.build();
+		
 		return GooglePlaceDetailsResDto.builder()
 			.placeId(result.getPlaceId())
 			.name(result.getName())
 			.formattedAddress(result.getFormattedAddress())
-			.formattedPhoneNumber(formattedPhoneNumber)
-			.businessStatus(businessStatus)
+			.location(location)
+			.formattedPhoneNumber(result.getFormattedPhoneNumber())
+			.businessStatus(result.getBusinessStatus())
 			.openNow(isOpenNow)
 			.weekdayText(weekdayText)
 			.photoUrls(photoUrls)
-			.website(website)
+			.website(result.getWebsite())
 			.build();
+	}
+
+	private void dealingNull(GooglePlaceDetailsDto.Result result) {
+
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드

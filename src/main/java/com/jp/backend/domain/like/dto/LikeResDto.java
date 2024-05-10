@@ -42,23 +42,24 @@ public class LikeResDto {
 	private String targetAddress;
 
 	@Schema(description = "좋아요 대상의 장소 사진 url")
-	private String photoUrl;
+	private String fileUrl;
 
 	@Schema(description = "좋아요 대상의 장소 타입")
 	private PlaceType placeType;
 
 	// place의 경우
 	@QueryProjection
-	public LikeResDto(Long id, Long userId, String targetId, String targetName, String targetAddress, String photoUrl,
-		Like.LikeType likeType, PlaceType placeTyp, LocalDateTime createdAt) {
+	public LikeResDto(Long id, Long userId, String targetId, String targetName, String targetAddress,
+		String fileUrl,
+		Like.LikeType likeType, PlaceType placeType, LocalDateTime createdAt) {
 		this.id = id;
 		this.userId = userId;
 		this.targetId = targetId;
 		this.targetName = targetName;
 		this.targetAddress = targetAddress;
-		this.photoUrl = photoUrl;
+		this.fileUrl = fileUrl;
 		this.likeType = likeType;
-		this.placeType = placeTyp;
+		this.placeType = placeType;
 		this.createdAt = createdAt;
 	}
 

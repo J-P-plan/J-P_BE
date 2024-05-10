@@ -75,21 +75,23 @@ public class LikeServiceImpl implements LikeService {
 		// Name 필드가 null인 경우 (PLACE 테이블에 저장된 정보가 없을 경우) --> api에서 가져오도록
 		// --> 이 경우는 여행지의 경우만 해당
 		List<LikeResDto> updatedContent = likePage.getContent().stream().map(like -> {
-			if (like.getTargetName() == null) {
-				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(like.getTargetId());
+			GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(like.getTargetId());
 
+			if (like.getTargetName() == null) {
 				like.setTargetName(placeDetails.getName());
 				like.setTargetAddress(placeDetails.getFormattedAddress());
 
 				List<String> photoUrls = placeDetails.getPhotoUrls();
 				if (!photoUrls.isEmpty()) {
-					like.setPhotoUrl(photoUrls.get(0)); // 첫번째 사진으로
+					like.setFileUrl(photoUrls.get(0)); // 첫번째 사진으로
 				}
 
 				like.setPlaceType(PlaceType.TRAVEL_PLACE);
 				// TODO 사용자가 도시 검색해서 좋아요 누르면 그것도 TRAVEL_PLACE로 들어감 / CITY를 따로 구분할 수가 없는데,,
 				//  그냥 PlaceType을 set하지 말까?
 				// TODO 이거 축제를 눌러도 여행지 찜 목록에 보여지는데 흠
+			} else if (like.getFileUrl() == null) { // 저장된 사진 url 없으면 google에서 첫번째 사진 가져오기
+				like.setFileUrl(placeDetails.getPhotoUrls().get(0));
 			}
 			return like;
 		}).toList();
