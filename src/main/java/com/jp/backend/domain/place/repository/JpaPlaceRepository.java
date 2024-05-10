@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jp.backend.domain.place.entity.Place;
 
-public interface JpaPlaceRepository extends JpaRepository<Place, Long>, PlaceRepository {
+import java.util.Optional;
 
+public interface JpaPlaceRepository extends JpaRepository<Place, Long>, PlaceRepository {
+    Optional<Place> findByPlaceId(String placeId);
 }

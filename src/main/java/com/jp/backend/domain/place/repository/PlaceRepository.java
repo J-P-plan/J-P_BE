@@ -1,5 +1,7 @@
 package com.jp.backend.domain.place.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +16,6 @@ public interface PlaceRepository {
 		//TODO 인기순 추가
 		Pageable pageable
 	);
+
+	List<String> findTagNames(String placeId);
 }
