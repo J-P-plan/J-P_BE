@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.jp.backend.domain.schedule.enums.Status;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class Schedule {
 
 	private Status status;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Day> dayList;
 
 	public void addDay(Day day) {

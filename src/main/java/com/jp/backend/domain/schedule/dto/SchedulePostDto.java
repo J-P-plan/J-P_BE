@@ -1,8 +1,10 @@
 package com.jp.backend.domain.schedule.dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.Schedule;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +35,7 @@ public class SchedulePostDto {
 			.startDate(startDate)
 			.endDate(endDate)
 			.title("여행")
+			.dayList(new ArrayList<Day>())
 			.build();
 	}
 
