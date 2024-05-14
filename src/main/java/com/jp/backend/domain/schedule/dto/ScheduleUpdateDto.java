@@ -20,5 +20,7 @@ public class ScheduleUpdateDto {
 
 	private LocalDate endDate;
 
+	private Boolean isOpen;
+
 	//DayLocationReqDto List
 }

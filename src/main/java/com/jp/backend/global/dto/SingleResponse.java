@@ -1,4 +1,4 @@
-package com.jp.backend.global.response;
+package com.jp.backend.global.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

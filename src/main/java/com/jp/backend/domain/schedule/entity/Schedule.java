@@ -3,6 +3,7 @@ package com.jp.backend.domain.schedule.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.schedule.enums.Status;
 
 import jakarta.persistence.CascadeType;
@@ -11,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +33,10 @@ public class Schedule {
 
 	private String title;
 
-	private LocalDate startDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Place city;
+
+    private LocalDate startDate;
 
 	private LocalDate endDate;
 
@@ -47,4 +52,8 @@ public class Schedule {
 		dayList.add(day);
 		//day.setSchedule(this); //양방향 연결 해야할까?_?
 	}
+
+
+  private Boolean isOpen;
+
 }
