@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.file.service.FileService;
-import com.jp.backend.global.response.SingleResponse;
+import com.jp.backend.global.dto.SingleResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

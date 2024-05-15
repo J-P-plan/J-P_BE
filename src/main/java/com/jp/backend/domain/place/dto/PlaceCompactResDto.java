@@ -27,11 +27,20 @@ public class PlaceCompactResDto {
 	@Schema(description = "서브 장소명")
 	private String subName;
 
+	@Schema(description = "장소 Url")
+	private String photoUrl;
+
 	@Builder
 	public PlaceCompactResDto(Place entity) {
 		this.name = entity.getName();
 		this.id = entity.getId();
 		this.placeId = entity.getPlaceId();
 		this.subName = entity.getSubName();
+
+		if (!entity.getFiles().isEmpty()) {
+			this.photoUrl = entity.getFiles().get(0).getUrl();
+		} else {
+			this.photoUrl = null;
+		}
 	}
 }

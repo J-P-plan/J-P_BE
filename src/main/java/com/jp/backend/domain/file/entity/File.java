@@ -4,12 +4,14 @@ import java.util.UUID;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -40,6 +42,10 @@ public class File {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "place_id")
+	private Place place;
 
 	public enum FileType {
 		IMAGE("이미지"),

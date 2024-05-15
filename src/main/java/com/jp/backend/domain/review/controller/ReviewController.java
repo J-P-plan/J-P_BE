@@ -72,10 +72,11 @@ public class ReviewController {
 	@GetMapping("/reviews")
 	public ResponseEntity<PageResDto<ReviewCompactResDto>> getPostPage(
 		@RequestParam(value = "page") Integer page,
-		@RequestParam(value = "placeId", required = false) Long placeId,
+		@RequestParam(value = "placeId", required = false) String placeId,
 		@RequestParam(value = "sort") ReviewSort sort,
-		@RequestParam(required = false, defaultValue = "10") Integer elementCnt
+		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt
 	) throws Exception {
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(reviewService.findReviewPage(page, placeId, sort
+			, elementCnt));
 	}
 }
