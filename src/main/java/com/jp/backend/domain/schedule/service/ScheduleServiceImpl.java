@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
+import com.jp.backend.domain.schedule.dto.DayReqDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.Schedule;
@@ -27,52 +28,55 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
-  private final JpaScheduleRepository scheduleRepository;
-  private final JpaScheduleUserRepository scheduleUserRepository;
-  private final JpaPlaceRepository placeRepository;
-  private final UserService userService;
+	private final JpaScheduleRepository scheduleRepository;
+	private final JpaScheduleUserRepository scheduleUserRepository;
+	private final JpaPlaceRepository placeRepository;
+	private final UserService userService;
 
-  @Override
-  @Transactional
-  public Boolean createSchedule(ScheduleReqDto postDto, String username) {
-    User user = userService.verifyUser(username);
-    Place city = placeRepository.findByPlaceId(postDto.getPlaceId()).orElseThrow(() -> new CustomLogicException(
-      ExceptionCode.PLACE_NONE));
-    Schedule schedule = postDto.toEntity(city);
-    ScheduleUser scheduleUser = ScheduleUser.builder()
-        .user(user)
-        .createrYn(true)
-        .schedule(schedule)
-        .build();
-    List<ScheduleUser> scheduleUserList = new ArrayList<>();
-    scheduleUserList.add(scheduleUser);
-    scheduleRepository.save(schedule);
-    scheduleUserRepository.save(scheduleUser);
-    schedule.setMember(scheduleUserList);
+	@Override
+	@Transactional
+	public Boolean createSchedule(ScheduleReqDto postDto, String username) {
+		User user = userService.verifyUser(username);
+		Place city = placeRepository.findByPlaceId(postDto.getPlaceId()).orElseThrow(() -> new CustomLogicException(
+			ExceptionCode.PLACE_NONE));
+		Schedule schedule = postDto.toEntity(city);
+		ScheduleUser scheduleUser = ScheduleUser.builder()
+			.user(user)
+			.createrYn(true)
+			.schedule(schedule)
+			.build();
+		List<ScheduleUser> scheduleUserList = new ArrayList<>();
+		scheduleUserList.add(scheduleUser);
+		scheduleRepository.save(schedule);
+		scheduleUserRepository.save(scheduleUser);
+		schedule.setMember(scheduleUserList);
 
-    //TODO DAY가 날짜만큼 만들어지게
-    LocalDate date = postDto.getStartDate();
-    int dayIndex = 1;
-    while (!date.isAfter(postDto.getEndDate())) {
-      Day day = Day.builder()
-          .date(date)
-          .dayIndex(dayIndex++)
-          .build();
-      schedule.addDay(day);
-      date = date.plusDays(1);
-    }
+		//TODO DAY가 날짜만큼 만들어지게
+		LocalDate date = postDto.getStartDate();
+		int dayIndex = 1;
+		while (!date.isAfter(postDto.getEndDate())) {
+			Day day = Day.builder()
+				.date(date)
+				.dayIndex(dayIndex++)
+				.build();
+			schedule.addDay(day);
+			date = date.plusDays(1);
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  //todo 장소 추가 api
+	//todo 장소 추가 api
+	public Boolean addPlace(Long dayId, DayReqDto requestDto) {
 
+		return true;
+	}
 
-  //todo 장소 삭제 api
-  //todo 장소 편집 api (list)
+	//todo 장소 삭제 api
+	//todo 장소 편집 api (list)
 
-  //todo 장소에 플랜추가 api
-  //todo 장소에 플랜 변경 api
+	//todo 장소에 플랜추가 api
+	//todo 장소에 플랜 변경 api
 
-  //todo 장소 날짜 변경 api
+	//todo 장소 날짜 변경 api
 }
