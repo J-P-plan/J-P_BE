@@ -32,6 +32,7 @@ google:
     api-key: ${GOOGLE_PLACES_API_KEY}
 
 server:
+  port: 443
   ssl:
     key-store: classpath:keystore.p12
     key-store-password: wnehdvlf575966
