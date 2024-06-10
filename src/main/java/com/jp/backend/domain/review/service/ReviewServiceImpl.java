@@ -13,7 +13,6 @@ import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
-import com.jp.backend.domain.like.repository.LikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
@@ -69,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,review.getId().toString(),null);
+		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
 		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).build();
 	}
 
@@ -79,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
 		//todo null을 넣는게 조금 구런데 리팩토링 필요
-		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,reviewId.toString(),null);
+		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, reviewId.toString(), null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 		return ReviewResDto.builder().review(review).likeCnt(likeCnt).commentList(commentList).build();
 	}
@@ -98,7 +97,45 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW,review.getId().toString(),null);
+					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
+					for (Comment comment : commentList) {
+						commentCnt += comment.getReplyList().size();
+					}
+					return ReviewCompactResDto.builder()
+						.review(review)
+						.commentCnt(commentCnt)
+						.likeCnt(likeCnt)
+						.build();
+				});
+
+		PageInfo pageInfo =
+			PageInfo.<ReviewCompactResDto>builder()
+				.pageable(pageable)
+				.pageDto(reviewPage)
+				.build();
+
+		return new PageResDto<>(pageInfo, reviewPage.getContent());
+	}
+
+	//전체리뷰 갯수가 있어서 굳이 Slice 객체로 조회할 필요가 없어보입니당
+	@Override
+	public PageResDto<ReviewCompactResDto> findMyReviewPage(
+		Integer page,
+		Integer elementCnt,
+		String username
+	) {
+		User user = userService.verifyUser(username);
+
+		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
+
+		Page<ReviewCompactResDto> reviewPage =
+			reviewRepository.findMyReviewPage(user.getId(), pageable)
+				.map(review -> {
+					List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW,
+						review.getId());
+					int commentCnt = commentList.size();
+					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
+					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
