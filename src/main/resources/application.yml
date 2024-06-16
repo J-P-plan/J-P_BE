@@ -31,8 +31,12 @@ google:
   places:
     api-key: ${GOOGLE_PLACES_API_KEY}
 
-  server:
-    port: 8080
+server:
+  port: 8080
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: codms0525
+    key-store-type: PKCS12
 
 spring-doc:
   swagger-ui:

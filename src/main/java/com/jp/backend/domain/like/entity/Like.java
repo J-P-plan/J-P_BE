@@ -39,10 +39,10 @@ public class Like extends Auditable {
 	@Enumerated(value = EnumType.STRING)
 	private LikeType likeType;
 
-	public enum LikeType {
-		REVIEW("리뷰"),
-		TRIP_JOURNAL("여행기"),
-		PLACE("여행지");
+    public enum LikeType {
+        REVIEW("리뷰"),
+        TRAVEL_DIARY("여행기"),
+        PLACE("여행지");
 
 		@Getter
 		private String likeType;

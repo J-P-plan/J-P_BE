@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.jp.backend.domain.file.entity.QFile;
 import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.dto.QLikeResDto;
 import com.jp.backend.domain.like.entity.Like;
@@ -28,6 +29,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 	private static final QLike qLike = QLike.like;
 	private static final QPlace qPlace = QPlace.place;
+	private static final QFile qFile = QFile.file;
 
 	// Like 객체 찾기
 	@Override
@@ -38,6 +40,23 @@ public class LikeRepositoryImpl implements LikeRepository {
 				.and(qLike.targetId.eq(targetId))
 				.and(qLike.user.id.eq(userId)))
 			.fetchFirst());
+	}
+
+	// userId null로 하면 --> 해당 타겟의 좋아요 개수 반환
+	// userId 넣으면 --> 해당 유저의 좋아요 개수 반환 -> 1 이상이면 좋아요 여부 true
+	@Override
+	public long countLike(Like.LikeType likeType, String targetId, Long userId) {
+		BooleanExpression condition = qLike.likeType.eq(likeType)
+			.and(qLike.targetId.eq(targetId));
+
+		if (userId != null) {
+			condition = condition.and(qLike.user.id.eq(userId));
+		}
+
+		return jpaQueryFactory
+			.selectFrom(qLike)
+			.where(condition)
+			.fetchCount();
 	}
 
 	// 사용자의 찜목록 페이지 반환
@@ -67,6 +86,13 @@ public class LikeRepositoryImpl implements LikeRepository {
 		// placeType에 따른 조건 추가
 		BooleanExpression placeTypeCondition = getPlaceTypeCondition(placeType);
 
+		JPAQuery<String> subQuery = new JPAQuery<>(); // 파일을 1개만 선택할 서브쿼리
+		subQuery.select(qFile.url)
+			.from(qFile)
+			.where(qFile.place.id.eq(qPlace.id))
+			.limit(1); // 첫 번째 파일만 선택
+
+		// 파일 없으면 null로 하고 어차피 service 로직에서 google 꺼 넣어줌
 		return baseQuery
 			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId))
 			.where(placeTypeCondition)
@@ -76,7 +102,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 				qLike.targetId,
 				qPlace.name,
 				qPlace.subName,
-				qPlace.photoUrl,
+				subQuery,
 				qLike.likeType,
 				qPlace.placeType,
 				qLike.createdAt
