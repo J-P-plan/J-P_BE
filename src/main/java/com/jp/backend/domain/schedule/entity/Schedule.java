@@ -33,10 +33,10 @@ public class Schedule {
 
 	private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Place city;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Place city;
 
-    private LocalDate startDate;
+	private LocalDate startDate;
 
 	private LocalDate endDate;
 
@@ -50,10 +50,9 @@ public class Schedule {
 
 	public void addDay(Day day) {
 		dayList.add(day);
-		//day.setSchedule(this); //양방향 연결 해야할까?_?
+		day.setSchedule(this); //양방향 연결 해야할까?_?
 	}
 
-
-  private Boolean isOpen;
+	private Boolean isOpen;
 
 }

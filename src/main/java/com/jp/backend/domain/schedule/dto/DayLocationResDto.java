@@ -4,7 +4,7 @@ import java.awt.*;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.jp.backend.domain.schedule.entity.DayLocation;
 import com.jp.backend.domain.schedule.enums.Mobility;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +17,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DayLocationResDto {
@@ -42,4 +41,17 @@ public class DayLocationResDto {
 	private Mobility mobility;
 
 	private String name;
+
+	@Builder
+	public DayLocationResDto(DayLocation entity) {
+		this.id = entity.getId();
+		this.index = entity.getLocationIndex();
+		this.time = entity.getTime();
+		this.memo = entity.getMemo();
+		this.location = entity.getLocation();
+		this.placeId = entity.getPlaceId();
+		this.expense = entity.getExpense();
+		this.mobility = entity.getMobility();
+		this.name = entity.getName();
+	}
 }

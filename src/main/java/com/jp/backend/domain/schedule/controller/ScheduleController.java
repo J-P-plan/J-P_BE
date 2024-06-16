@@ -5,14 +5,18 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
+import com.jp.backend.domain.schedule.dto.DayLocationResDto;
+import com.jp.backend.domain.schedule.dto.DayLocationUpdateDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.service.ScheduleService;
 import com.jp.backend.global.websocket.WebSocketHandler;
@@ -34,7 +38,7 @@ public class ScheduleController {
 
 	@PostMapping("/schedule")
 	@Operation(summary = "일정 초기 생성 API", description = "날짜와 도시를 넣어 초기 일정을 생성합니다")
-	public ResponseEntity<Boolean> createSchedule(
+	public ResponseEntity<Long> createSchedule(
 		@RequestBody ScheduleReqDto postDto,
 		@AuthenticationPrincipal UserPrincipal principal
 	) {
@@ -44,18 +48,42 @@ public class ScheduleController {
 	//장소 추가 api
 	@PostMapping("/schedule/place/{dayId}")
 	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다")
-	public ResponseEntity<Boolean> addPlace(
+	public ResponseEntity<Boolean> addDayLocation(
 		@PathVariable(value = "dayId") Long dayId,
 		@RequestBody List<DayLocationReqDto> postDto,
 		@AuthenticationPrincipal UserPrincipal principal
 	) {
-		Boolean result = scheduleService.addPlace(dayId, postDto);
-		webSocketHandler.broadcast("유저가 장소를 추가했습니다. username : " + principal.getUsername());
+		Boolean result = scheduleService.addDayLocation(dayId, postDto);
+		//webSocketHandler.broadcast("유저가 장소를 추가했습니다. username : " + principal.getUsername());
 		return ResponseEntity.ok(result);
 	}
 
 	//todo 장소 삭제 api
-	//todo 장소 편집 api (list)
+
+	//todo 장소 편집 api
+	@PutMapping("/schedule/place/{dayLocationId}")
+	@Operation(summary = "장소 편집 API", description = "일정에 장소를 추가합니다")
+	public ResponseEntity<Boolean> updateDayLocation(
+		@PathVariable(value = "dayLocationId") Long dayLocationId,
+		@RequestBody DayLocationUpdateDto updateDto
+	) {
+		Boolean result = scheduleService.updateDayLocation(dayLocationId, updateDto);
+		//webSocketHandler.broadcast("유저가 장소를 수정했습니다. username : " + principal.getUsername());
+		return ResponseEntity.ok(result);
+	}
+
+	//todo 장소 상세조회
+	@GetMapping("/schedule/place/{dayLocationId}")
+	@Operation(summary = "장소 상세조회 API", description = "일정에 장소를 추가합니다")
+	public ResponseEntity<DayLocationResDto> findDayLocation(
+		@PathVariable(value = "dayLocationId") Long dayLocationId
+	) {
+		return ResponseEntity.ok(scheduleService.findDayLocation(dayLocationId));
+	}
+
+	//todo Day 편집 api (list)
+
+	// todo Day 조회 api (list)
 
 	//todo 장소에 플랜 추가 api
 	//todo 장소에 플랜 변경 api

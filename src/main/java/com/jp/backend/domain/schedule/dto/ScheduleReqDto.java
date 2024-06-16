@@ -35,11 +35,11 @@ public class ScheduleReqDto {
 	@Schema(description = "도시 아이다")
 	private String placeId;
 
-	public Schedule toEntity(Place city) {
+	public Schedule toEntity(Place city, String title) {
 		return Schedule.builder()
 			.startDate(startDate)
 			.endDate(endDate)
-			.title("여행")
+			.title(title + " 여행")
 			.dayList(new ArrayList<Day>())
 			.city(city)
 			.build();

@@ -6,9 +6,11 @@ import java.time.LocalTime;
 import com.jp.backend.domain.schedule.enums.Mobility;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +43,11 @@ public class DayLocation {
 	//이동수단
 	private Mobility mobility;
 
-	private String placeId; //restourant, cafe
+	private String placeId; //restaurant, cafe
 
 	private String name;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Day day;
+
 }
