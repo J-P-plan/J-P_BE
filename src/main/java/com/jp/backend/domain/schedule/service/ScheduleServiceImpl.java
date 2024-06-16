@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
-import com.jp.backend.domain.schedule.dto.DayReqDto;
+import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.Schedule;
@@ -67,8 +67,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 	}
 
 	//todo 장소 추가 api
-	public Boolean addPlace(Long dayId, DayReqDto requestDto) {
-
+	@Override
+	@Transactional
+	public Boolean addPlace(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
 		return true;
 	}
 

@@ -37,7 +37,10 @@ public enum ExceptionCode {
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),
 	LIKE_NONE(404, "LIKE_NONE"),
-	TARGET_NONE(404, "TARGET_NONE");
+	TARGET_NONE(404, "TARGET_NONE"),
+
+	//WebSocket
+	WEBSOCKET_IO_EXCEPTION(500, "WEBSOCKET_IO_EXCEPTION");
 
 	@Getter
 	private final int code;

@@ -23,7 +23,7 @@ public class DayLocationReqDto {
 	private Integer index;
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime time;
-	private String memo;
+	//private String memo;
 	private Point location; //위도, 경도
 	private String placeId; //restaurant, cafe
 	private String name;
