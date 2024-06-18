@@ -36,4 +36,4 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "https://jandp-travel.kro.kr/login/oauth2/code/google"
+            redirect-uri: "https://local.jandp-travel.kro.kr/redirect"
