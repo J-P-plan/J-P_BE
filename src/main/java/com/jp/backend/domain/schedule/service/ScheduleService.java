@@ -5,6 +5,8 @@ import java.util.List;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
 import com.jp.backend.domain.schedule.dto.DayLocationResDto;
 import com.jp.backend.domain.schedule.dto.DayLocationUpdateDto;
+import com.jp.backend.domain.schedule.dto.DayResDto;
+import com.jp.backend.domain.schedule.dto.DayUpdateDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 
 public interface ScheduleService {
@@ -16,4 +18,7 @@ public interface ScheduleService {
 
 	DayLocationResDto findDayLocation(Long locationId);
 
+	DayResDto findDay(Long dayId);
+
+	Long updateDay(Long dayId, DayUpdateDto updateDto);
 }

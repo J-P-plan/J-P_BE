@@ -7,15 +7,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 @NoArgsConstructor
-public class DayReqDto {
+public class DayUpdateDto {
 	private Integer index;
 	private List<DayLocationReqDto> dayLocationReqDtoList;
 }

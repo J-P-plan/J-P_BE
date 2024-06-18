@@ -2,6 +2,7 @@ package com.jp.backend.domain.schedule.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,6 +14,8 @@ import com.jp.backend.domain.place.repository.JpaPlaceRepository;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
 import com.jp.backend.domain.schedule.dto.DayLocationResDto;
 import com.jp.backend.domain.schedule.dto.DayLocationUpdateDto;
+import com.jp.backend.domain.schedule.dto.DayResDto;
+import com.jp.backend.domain.schedule.dto.DayUpdateDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.DayLocation;
@@ -142,7 +145,28 @@ public class ScheduleServiceImpl implements ScheduleService {
 			.toList();
 	}
 
+	@Override
+	@Transactional
+	public DayResDto findDay(Long dayId) {
+		Day day = dayRepository.findById(dayId)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
+
+		List<DayLocationResDto> dayLocations = dayLocationRepository.findAllByDay(day).stream()
+			.map(dayLocation -> DayLocationResDto.builder().entity(dayLocation).build())
+			.sorted(Comparator.comparing(DayLocationResDto::getIndex)).toList();
+
+		return DayResDto.builder().day(day).dayLocationResDtos(dayLocations).build();
+	}
+
 	//todo DAY 편집 api (list)
+	@Override
+	@Transactional
+	public Long updateDay(Long dayId, DayUpdateDto updateDto) {
+		Day day = dayRepository.findById(dayId)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
+
+		return 1L;
+	}
 
 	//todo 장소에 플랜추가 api
 	//todo 장소에 플랜 변경 api

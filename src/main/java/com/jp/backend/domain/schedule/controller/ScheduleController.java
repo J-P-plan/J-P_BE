@@ -17,6 +17,8 @@ import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
 import com.jp.backend.domain.schedule.dto.DayLocationResDto;
 import com.jp.backend.domain.schedule.dto.DayLocationUpdateDto;
+import com.jp.backend.domain.schedule.dto.DayResDto;
+import com.jp.backend.domain.schedule.dto.DayUpdateDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.service.ScheduleService;
 import com.jp.backend.global.websocket.WebSocketHandler;
@@ -46,7 +48,7 @@ public class ScheduleController {
 	}
 
 	//장소 추가 api
-	@PostMapping("/schedule/place/{dayId}")
+	@PostMapping("/schedule/location/{dayId}")
 	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다")
 	public ResponseEntity<Boolean> addDayLocation(
 		@PathVariable(value = "dayId") Long dayId,
@@ -61,8 +63,8 @@ public class ScheduleController {
 	//todo 장소 삭제 api
 
 	//todo 장소 편집 api
-	@PutMapping("/schedule/place/{dayLocationId}")
-	@Operation(summary = "장소 편집 API", description = "일정에 장소를 추가합니다")
+	@PutMapping("/schedule/location/{dayLocationId}")
+	@Operation(summary = "장소 편집 API", description = "장소를 편집합니다.")
 	public ResponseEntity<Boolean> updateDayLocation(
 		@PathVariable(value = "dayLocationId") Long dayLocationId,
 		@RequestBody DayLocationUpdateDto updateDto
@@ -73,8 +75,8 @@ public class ScheduleController {
 	}
 
 	//todo 장소 상세조회
-	@GetMapping("/schedule/place/{dayLocationId}")
-	@Operation(summary = "장소 상세조회 API", description = "일정에 장소를 추가합니다")
+	@GetMapping("/schedule/location/{dayLocationId}")
+	@Operation(summary = "장소 상세조회 API", description = "장소를 상세조회합니다.")
 	public ResponseEntity<DayLocationResDto> findDayLocation(
 		@PathVariable(value = "dayLocationId") Long dayLocationId
 	) {
@@ -82,8 +84,23 @@ public class ScheduleController {
 	}
 
 	//todo Day 편집 api (list)
+	@PutMapping("/schedule/{scheduleId}")
+	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다.")
+	public ResponseEntity<DayResDto> findDay(
+		@PathVariable(value = "scheduleId") Long scheduleId
+	) {
+		return ResponseEntity.ok(scheduleService.findDay(dayId));
+	}
 
 	// todo Day 조회 api (list)
+	@GetMapping("/schedule/day/{dayId}")
+	@Operation(summary = "Day 상세조회 API", description = "Day를 상세조회합니다.")
+	public ResponseEntity<DayResDto> findDay(
+		@PathVariable(value = "dayId") Long dayId,
+		@RequestBody List<DayUpdateDto> updateDto
+	) {
+		return ResponseEntity.ok(scheduleService.findDay(dayId));
+	}
 
 	//todo 장소에 플랜 추가 api
 	//todo 장소에 플랜 변경 api
