@@ -1,5 +1,8 @@
 package com.jp.backend.domain.review.dto;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
@@ -38,6 +41,10 @@ public class ReviewCompactResDto {
 
 	@Schema(description = "장소아이디")
 	private String placeId; //장소 위경도가 필요할까 ,,,?_?
+
+	@Schema(description = "작성일자")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
+	private LocalDateTime createdAt;
 
 	//todo 좋아요 갯수
 
