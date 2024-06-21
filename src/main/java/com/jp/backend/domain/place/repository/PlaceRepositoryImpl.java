@@ -38,7 +38,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 				(searchString != null && !searchString.isBlank()) ?  //검색어에 값이 있으면 검색어로 검색
 					place.name.contains(searchString).or(place.subName.contains(searchString)) : null
 			)
-			.orderBy(place.sort.desc())
+			.orderBy(place.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();

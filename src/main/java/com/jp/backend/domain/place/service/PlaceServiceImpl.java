@@ -48,8 +48,7 @@ public class PlaceServiceImpl implements PlaceService {
 	 * @return
 	 * @throws Exception
 	 */
-
-	// TODO 변경 - 채은언니가 쓴 메서드들 필요한지 다시 살펴봐
+	
 	@Override
 	public PageResDto<PlaceCompactResDto> findPlacePage(
 		Integer page,

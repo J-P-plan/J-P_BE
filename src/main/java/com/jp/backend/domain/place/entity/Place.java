@@ -48,7 +48,7 @@ public class Place {
 	private Double lng;
 
 	private Integer sort;
-	
+
 	@OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<File> files;
 
