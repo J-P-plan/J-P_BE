@@ -60,6 +60,8 @@ public class OauthController {
 		HttpServletResponse response,
 		@RequestParam(value = "code") String code) throws
 		Exception {
+
+		System.out.println("code : " + code);
 		String accessToken = googleService.getGoogleAccessToken(code);
 
 		System.out.println("accessToken ---------------------" + accessToken);

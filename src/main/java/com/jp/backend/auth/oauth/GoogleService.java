@@ -68,14 +68,19 @@ public class GoogleService {
 
 		//try {
 		ResponseEntity<String> responseEntity = restTemplate.postForEntity(GOOGLE_TOKEN_URL, params, String.class);
+		// 	System.out.println("Response Status: " + responseEntity.getStatusCode());
+		// 	System.out.println("Response Body: " + responseEntity.getBody());
 		// } catch (HttpClientErrorException ex) {
 		// 	// 에러 로그를 기록
 		// 	System.out.println("Request URL: " + GOOGLE_TOKEN_URL);
-		// 	System.out.println("Response Status: " + ex.getStatusCode());
+		// 	System.out.println("Request Parameters: " + params);
+		// 	//System.out.println("Response Status: " + ex.getStatusCode());
 		// 	System.out.println("Response Body: " + ex.getResponseBodyAsString());
 		// 	// 필요한 추가 조치
-		//}
-		//
+		// } catch (Exception e) {
+		// 	System.err.println("An unexpected error occurred: " + e.getMessage());
+		// }
+
 		if (responseEntity.getStatusCode() == HttpStatus.OK) {
 			String jsonResponse = responseEntity.getBody();
 
