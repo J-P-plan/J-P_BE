@@ -1,5 +1,6 @@
 package com.jp.backend.domain.place.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
+import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.place.service.PlaceService;
 import com.jp.backend.global.dto.PageResDto;
@@ -64,6 +66,16 @@ public class PlaceController {
 		PlaceDetailResDto details = placeService.getPlaceDetails(placeId, username);
 
 		return ResponseEntity.ok(details);
+	}
+
+	@GetMapping("/city")
+	@Operation(summary = "도시 리스트 조회 API",
+		description =
+			"도시 정보를 CITY TYPE에 맞게 조회한다.")
+	public ResponseEntity<List<PlaceCompactResDto>> findCityList(
+		@RequestParam(required = true, value = "placeType") CityType cityType
+	) throws Exception {
+		return ResponseEntity.ok(placeService.findCityList(cityType));
 	}
 
 }
