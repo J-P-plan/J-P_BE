@@ -114,18 +114,10 @@ public class PlaceServiceImpl implements PlaceService {
 		// Ex. db에 저장되어있는 애면 --> likeCount + googleService detail에서 userTotal
 
 		return PlaceDetailResDto.builder()
-			.id(place != null ? place.getId() : null) // db에 저장되어있는 장소면 나오고, 아닌 경우 null로 들어가서 표시 안됨
+			.place(place)
 			.placeId(placeId)
-			.name(detailsByGoogle.getName())
-			.formattedAddress(detailsByGoogle.getFormattedAddress())
-			.location(PlaceDetailResDto.Location.builder()
-				.lat(detailsByGoogle.getLocation().getLat())
-				.lng(detailsByGoogle.getLocation().getLng())
-				.build())
-			.description(place != null ? place.getDescription() : null)
-			.tags(tagNames)
+			.detailsByGoogle(detailsByGoogle)
 			.photoUrls(photoUrls)
-			// .placeType(placeType) // TODO 같이 넣어줄까 말까 고민이욤
 			.likeCount(likeCount)
 			.userId(userId)
 			.isLiked(isLiked)
