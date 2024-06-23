@@ -31,7 +31,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 		List<Review> result = query.where(
 				(placeId != null) ? review.placeId.eq(placeId) : null
-			).orderBy(orderBySort(sort))
+			).orderBy(orderBySort(sort), review.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -44,6 +44,32 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 		return new PageImpl<>(result, pageable, totalCount);
 
+	}
+
+	@Override
+	public Page<Review> findMyReviewPage(
+		Long userId,
+		Pageable pageable
+	) {
+
+		JPAQuery<Review> query = queryFactory.selectFrom(review);
+
+		List<Review> result = query.where(
+				review.user.id.eq(userId)
+			).orderBy(orderBySort(ReviewSort.NEW))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long totalCount =
+			queryFactory.select(review.count())
+				.from(review)
+				.where(
+					review.user.id.eq(userId)
+				)
+				.fetchOne();
+
+		return new PageImpl<>(result, pageable, totalCount);
 	}
 
 	public OrderSpecifier<?> orderBySort(ReviewSort sort) {

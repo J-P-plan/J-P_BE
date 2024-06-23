@@ -70,7 +70,7 @@ public class ReviewController {
 				+ "sort : 최신순/인기순 <br>"
 				+ "elementCnt : 10 (default)")
 	@GetMapping("/reviews")
-	public ResponseEntity<PageResDto<ReviewCompactResDto>> getPostPage(
+	public ResponseEntity<PageResDto<ReviewCompactResDto>> getReviewPage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "placeId", required = false) String placeId,
 		@RequestParam(value = "sort") ReviewSort sort,
@@ -79,4 +79,22 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.findReviewPage(page, placeId, sort
 			, elementCnt));
 	}
+
+	@Operation(summary = "내 리뷰 조회 API - Pagination",
+		description =
+			"리뷰를 elementCnt 개수 만큼 조회한다."
+				+ "<br> <br> Data 명세 <br>"
+				+ "page : 조회할 페이지 <br>"
+				+ "placeId : 장소 아이디 <br>"
+				+ "sort : 최신순/인기순 <br>"
+				+ "elementCnt : 10 (default)")
+	@GetMapping("/my/reviews")
+	public ResponseEntity<PageResDto<ReviewCompactResDto>> getMyReviewPage(
+		@AuthenticationPrincipal UserPrincipal principal,
+		@RequestParam(value = "page") Integer page,
+		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt
+	) throws Exception {
+		return ResponseEntity.ok(reviewService.findMyReviewPage(page, elementCnt, principal.getUsername()));
+	}
+
 }
