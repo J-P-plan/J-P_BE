@@ -39,7 +39,7 @@ public class FileController {
 		return ResponseEntity.ok().body(new SingleResponse<>(fileService.uploadProfile(file, principal.getUsername())));
 	}
 
-	// TODO 리뷰/여행기 파일 업로드 - 리뷰/여행기 기능 구현 후 수정 ( 다중 업로드 가능 )
+	// TODO 리뷰/여행기 파일 업로드 - 리뷰/여행기 기능 구현 후 수정 ( 다중 업로드 가능 )ㅎㅎ
 	@PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",
 		description = "이미지, 영상, pdf 업로드가 가능합니다.<br>"
