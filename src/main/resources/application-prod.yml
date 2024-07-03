@@ -6,14 +6,17 @@ spring:
       enabled: true  # 여기까지만 해도 H2 Browser 생성됨
       path: /h2  # 추가 - Context path 변경
   datasource: # 추가
-    url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
+    url: jdbc:mysql://jandpdatabasemysql.cfgwceqs251j.ap-northeast-2.rds.amazonaws.com:3306/jandpdatabasemysql?serverTimezone=Asia/Seoul&characterEncoding=UTF-8  # 추가 - JDBC URL 변경
+    username: admin
+    password: jandp0525
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     defer-datasource-initialization: true
     show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         auto_quote_keyword: true
@@ -36,4 +39,4 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "https://local.jandp-travel.kro.kr/redirect"
+            redirect-uri: "https://local.jandp-travel.kro.kr/login/oauth2/code/google"
