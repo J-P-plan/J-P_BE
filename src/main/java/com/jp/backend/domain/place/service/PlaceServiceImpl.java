@@ -19,6 +19,7 @@ import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
 import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
 import com.jp.backend.domain.user.entity.User;
@@ -123,6 +124,15 @@ public class PlaceServiceImpl implements PlaceService {
 			.userId(userId)
 			.isLiked(isLiked)
 			.build();
+	}
+
+	@Override
+	public List<PlaceCompactResDto> findCityList(CityType cityType) {
+		List<Long> cityIds = cityType.getPlaceIds();
+		return placeRepository.findAllById(cityIds)
+			.stream()
+			.map(city -> PlaceCompactResDto.builder().entity(city).build())
+			.toList();
 	}
 
 	private Place verifyPlace(String placeId) {
