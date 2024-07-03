@@ -38,6 +38,9 @@ public class ReviewResDto {
 	@Schema(description = "별점")
 	private Double star;
 
+	@Schema(description = "좋아요 갯수")
+	private Long likeCnt; //장소 위경도가 필요할까 ,,,?_?
+
 	// @Schema(description = "실제 방문여부")
 	// private Boolean visitedYn;
 
@@ -52,7 +55,7 @@ public class ReviewResDto {
 	private List<CommentResDto> commentResDtoList;
 
 	@Builder
-	public ReviewResDto(Review review, List<Comment> commentList) {
+	public ReviewResDto(Review review, List<Comment> commentList, Long likeCnt) {
 		this.id = review.getId();
 		this.content = review.getContent();
 		this.placeId = review.getPlaceId();
@@ -61,6 +64,7 @@ public class ReviewResDto {
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.viewCnt = review.getViewCnt();
 		this.createdAt = review.getCreatedAt();
+		this.likeCnt = likeCnt;
 		if (commentList != null)
 			this.commentResDtoList = commentList.stream()
 				.map(comment -> CommentResDto.builder().comment(comment).build())

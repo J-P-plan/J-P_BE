@@ -19,4 +19,10 @@ public interface ReviewService {
 		String placeId,
 		ReviewSort sort,
 		Integer elementCnt);
+
+	PageResDto<ReviewCompactResDto> findMyReviewPage(
+		Integer page,
+		Integer elementCnt,
+		String username);
+
 }
