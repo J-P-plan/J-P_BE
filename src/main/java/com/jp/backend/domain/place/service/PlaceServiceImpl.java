@@ -49,7 +49,7 @@ public class PlaceServiceImpl implements PlaceService {
 	 * @return
 	 * @throws Exception
 	 */
-	
+
 	@Override
 	public PageResDto<PlaceCompactResDto> findPlacePage(
 		Integer page,
@@ -99,7 +99,7 @@ public class PlaceServiceImpl implements PlaceService {
 			photoUrls.addAll(additionalPhotoUrls);
 		}
 
-		// 태그 가져오기
+		// 태그 가져오기 // TODO 여기 태그?
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
 		// 유저 Id랑 좋아요 여부 가져오기

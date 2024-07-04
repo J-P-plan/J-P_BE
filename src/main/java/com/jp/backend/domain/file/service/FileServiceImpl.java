@@ -28,6 +28,7 @@ public class FileServiceImpl implements FileService {
 
 	// 유저 프로필 사진 업로드
 	@Override
+	@Transactional
 	public String uploadProfile(MultipartFile file, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
@@ -61,6 +62,7 @@ public class FileServiceImpl implements FileService {
 
 	// TODO 리뷰/여행기 등의 파일 업로드 및 업데이트 - 리뷰/여행기 기능 완료 후 수정
 	@Override
+	@Transactional
 	public String uploadFile(MultipartFile file, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);

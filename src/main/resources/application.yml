@@ -7,6 +7,10 @@ spring:
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
+  servlet: # 파일 크기 제
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   security:
     oauth2:
