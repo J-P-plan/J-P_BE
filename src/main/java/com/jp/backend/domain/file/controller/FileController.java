@@ -39,8 +39,6 @@ public class FileController {
 		return ResponseEntity.ok().body(new SingleResponse<>(fileService.uploadProfile(file, principal.getUsername())));
 	}
 
-	// TODO 프로필사진 기본프로필로 변경하는 거 ---> 프로필 삭제 기능을 만들어야할까?
-
 	// TODO 리뷰/여행기 파일 업로드 - 리뷰/여행기 기능 구현 후 수정 ( 다중 업로드 가능 )
 	@PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",

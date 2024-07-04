@@ -137,7 +137,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	}
 
 	// placeId로 장소 상세 정보 가져오는 메서드
-	// TODO 구글장소 디테일 api에서 placeID 없으면 null로 뜨는 듯 / 장소 정보가 없습니다.로 바꾸기
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
