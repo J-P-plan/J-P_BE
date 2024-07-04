@@ -12,4 +12,9 @@ public interface ReviewRepository {
 		ReviewSort sort,
 		Pageable pageable
 	);
+
+	Page<Review> findMyReviewPage(
+		Long userId,
+		Pageable pageable
+	);
 }
