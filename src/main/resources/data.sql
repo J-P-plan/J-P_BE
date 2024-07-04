@@ -281,7 +281,7 @@ VALUES (511, 'ChIJPXkHCtrCZDURN9AADeggtz0', '증평', '강원도 춘천', '남�
 
 --충남
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES VALUES (512, 'ChIJ6QUVEkr_ejURkBv31pQCCbc', '당진', '충청남도 당진', '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
+VALUES (512, 'ChIJ6QUVEkr_ejURkBv31pQCCbc', '당진', '충청남도 당진', '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
     'CITY', 36.9023743, 126.6545022);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (513, 'ChIJswpwSZtbejUR6U6X3CLP3hA', '서산', '충청남도 서산', '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
