@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
@@ -32,6 +33,7 @@ public class S3Uploader implements Uploader {
 
 	// S3에 업로드 하는 메서드
 	@Override
+	@Transactional
 	public String[] upload(MultipartFile file) throws IOException {
 		String dirName = FileUploadUtil.determinePathsBasedOnMimeType(file.getContentType());
 		return new String[] {
