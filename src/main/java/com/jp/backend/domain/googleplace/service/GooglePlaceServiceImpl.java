@@ -1,5 +1,7 @@
 package com.jp.backend.domain.googleplace.service;
 
+import static com.jp.backend.domain.googleplace.enums.SearchType.*;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,6 +19,7 @@ import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlacePhotosResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
+import com.jp.backend.domain.googleplace.enums.SearchType;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
@@ -51,7 +54,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response, "textSearch");
+			setPhotoUrls(response, TEXT_SEARCH);
 			sortPlacesByPopularity(response);
 		}
 
@@ -82,21 +85,18 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response, "nearbySearch");
+			setPhotoUrls(response, NEARBY_SEARCH);
 			sortPlacesByPopularity(response);
 		}
 
 		// 들어오는 개수대로 데이터 뽑아서 반환
-		if (maxResults != null && maxResults <= 20) {
-			GooglePlaceSearchResDto newResponse = new GooglePlaceSearchResDto();
-			List<GooglePlaceSearchResDto.Result> subList = response.getResults().stream()
+		if (response != null && response.getResults() != null && maxResults != null) {
+			if (maxResults > 20) {
+				throw new CustomLogicException(ExceptionCode.TOO_MANY_REQUEST);
+			}
+			response.setResults(response.getResults().stream()
 				.limit(maxResults)
-				.toList();
-			newResponse.setResults(subList);
-			newResponse.setNextPageToken(response.getNextPageToken());
-			return newResponse;
-		} else if (maxResults != null && maxResults > 20) {
-			throw new CustomLogicException(ExceptionCode.TOO_MANY_REQUEST);
+				.toList());
 		}
 
 		return response;
@@ -104,13 +104,26 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 	// textSearch에서 사용할 경우 --> 모든 사진들 가져오도록
 	// nearbySearch에서 사용할 경우 --> 사진 1개만 가져오도록
-	private void setPhotoUrls(GooglePlaceSearchResDto response, String type) {
+	private void setPhotoUrls(GooglePlaceSearchResDto response, SearchType type) {
 		response.getResults().forEach(result -> {
 			List<String> photoUrls = getPlacePhotos(result.getPlaceId());
 
-			if (type.equals("textSearch")) {
+			switch (type) {
+				case TEXT_SEARCH -> result.setPhotoUrls(photoUrls);
+				case NEARBY_SEARCH -> {
+					if (!photoUrls.isEmpty()) {
+						List<String> singlePhotoUrl = new ArrayList<>();
+						singlePhotoUrl.add(photoUrls.get(0)); // 첫 번째 사진 URL만 추가
+						result.setPhotoUrls(singlePhotoUrl);
+					} else {
+						result.setPhotoUrls(new ArrayList<>()); // 사진 URL이 없는 경우 빈 리스트 설정
+					}
+				}
+			}
+
+			if (type.equals(TEXT_SEARCH)) {
 				result.setPhotoUrls(photoUrls);
-			} else if (type.equals("nearbySearch")) {
+			} else if (type.equals(NEARBY_SEARCH)) {
 				if (!photoUrls.isEmpty()) {
 					List<String> singlePhotoUrl = new ArrayList<>();
 					singlePhotoUrl.add(photoUrls.get(0)); // 첫 번째 사진 URL만 추가
