@@ -69,6 +69,8 @@ public class FileServiceImpl implements FileService {
 		User user = userService.verifyUser(email);
 
 		if (user.getProfile() != null) {
+			user.setProfile(null);
+
 			String fileUrl = user.getProfile().getUrl();
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // 최종 슬래시 이후의 문자열이 파일 이름
 			s3Uploader.deleteFile(fileName); // S3에서 파일 삭제

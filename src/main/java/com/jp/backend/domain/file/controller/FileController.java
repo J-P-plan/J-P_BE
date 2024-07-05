@@ -42,7 +42,7 @@ public class FileController {
 
 	@DeleteMapping(value = "/profile/delete")
 	@Operation(summary = "유저의 프로필 사진을 삭제합니다.")
-	public ResponseEntity<void> deleteProfile(@AuthenticationPrincipal UserPrincipal principal) throws IOException {
+	public ResponseEntity<Void> deleteProfile(@AuthenticationPrincipal UserPrincipal principal) throws IOException {
 		fileService.deleteProfile(principal.getUsername());
 		return ResponseEntity.noContent().build();
 	}
