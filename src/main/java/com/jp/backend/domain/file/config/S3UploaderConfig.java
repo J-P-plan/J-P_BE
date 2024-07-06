@@ -19,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class S3UploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
 	private final UserService userService;
-	private final S3Uploader s3Uploader;
 
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), s3Uploader, jpaFileRepository, userService);
+		return new FileServiceImpl(this.uploader(), (S3Uploader)this.uploader(), jpaFileRepository, userService);
 	}
 
 	@Bean

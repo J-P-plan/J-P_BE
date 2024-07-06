@@ -120,18 +120,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 					}
 				}
 			}
-
-			if (type.equals(TEXT_SEARCH)) {
-				result.setPhotoUrls(photoUrls);
-			} else if (type.equals(NEARBY_SEARCH)) {
-				if (!photoUrls.isEmpty()) {
-					List<String> singlePhotoUrl = new ArrayList<>();
-					singlePhotoUrl.add(photoUrls.get(0)); // 첫 번째 사진 URL만 추가
-					result.setPhotoUrls(singlePhotoUrl);
-				} else {
-					result.setPhotoUrls(new ArrayList<>()); // 사진 URL이 없는 경우 빈 리스트 설정
-				}
-			}
 		});
 	}
 
