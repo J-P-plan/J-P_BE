@@ -11,20 +11,18 @@ import com.jp.backend.domain.file.uploader.S3Uploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.user.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 @Profile("prod")
 public class S3UploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
 	private final UserService userService;
 
-	public S3UploaderConfig(JpaFileRepository jpaFileRepository, UserService userService) {
-		this.jpaFileRepository = jpaFileRepository;
-		this.userService = userService;
-	}
-
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), jpaFileRepository, userService);
+		return new FileServiceImpl(this.uploader(), (S3Uploader)this.uploader(), jpaFileRepository, userService);
 	}
 
 	@Bean

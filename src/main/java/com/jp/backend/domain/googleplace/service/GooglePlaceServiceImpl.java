@@ -1,5 +1,7 @@
 package com.jp.backend.domain.googleplace.service;
 
+import static com.jp.backend.domain.googleplace.enums.SearchType.*;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,6 +19,7 @@ import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlacePhotosResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
+import com.jp.backend.domain.googleplace.enums.SearchType;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
@@ -51,7 +54,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response);
+			setPhotoUrls(response, TEXT_SEARCH);
 			sortPlacesByPopularity(response);
 		}
 
@@ -61,11 +64,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// TODO 리팩토링 - 응답 반환까지 시간이 좀 걸림
 	// nearbySearch 메서드
 	@Override
-	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken) {
+	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, Long maxResults,
+		String nextPageToken) {
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.NEARBY_SEARCH_URL)
 			.queryParam("location", lat + "," + lng)
 			.queryParam("radius", radius * 1000)
+			.queryParam("keyword", "여행지")
+			.queryParam("keyword", "맛집, 카페")
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
@@ -79,18 +85,41 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response);
+			setPhotoUrls(response, NEARBY_SEARCH);
 			sortPlacesByPopularity(response);
+		}
+
+		// 들어오는 개수대로 데이터 뽑아서 반환
+		if (response != null && response.getResults() != null && maxResults != null) {
+			if (maxResults > 20) {
+				throw new CustomLogicException(ExceptionCode.TOO_MANY_REQUEST);
+			}
+			response.setResults(response.getResults().stream()
+				.limit(maxResults)
+				.toList());
 		}
 
 		return response;
 	}
 
-	// placeId로 photoUrls를 가져와 dto에 넣어 반환
-	private void setPhotoUrls(GooglePlaceSearchResDto response) {
+	// textSearch에서 사용할 경우 --> 모든 사진들 가져오도록
+	// nearbySearch에서 사용할 경우 --> 사진 1개만 가져오도록
+	private void setPhotoUrls(GooglePlaceSearchResDto response, SearchType type) {
 		response.getResults().forEach(result -> {
 			List<String> photoUrls = getPlacePhotos(result.getPlaceId());
-			result.setPhotoUrls(photoUrls); // 각 Result 객체의 photoUrls 필드에 사진 URL 목록을 설정
+
+			switch (type) {
+				case TEXT_SEARCH -> result.setPhotoUrls(photoUrls);
+				case NEARBY_SEARCH -> {
+					if (!photoUrls.isEmpty()) {
+						List<String> singlePhotoUrl = new ArrayList<>();
+						singlePhotoUrl.add(photoUrls.get(0)); // 첫 번째 사진 URL만 추가
+						result.setPhotoUrls(singlePhotoUrl);
+					} else {
+						result.setPhotoUrls(new ArrayList<>()); // 사진 URL이 없는 경우 빈 리스트 설정
+					}
+				}
+			}
 		});
 	}
 
@@ -126,6 +155,11 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
+		// 결과가 없으면 장소 정보 없다고 null 처리
+		if (apiResponse == null || apiResponse.getResult() == null) {
+			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
+		}
+
 		// null 처리
 		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
 			.orElse(new GooglePlaceDetailsDto.Result());
@@ -142,7 +176,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.lat(result.getGeometry().getLocation().getLat())
 			.lng(result.getGeometry().getLocation().getLng())
 			.build();
-		
+
 		return GooglePlaceDetailsResDto.builder()
 			.placeId(result.getPlaceId())
 			.name(result.getName())
@@ -157,10 +191,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.build();
 	}
 
-	private void dealingNull(GooglePlaceDetailsDto.Result result) {
-
-	}
-
 	// placeId로 장소 사진 url들 가져오는 메서드
 	@Override
 	public List<String> getPlacePhotos(String placeId) {
@@ -173,6 +203,11 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		URI detailsUri = detailsUriBuilder.build().toUri();
 		GooglePlacePhotosResDto response = handleGooglePlacesApiException(detailsUri, GooglePlacePhotosResDto.class);
+
+		// 결과가 없으면 장소 정보 없다고 null 처리
+		if (response == null || response.getResult() == null) {
+			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
+		}
 
 		// photo Url 만들기
 		List<String> photoUrls = new ArrayList<>();

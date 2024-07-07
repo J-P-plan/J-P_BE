@@ -11,20 +11,18 @@ import com.jp.backend.domain.file.uploader.LocalUploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.user.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 @Profile("local")
 public class LocalUploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
 	private final UserService userService;
 
-	public LocalUploaderConfig(JpaFileRepository jpaFileRepository, UserService userService) {
-		this.jpaFileRepository = jpaFileRepository;
-		this.userService = userService;
-	}
-
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), jpaFileRepository, userService);
+		return new FileServiceImpl(this.uploader(), null, jpaFileRepository, userService);
 	}
 
 	@Bean
