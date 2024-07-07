@@ -8,7 +8,8 @@ import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 public interface GooglePlaceService {
 	GooglePlaceSearchResDto searchPlaces(String contents, String nextPageToken);
 
-	GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, String nextPageToken);
+	GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, Long maxResults,
+		String nextPageToken);
 
 	GooglePlaceDetailsResDto getPlaceDetails(String placeId);
 

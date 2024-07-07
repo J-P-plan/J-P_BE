@@ -50,7 +50,6 @@ public class PlaceServiceImpl implements PlaceService {
 	 * @throws Exception
 	 */
 
-	// TODO 변경 - 채은언니가 쓴 메서드들 필요한지 다시 살펴봐
 	@Override
 	public PageResDto<PlaceCompactResDto> findPlacePage(
 		Integer page,
@@ -100,7 +99,7 @@ public class PlaceServiceImpl implements PlaceService {
 			photoUrls.addAll(additionalPhotoUrls);
 		}
 
-		// 태그 가져오기
+		// 태그 가져오기 // TODO 여기 태그?
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
 		// 유저 Id랑 좋아요 여부 가져오기
