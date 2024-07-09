@@ -59,6 +59,7 @@ public class ReviewCompactResDto {
 		this.placeId = review.getPlaceId();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.commentCnt = commentCnt; //todo 바꾸기
+		this.createdAt = review.getCreatedAt();
 	}
 
 }

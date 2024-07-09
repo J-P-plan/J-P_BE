@@ -51,6 +51,9 @@ public class ReviewResDto {
 	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
 	private LocalDateTime createdAt;
 
+	@Schema(description = "댓글 갯수")
+	private Integer commentCnt;
+
 	@Schema(description = "댓글 리스트")
 	private List<CommentResDto> commentResDtoList;
 
@@ -65,9 +68,16 @@ public class ReviewResDto {
 		this.viewCnt = review.getViewCnt();
 		this.createdAt = review.getCreatedAt();
 		this.likeCnt = likeCnt;
-		if (commentList != null)
+		this.commentCnt = 0;
+		if (commentList != null) {
 			this.commentResDtoList = commentList.stream()
 				.map(comment -> CommentResDto.builder().comment(comment).build())
 				.toList();
+			int commentCnt = commentList.size();
+			for (Comment comment : commentList) {
+				commentCnt += comment.getReplyList().size();
+			}
+			this.commentCnt = commentCnt;
+		}
 	}
 }
