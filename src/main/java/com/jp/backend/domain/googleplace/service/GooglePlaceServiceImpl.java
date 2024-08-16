@@ -177,15 +177,34 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.lng(result.getGeometry().getLocation().getLng())
 			.build();
 
+		// shortAddress 추출
+		String address = result.getFormattedAddress();
+		StringBuilder shortAdd = new StringBuilder();
+		if (address != null) {
+			String[] addArr = address.split(" ");
+
+			for (String word : addArr) {
+				if (word.endsWith("도") || word.endsWith("시") || word.endsWith("군")) {
+					if (shortAdd.length() > 0) {
+						shortAdd.append(" "); // 공백 추가
+					}
+					shortAdd.append(word); // 요소 추가
+				}
+			}
+		}
+		String shortAddress = shortAdd.toString();
+
 		return GooglePlaceDetailsResDto.builder()
 			.placeId(result.getPlaceId())
 			.name(result.getName())
-			.formattedAddress(result.getFormattedAddress())
+			.shortAddress(shortAddress)
+			.fullAddress(result.getFormattedAddress())
 			.location(location)
 			.formattedPhoneNumber(result.getFormattedPhoneNumber())
 			.businessStatus(result.getBusinessStatus())
 			.openNow(isOpenNow)
 			.weekdayText(weekdayText)
+			.rating(result.getRating())
 			.photoUrls(photoUrls)
 			.website(result.getWebsite())
 			.build();

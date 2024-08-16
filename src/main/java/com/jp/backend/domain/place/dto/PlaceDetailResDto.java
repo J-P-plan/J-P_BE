@@ -76,7 +76,7 @@ public class PlaceDetailResDto {
 		this.placeId = placeId;
 		if (detailsByGoogle != null) {
 			this.name = detailsByGoogle.getName();
-			this.formattedAddress = detailsByGoogle.getFormattedAddress();
+			this.formattedAddress = detailsByGoogle.getFullAddress();
 			this.location = Location.builder().lat(detailsByGoogle.getLocation().getLat())
 				.lng(detailsByGoogle.getLocation().getLng()).build();
 		}
