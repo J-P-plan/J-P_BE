@@ -56,6 +56,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		if (response != null && response.getResults() != null) {
 			setPhotoUrls(response, TEXT_SEARCH);
 			sortPlacesByPopularity(response);
+
+			// response에 shortAddress 추가
+			response.getResults().stream()
+				.map(result -> {
+					String address = result.getFormattedAddress();
+					result.setShortAddress(getShortAddress(address));
+					return result;
+				}).toList();
 		}
 
 		return response;
@@ -87,6 +95,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		if (response != null && response.getResults() != null) {
 			setPhotoUrls(response, NEARBY_SEARCH);
 			sortPlacesByPopularity(response);
+
+			// response에 shortAddress 추가
+			response.getResults().stream()
+				.map(result -> {
+					String address = result.getVicinity();
+					result.setShortAddress(getShortAddress(address));
+					return result;
+				}).toList();
 		}
 
 		// 들어오는 개수대로 데이터 뽑아서 반환
@@ -180,12 +196,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return GooglePlaceDetailsResDto.builder()
 			.placeId(result.getPlaceId())
 			.name(result.getName())
-			.formattedAddress(result.getFormattedAddress())
+			.shortAddress(getShortAddress(result.getFormattedAddress())) // shortAddress 추출해서 넣기
+			.fullAddress(result.getFormattedAddress())
 			.location(location)
 			.formattedPhoneNumber(result.getFormattedPhoneNumber())
 			.businessStatus(result.getBusinessStatus())
 			.openNow(isOpenNow)
 			.weekdayText(weekdayText)
+			.rating(result.getRating())
 			.photoUrls(photoUrls)
 			.website(result.getWebsite())
 			.build();
@@ -247,6 +265,43 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	// 간략한 주소 추출
+	private String getShortAddress(String address) {
+		// 조건을 Set으로 정의하여 빠른 검색 가능
+		String[] conditions = new String[] {"도", "시", "군", "구", "면", "동", "로", "가"};
+		StringBuilder shortAdd = new StringBuilder();
+
+		if (address != null) {
+			String[] addArr = address.split(" ");
+			int count = 0;
+
+			for (String word : addArr) {
+				if (endsWithAnyCondition(word, conditions)) { // 단어의 마지막 글자가 해당 조건으로 끝나는지 --> true면 stringbuilder에 단어 추가
+					if (shortAdd.length() > 0) {
+						shortAdd.append(" "); // 공백 추가
+					}
+					shortAdd.append(word); // 요소 추가
+					count++;
+
+					if (count == 2) { // 단어 두개까지만 넣고 반환
+						return shortAdd.toString();
+					}
+				}
+			}
+		}
+		return shortAdd.toString();
+	}
+
+	// 단어가 조건 중 하나로 끝나는지 확인
+	private boolean endsWithAnyCondition(String word, String[] conditions) {
+		for (String condition : conditions) {
+			if (word.endsWith(condition)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

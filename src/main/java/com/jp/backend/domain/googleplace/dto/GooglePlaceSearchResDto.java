@@ -27,6 +27,7 @@ public class GooglePlaceSearchResDto { // search 결과에 따른 장소 list re
 	public static class Result {
 		private String placeId;
 		private String name;
+		private String shortAddress;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String formattedAddress;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
