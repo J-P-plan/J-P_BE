@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -59,16 +60,30 @@ public class PlaceServiceImpl implements PlaceService {
 	) {
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		Page<PlaceCompactResDto> placePage =
-			placeRepository.findPlacePage(placeType, searchString, pageable)
-				.map(place -> PlaceCompactResDto.builder().entity(place).build());
+		Page<Place> placePage = placeRepository.findPlacePage(placeType, searchString, pageable);
+		List<PlaceCompactResDto> placeCompactList = new ArrayList<>();
+
+		for (Place place : placePage.getContent()) {
+			// google에서 별점 가져와서 넣어주기
+			Double rating = Optional.ofNullable(googlePlaceService.getPlaceDetails(place.getPlaceId(), "rating"))
+				.map(GooglePlaceDetailsResDto::getRating)
+				.orElse(0.0);
+
+			placeCompactList.add(PlaceCompactResDto.builder()
+				.entity(place)
+				.rating(rating)
+				.build());
+		}
+
+		Page<PlaceCompactResDto> placeCompactPage = new PageImpl<>(placeCompactList, pageable,
+			placePage.getTotalElements());
 
 		PageInfo pageInfo =
 			PageInfo.<PlaceCompactResDto>builder()
 				.pageable(pageable)
-				.pageDto(placePage)
+				.pageDto(placeCompactPage)
 				.build();
-		return new PageResDto<>(pageInfo, placePage.getContent());
+		return new PageResDto<>(pageInfo, placeCompactPage.getContent());
 	}
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기

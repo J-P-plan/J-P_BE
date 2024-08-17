@@ -47,7 +47,7 @@ public class PlaceController {
 		@RequestParam(required = false, value = "placeType") PlaceType placeType,
 		@RequestParam(required = false, value = "searchString") String searchString,
 		@RequestParam(required = false, value = "elementCnt", defaultValue = "10") Integer elementCnt
-	) throws Exception {
+	) {
 		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, elementCnt));
 	}
 
