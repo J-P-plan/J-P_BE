@@ -42,7 +42,7 @@ server:
   port: 8080
   ssl:
     key-store: classpath:keystore.p12
-    key-store-password: 19980525
+    key-store-password: hello12345678
     key-store-type: PKCS12
 
 spring-doc:
