@@ -108,11 +108,12 @@ public class PlaceServiceImpl implements PlaceService {
 			}
 		}
 
-		if (photoUrls.size() < 6
-			|| place == null) { // photoUrls의 크기가 6개 미만이거나 place가 null일 경우, Google에서 추가 사진을 가져와서 넣어줌
-			List<String> additionalPhotoUrls = googlePlaceService.getPlacePhotos(placeId);
-			photoUrls.addAll(additionalPhotoUrls);
-		}
+		// TODO 여기 수정 후 주석 풀기
+		// if (photoUrls.size() < 6
+		// 	|| place == null) { // photoUrls의 크기가 6개 미만이거나 place가 null일 경우, Google에서 추가 사진을 가져와서 넣어줌
+		// 	List<String> additionalPhotoUrls = googlePlaceService.getPlacePhotos(placeId);
+		// 	photoUrls.addAll(additionalPhotoUrls);
+		// }
 
 		// 태그 가져오기 // TODO 여기 태그?
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
