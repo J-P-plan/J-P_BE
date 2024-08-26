@@ -6,8 +6,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -15,9 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
-import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
-import com.jp.backend.domain.googleplace.dto.GooglePlacePhotosResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
 import com.jp.backend.domain.googleplace.enums.SearchType;
 import com.jp.backend.global.exception.CustomLogicException;
@@ -156,94 +152,96 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
-		UriComponentsBuilder uriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlaceConfig.DETAILS_URL)
-			.queryParam("placeid", placeId)
-			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
-			.queryParam("language", "ko");
-
-		// 리뷰 가져오기
-		if (Objects.equals(fields, "reviews")) {
-			uriBuilder.queryParam("fields", fields + ",user_ratings_total");
-		}
-
-		URI uri = uriBuilder.build().toUri();
-
-		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
-
-		// 결과가 없으면 장소 정보 없다고 null 처리
-		if (apiResponse == null || apiResponse.getResult() == null) {
-			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
-		}
-
-		// null 처리
-		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
-			.orElse(new GooglePlaceDetailsDto.Result());
-
-		boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
-			.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
-			.orElse(false);
-		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
-			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
-			.orElse(null);
-		List<String> photoUrls = Optional.ofNullable(result.getPhotoUrls())
-			.orElseGet(() -> getPlacePhotos(placeId));
-		GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
-			.lat(result.getGeometry().getLocation().getLat())
-			.lng(result.getGeometry().getLocation().getLng())
-			.build();
-
-		return GooglePlaceDetailsResDto.builder()
-			.placeId(result.getPlaceId())
-			.name(result.getName())
-			.shortAddress(getShortAddress(result.getFormattedAddress())) // shortAddress 추출해서 넣기
-			.fullAddress(result.getFormattedAddress())
-			.location(location)
-			.formattedPhoneNumber(result.getFormattedPhoneNumber())
-			.businessStatus(result.getBusinessStatus())
-			.openNow(isOpenNow)
-			.weekdayText(weekdayText)
-			.rating(result.getRating())
-			.photoUrls(photoUrls)
-			.website(result.getWebsite())
-			.build();
+		// UriComponentsBuilder uriBuilder = UriComponentsBuilder
+		// 	.fromUriString(GooglePlaceConfig.DETAILS_URL)
+		// 	.queryParam("placeid", placeId)
+		// 	.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
+		// 	.queryParam("language", "ko");
+		//
+		// // 리뷰 가져오기
+		// if (Objects.equals(fields, "reviews")) {
+		// 	uriBuilder.queryParam("fields", fields + ",user_ratings_total");
+		// }
+		//
+		// URI uri = uriBuilder.build().toUri();
+		//
+		// GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
+		//
+		// // 결과가 없으면 장소 정보 없다고 null 처리
+		// if (apiResponse == null || apiResponse.getResult() == null) {
+		// 	throw new CustomLogicException(ExceptionCode.PLACE_NONE);
+		// }
+		//
+		// // null 처리
+		// GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
+		// 	.orElse(new GooglePlaceDetailsDto.Result());
+		//
+		// boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
+		// 	.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
+		// 	.orElse(false);
+		// List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
+		// 	.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
+		// 	.orElse(null);
+		// List<String> photoUrls = Optional.ofNullable(result.getPhotoUrls())
+		// 	.orElseGet(() -> getPlacePhotos(placeId));
+		// GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
+		// 	.lat(result.getGeometry().getLocation().getLat())
+		// 	.lng(result.getGeometry().getLocation().getLng())
+		// 	.build();
+		//
+		// return GooglePlaceDetailsResDto.builder()
+		// 	.placeId(result.getPlaceId())
+		// 	.name(result.getName())
+		// 	.shortAddress(getShortAddress(result.getFormattedAddress())) // shortAddress 추출해서 넣기
+		// 	.fullAddress(result.getFormattedAddress())
+		// 	.location(location)
+		// 	.formattedPhoneNumber(result.getFormattedPhoneNumber())
+		// 	.businessStatus(result.getBusinessStatus())
+		// 	.openNow(isOpenNow)
+		// 	.weekdayText(weekdayText)
+		// 	.rating(result.getRating())
+		// 	.photoUrls(photoUrls)
+		// 	.website(result.getWebsite())
+		// 	.build();
+		return null;
 	}
 
 	// placeId로 장소 사진 url들 가져오는 메서드
 	@Override
 	public List<String> getPlacePhotos(String placeId) {
-		// details 가져오기
-		UriComponentsBuilder detailsUriBuilder = UriComponentsBuilder
-			.fromUriString(GooglePlaceConfig.DETAILS_URL)
-			.queryParam("placeid", placeId)
-			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
-			.queryParam("language", "ko");
-
-		URI detailsUri = detailsUriBuilder.build().toUri();
-		GooglePlacePhotosResDto response = handleGooglePlacesApiException(detailsUri, GooglePlacePhotosResDto.class);
-
-		// 결과가 없으면 장소 정보 없다고 null 처리
-		if (response == null || response.getResult() == null) {
-			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
-		}
-
-		// photo Url 만들기
-		List<String> photoUrls = new ArrayList<>();
-		if (response.getResult().getPhotos() != null) { // 사진 정보가 null이 아닐 때만 가져오기
-			for (GooglePlacePhotosResDto.Photo photo : response.getResult().getPhotos()) {
-				String photoUri = UriComponentsBuilder
-					.fromUriString(GooglePlaceConfig.PHOTO_URL)
-					.queryParam("maxwidth", photo.getWidth())
-					.queryParam("maxheight", photo.getHeight())
-					.queryParam("photo_reference", photo.getPhotoReference())
-					.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
-					.toUriString();
-
-				photoUrls.add(photoUri);
-			}
-		}
-
-		return photoUrls;
+		// // details 가져오기
+		// UriComponentsBuilder detailsUriBuilder = UriComponentsBuilder
+		// 	.fromUriString(GooglePlaceConfig.DETAILS_URL)
+		// 	.queryParam("placeid", placeId)
+		// 	.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
+		// 	.queryParam("language", "ko");
+		//
+		// URI detailsUri = detailsUriBuilder.build().toUri();
+		// GooglePlacePhotosResDto response = handleGooglePlacesApiException(detailsUri, GooglePlacePhotosResDto.class);
+		//
+		// // 결과가 없으면 장소 정보 없다고 null 처리
+		// if (response == null || response.getResult() == null) {
+		// 	throw new CustomLogicException(ExceptionCode.PLACE_NONE);
+		// }
+		//
+		// // photo Url 만들기
+		// List<String> photoUrls = new ArrayList<>();
+		// if (response.getResult().getPhotos() != null) { // 사진 정보가 null이 아닐 때만 가져오기
+		// 	for (GooglePlacePhotosResDto.Photo photo : response.getResult().getPhotos()) {
+		// 		String photoUri = UriComponentsBuilder
+		// 			.fromUriString(GooglePlaceConfig.PHOTO_URL)
+		// 			.queryParam("maxwidth", photo.getWidth())
+		// 			.queryParam("maxheight", photo.getHeight())
+		// 			.queryParam("photo_reference", photo.getPhotoReference())
+		// 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
+		// 			.toUriString();
+		//
+		// 		photoUrls.add(photoUri);
+		// 	}
+		// }
+		//
+		// return photoUrls;
+		return null;
 	}
 
 	// Google Places API 네트워크 에러 시 익셉션 처리
