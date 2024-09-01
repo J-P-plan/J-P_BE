@@ -238,12 +238,20 @@ VALUES (311, 'ChIJn3jj9rkUDTURS7YjOgUyUVU', '제주도 성산일출봉', '제주
         'TRAVEL_PLACE', 33.458056, 126.94250);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (312, 'ChIJQwyfbNqyZzUR31ffyfmvm6w', '경주 불국사', '경상북도 경주', '신라 시대의 불교 사원으로, 유네스코 세계문화유산에 등재되어 있습니다.',
-        'THEME', 35.7901973, 129.3320806);
+        'TRAVEL_PLACE', 35.7901973, 129.3320806);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (313, 'ChIJS73uEmIjcDURjoTQxhu-9I4', '전주 한옥마을', '전라북도 전주', '전통 한옥이 잘 보존된 지역으로, 한국의 전통 문화를 체험할 수 있는 곳입니다.',
-        'THEME', 35.8175376, 127.1520417);
+        'TRAVEL_PLACE', 35.8175376, 127.1520417);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (314, 'ChIJda9gFeQmYzURIsXnKaOqStY', '남이섬', '강원도 춘천',
         '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
-        'THEME', 37.7899352, 127.5258072);
+        'TRAVEL_PLACE', 37.7899352, 127.5258072);
 
+-- place - THEME_TRAVEL
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (500, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '테마여행지 축제 예시', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'THEME',
+        37.3676264, 127.8248756, 'FESTIVAL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (501, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '테마여행지 여행지 예시', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'THEME',
+        37.3676264, 127.8248756, 'TRAVEL');

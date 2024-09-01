@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.place.enums.ThemeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -31,6 +32,9 @@ public class PlaceDetailResDto {
 
 	@Schema(description = "장소명")
 	private String name;
+
+	@Schema(description = "여행지/축제 구분")
+	private ThemeType themeType; //여행지일시에만 구현
 
 	@Schema(description = "장소 주소")
 	private String formattedAddress;
@@ -85,6 +89,7 @@ public class PlaceDetailResDto {
 			this.description = place.getDescription();
 			this.tags = Arrays.asList("여름여행", "바닷가", "태그예시", "여행가고싶다"); //TODO PLACE에서 가져오는걸로 수정
 			this.id = place.getId();
+			this.themeType = place.getThemeType();
 		}
 		this.photoUrls = photoUrls;
 		this.likeCount = likeCount;

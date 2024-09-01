@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.place.enums.ThemeType;
 import com.jp.backend.domain.tag.entity.PlaceTag;
 
 import jakarta.persistence.CascadeType;
@@ -42,6 +43,9 @@ public class Place {
 
 	@Enumerated(EnumType.STRING)
 	private PlaceType placeType;
+
+	@Enumerated(EnumType.STRING)
+	private ThemeType themeType; //여행지일시에만 구현
 
 	private Double lat;
 
