@@ -68,13 +68,11 @@ public class GooglePlaceDetailsDto { // api에서 받아올 장소의 상세 정
 	@Getter
 	@Setter
 	public static class Review {
-		private String authorName;
-		private String authorUrl;
-		private String profilePhotoUrl;
-		private Long rating;
-		private String relativeTimeDescription;
-		private String text;
-		private Long time;
+		private String authorName; // 리뷰 남긴 사용자명
+		private String profilePhotoUrl; // 리뷰 남긴 사용자 프로필 사진 URL
+		private Long rating; // 쓴 별점
+		private String text; // 리뷰 text
+		private Long time; // 리뷰가 작성된 시간의 Unix 타임스탬프 / 1970년 1월 1일부터 해당 시간까지의 초를 나타낸데 엥
 	}
 
 }

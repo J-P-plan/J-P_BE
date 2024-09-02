@@ -31,8 +31,8 @@ public class GooglePlaceDetailsResDto { // 프론트에게 넘겨줄 장소 상�
 	private double rating;
 	private Long userRatingTotal;
 	private List<String> photoUrls;
-	private String website; // 장소의 웹사이트
 	private List<Review> reviews;
+	private String website; // 장소의 웹사이트
 
 	@Getter
 	@Setter
@@ -44,12 +44,11 @@ public class GooglePlaceDetailsResDto { // 프론트에게 넘겨줄 장소 상�
 
 	@Getter
 	@Setter
+	@Builder
 	public static class Review {
 		private String authorName;
-		private String authorUrl;
 		private String profilePhotoUrl;
 		private Long rating;
-		private String relativeTimeDescription;
 		private String text;
 		private Long time;
 	}

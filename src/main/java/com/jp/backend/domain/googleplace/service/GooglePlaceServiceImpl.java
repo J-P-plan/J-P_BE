@@ -184,6 +184,9 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
 		}
 
+		// TODO 어차피 dto 에서 null인 애들은 안보여주니까 null 처리문 필요없는 거 빼기 --> 근데 있어야하는 듯...? review만 보여줄 때는 필요할 듯...?
+		//  --> shortAdd / location / openNow / rating / photourls 얘네가 null로 안들어가서 그냥 빈 애들로 나오는데 어쩌징
+
 		// null 처리
 		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
 			.orElse(new GooglePlaceDetailsDto.Result());
@@ -194,6 +197,18 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
 			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
 			.orElse(null);
+
+		List<GooglePlaceDetailsResDto.Review> reviews = Optional.ofNullable(result.getReviews())
+			.orElse(Collections.emptyList())
+			.stream()
+			.map(review -> GooglePlaceDetailsResDto.Review.builder()
+				.authorName(review.getAuthorName())
+				.rating(review.getRating())
+				.text(review.getText())
+				.time(review.getTime())
+				.profilePhotoUrl(review.getProfilePhotoUrl())
+				.build())
+			.toList();
 
 		// photos를 이용하여 photoUrls 생성
 		List<String> photoUrls = Optional.ofNullable(result.getPhotos())
@@ -208,10 +223,24 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 				.toUriString())
 			.toList();
 
-		GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
-			.lat(result.getGeometry().getLocation().getLat())
-			.lng(result.getGeometry().getLocation().getLng())
-			.build();
+		// GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
+		// 	.lat(result.getGeometry().getLocation().getLat())
+		// 	.lng(result.getGeometry().getLocation().getLng())
+		// 	.build();
+
+		GooglePlaceDetailsResDto.Location location; // location 변수를 외부에서 선언
+
+		if (result.getGeometry() != null) {
+			location = GooglePlaceDetailsResDto.Location.builder() // location 초기화
+				.lat(result.getGeometry().getLocation().getLat())
+				.lng(result.getGeometry().getLocation().getLng())
+				.build();
+		} else {
+			location = GooglePlaceDetailsResDto.Location.builder() // 기본값 설정
+				.lat(0.0)
+				.lng(0.0)
+				.build();
+		}
 
 		return GooglePlaceDetailsResDto.builder()
 			.placeId(result.getPlaceId())
@@ -224,6 +253,8 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.openNow(isOpenNow)
 			.weekdayText(weekdayText)
 			.rating(result.getRating())
+			.userRatingTotal(result.getUserRatingsTotal())
+			.reviews(reviews)
 			.photoUrls(photoUrls)
 			.website(result.getWebsite())
 			.build();
