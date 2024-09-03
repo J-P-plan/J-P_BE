@@ -56,11 +56,12 @@ public class PlaceServiceImpl implements PlaceService {
 		Integer page,
 		String searchString,
 		PlaceType placeType,
+		CityType cityType,
 		Integer elementCnt
 	) {
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		Page<Place> placePage = placeRepository.findPlacePage(placeType, searchString, pageable);
+		Page<Place> placePage = placeRepository.findPlacePage(placeType, cityType, searchString, pageable);
 		List<PlaceCompactResDto> placeCompactList = new ArrayList<>();
 
 		for (Place place : placePage.getContent()) {
@@ -136,16 +137,7 @@ public class PlaceServiceImpl implements PlaceService {
 			.isLiked(isLiked)
 			.build();
 	}
-
-	@Override
-	public List<PlaceCompactResDto> findCityList(CityType cityType) {
-		List<Long> cityIds = cityType.getPlaceIds();
-		return placeRepository.findAllById(cityIds)
-			.stream()
-			.map(city -> PlaceCompactResDto.builder().entity(city).build())
-			.toList();
-	}
-
+	
 	private Place verifyPlace(String placeId) {
 		return placeRepository.findByPlaceId(placeId)
 			.orElse(null); // 장소가 존재하지 않으면 null 처리

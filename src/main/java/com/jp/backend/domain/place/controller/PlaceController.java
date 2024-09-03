@@ -1,6 +1,5 @@
 package com.jp.backend.domain.place.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -39,16 +38,18 @@ public class PlaceController {
 				" Data 명세 <br>{ <br>" +
 				"page : 조회할 페이지 <br>" +
 				"placeType : 장소 타입 (인기 도시/인기 여행지/테마별 여행지), 선택 안할시 전체조회 <br>" +
+				"cityType : 도시 타입 (서울/경기/강원 등)" +
 				"searchString : 검색어 <br>" +
 				"elementCnt : 10 (default) <br>"
 				+ "} ( 현재 response의 photoUrl은 아직 사진 데이터를 넣지 않아 null로 표시됩니다. )")
 	public ResponseEntity<PageResDto<PlaceCompactResDto>> findPlacePage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "placeType") PlaceType placeType,
+		@RequestParam(required = false, value = "cityType") CityType cityType,
 		@RequestParam(required = false, value = "searchString") String searchString,
 		@RequestParam(required = false, value = "elementCnt", defaultValue = "10") Integer elementCnt
 	) {
-		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, elementCnt));
+		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, cityType, elementCnt));
 	}
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
@@ -67,15 +68,4 @@ public class PlaceController {
 
 		return ResponseEntity.ok(details);
 	}
-
-	@GetMapping("/city")
-	@Operation(summary = "도시 리스트 조회 API",
-		description =
-			"도시 정보를 CITY TYPE에 맞게 조회한다.")
-	public ResponseEntity<List<PlaceCompactResDto>> findCityList(
-		@RequestParam(required = true, value = "placeType") CityType cityType
-	) throws Exception {
-		return ResponseEntity.ok(placeService.findCityList(cityType));
-	}
-
 }

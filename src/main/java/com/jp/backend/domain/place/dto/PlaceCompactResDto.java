@@ -1,6 +1,7 @@
 package com.jp.backend.domain.place.dto;
 
 import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.enums.ThemeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,9 @@ public class PlaceCompactResDto {
 	@Schema(description = "서브 장소명")
 	private String subName;
 
+	@Schema(description = "여행지/축제 구분")
+	private ThemeType themeType; //여행지일시에만 구현
+
 	@Schema(description = "별점")
 	private Double rating;
 
@@ -40,7 +44,7 @@ public class PlaceCompactResDto {
 		this.placeId = entity.getPlaceId();
 		this.subName = entity.getSubName();
 		this.rating = rating;
-
+		this.themeType = entity.getThemeType();
 		if (!entity.getFiles().isEmpty()) {
 			this.photoUrl = entity.getFiles().get(0).getUrl();
 		} else {
