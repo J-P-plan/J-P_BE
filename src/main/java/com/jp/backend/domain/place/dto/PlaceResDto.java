@@ -2,6 +2,7 @@ package com.jp.backend.domain.place.dto;
 
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.place.enums.ThemeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -33,6 +34,9 @@ public class PlaceResDto {
 	@Schema(description = "장소 타입")
 	private PlaceType placeType;
 
+	@Schema(description = "여행지/축제 구분")
+	private ThemeType themeType; //여행지일시에만 구현
+
 	@Schema(description = "장소명")
 	private String name;
 
@@ -52,5 +56,6 @@ public class PlaceResDto {
 		this.lng = entity.getLng();
 		this.subName = entity.getSubName();
 		this.description = entity.getDescription();
+		this.themeType = entity.getThemeType();
 	}
 }

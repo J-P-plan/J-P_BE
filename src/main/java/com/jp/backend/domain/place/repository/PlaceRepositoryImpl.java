@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.entity.QPlace;
+import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.tag.entity.QPlaceTag;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -25,6 +26,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 	@Override
 	public Page<Place> findPlacePage(
 		PlaceType placeType,
+		CityType cityType,
 		String searchString,
 		//OrderByType sort,
 		//인기순 추가
@@ -35,6 +37,7 @@ public class PlaceRepositoryImpl implements PlaceRepository {
 
 		List<Place> result = query.where(
 				(placeType != null) ? place.placeType.eq(placeType) : null,
+				(cityType != null) ? place.cityType.eq(cityType) : null,
 				(searchString != null && !searchString.isBlank()) ?  //검색어에 값이 있으면 검색어로 검색
 					place.name.contains(searchString).or(place.subName.contains(searchString)) : null
 			)
