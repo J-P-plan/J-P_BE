@@ -64,7 +64,7 @@ public class PlaceController {
 	public ResponseEntity<PlaceDetailResDto> findPlaceDetailPage(@PathVariable("placeId") String placeId,
 		@AuthenticationPrincipal UserPrincipal principal) {
 		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
-		PlaceDetailResDto details = placeService.getPlaceDetails(placeId, username);
+		PlaceDetailResDto details = placeService.getPlaceDetailsFromDB(placeId, username);
 
 		return ResponseEntity.ok(details);
 	}
