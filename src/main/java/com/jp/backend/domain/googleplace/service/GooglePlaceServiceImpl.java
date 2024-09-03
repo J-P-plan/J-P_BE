@@ -1,7 +1,5 @@
 package com.jp.backend.domain.googleplace.service;
 
-import static com.jp.backend.domain.googleplace.enums.SearchType.*;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +16,6 @@ import com.jp.backend.domain.googleplace.config.GooglePlaceConfig;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceSearchResDto;
-import com.jp.backend.domain.googleplace.enums.SearchType;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
@@ -53,7 +50,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response, TEXT_SEARCH);
+			setPhotoUrls(response);
 			sortPlacesByPopularity(response);
 
 			// response에 shortAddress 추가
@@ -68,7 +65,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
-	// TODO 리팩토링 - 응답 반환까지 시간이 좀 걸림
 	// nearbySearch 메서드
 	@Override
 	public GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, Long maxResults,
@@ -90,9 +86,8 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
-		// photos 정보 가져와서 photoUrl에 넣어 반환
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response, NEARBY_SEARCH);
+			setPhotoUrls(response); // photos 정보 가져와서 photoUrl에 넣어 반환
 			sortPlacesByPopularity(response);
 
 			// response에 shortAddress 추가
@@ -117,12 +112,8 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return response;
 	}
 
-	// textSearch에서 사용할 경우 --> 모든 사진들 가져오도록
-	// nearbySearch에서 사용할 경우 --> 사진 1개만 가져오도록
-	// TODO 각 장소마다 getPlacePhotos 호출 --> 각 장소에 대한 중복된 api 요청 발생
-	//  여기서 getPlacePhotos 또 하지 말고 그냥 아예 response의 photos url들을 받아.
-	//   ---> 그래서 아예 response 자체에서 photos 정보를 받고 여기에서 한번에 url 만들어서 넣어주는 방식으로 변경
-	private void setPhotoUrls(GooglePlaceSearchResDto response, SearchType type) {
+	// 사진 url 만들어서 넣어주는 로직
+	private void setPhotoUrls(GooglePlaceSearchResDto response) {
 		response.getResults().forEach(result -> {
 			List<String> photoUrls = Optional.ofNullable(result.getPhotos())
 				.orElse(Collections.emptyList()) // photos가 null일 경우엔 빈 리스트 반환
@@ -136,14 +127,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 					.toUriString())
 				.toList();
 
-			switch (type) {
-				case TEXT_SEARCH -> result.setPhotoUrls(photoUrls);
-				case NEARBY_SEARCH -> {
-					if (!photoUrls.isEmpty()) {
-						result.setPhotoUrls(List.of(photoUrls.get(0))); // 첫번째 사진만 추가
-					}
-				}
-			}
+			result.setPhotoUrls(photoUrls);
 		});
 	}
 
@@ -184,9 +168,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
 		}
 
-		// TODO 어차피 dto 에서 null인 애들은 안보여주니까 null 처리문 필요없는 거 빼기 --> 근데 있어야하는 듯...? review만 보여줄 때는 필요할 듯...?
-		//  --> shortAdd / location / openNow / rating / photourls 얘네가 null로 안들어가서 그냥 빈 애들로 나오는데 어쩌징
-
 		// null 처리
 		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
 			.orElse(new GooglePlaceDetailsDto.Result());
@@ -223,20 +204,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 				.toUriString())
 			.toList();
 
-		// GooglePlaceDetailsResDto.Location location = GooglePlaceDetailsResDto.Location.builder()
-		// 	.lat(result.getGeometry().getLocation().getLat())
-		// 	.lng(result.getGeometry().getLocation().getLng())
-		// 	.build();
-
-		GooglePlaceDetailsResDto.Location location; // location 변수를 외부에서 선언
-
+		GooglePlaceDetailsResDto.Location location;
 		if (result.getGeometry() != null) {
-			location = GooglePlaceDetailsResDto.Location.builder() // location 초기화
+			location = GooglePlaceDetailsResDto.Location.builder()
 				.lat(result.getGeometry().getLocation().getLat())
 				.lng(result.getGeometry().getLocation().getLng())
 				.build();
 		} else {
-			location = GooglePlaceDetailsResDto.Location.builder() // 기본값 설정
+			location = GooglePlaceDetailsResDto.Location.builder()
 				.lat(0.0)
 				.lng(0.0)
 				.build();

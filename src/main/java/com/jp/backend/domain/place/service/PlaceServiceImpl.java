@@ -74,6 +74,7 @@ public class PlaceServiceImpl implements PlaceService {
 				.rating(rating)
 				.build());
 		}
+		// TODO photo 안넣어놔서 현재는 response에 photoUrl이 null로 나오는데 --> 이후에 photo 넣어놓고 값 잘 들어가나 확인
 
 		Page<PlaceCompactResDto> placeCompactPage = new PageImpl<>(placeCompactList, pageable,
 			placePage.getTotalElements());
@@ -92,7 +93,7 @@ public class PlaceServiceImpl implements PlaceService {
 	// user 정보가 안들어오면 --> 해당 장소의 상세 정보들
 	// user 정보가 들어오면 --> 해당 유저가 좋아요 했는지도 함께 보여줌
 	@Override
-	public PlaceDetailResDto getPlaceDetails(String placeId, Optional<String> emailOption) {
+	public PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption) {
 		User user = emailOption.flatMap(userRepository::findByEmail)
 			.orElse(null);
 		GooglePlaceDetailsResDto detailsByGoogle = googlePlaceService.getPlaceDetails(placeId);
@@ -100,20 +101,15 @@ public class PlaceServiceImpl implements PlaceService {
 
 		// 사진 url 가져오기
 		List<String> photoUrls = new ArrayList<>();
-		if (place != null) {
-			// place의 File 객체에서 URL 추출하여 photoUrls에 추가
+		if (place != null) { // place의 File 객체에서 URL 추출하여 photoUrls에 추가 --> DB에서 사진 가져오기
 			List<File> files = place.getFiles();
 			if (files != null) {
 				files.forEach(file -> photoUrls.add(file.getUrl()));
 			}
 		}
-
-		// TODO 여기 수정 후 주석 풀기
-		// if (photoUrls.size() < 6
-		// 	|| place == null) { // photoUrls의 크기가 6개 미만이거나 place가 null일 경우, Google에서 추가 사진을 가져와서 넣어줌
-		// 	List<String> additionalPhotoUrls = googlePlaceService.getPlacePhotos(placeId);
-		// 	photoUrls.addAll(additionalPhotoUrls);
-		// }
+		if (detailsByGoogle != null && detailsByGoogle.getPhotoUrls() != null) { // 구글에서 사진 가져오기
+			photoUrls.addAll(detailsByGoogle.getPhotoUrls());
+		}
 
 		// 태그 가져오기 // TODO 여기 태그?
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);

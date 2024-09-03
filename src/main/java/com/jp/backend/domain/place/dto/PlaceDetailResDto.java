@@ -79,6 +79,10 @@ public class PlaceDetailResDto {
 			this.formattedAddress = detailsByGoogle.getFullAddress();
 			this.location = Location.builder().lat(detailsByGoogle.getLocation().getLat())
 				.lng(detailsByGoogle.getLocation().getLng()).build();
+		} else { // 혹시 detailsByGoogle가 null일 경우 --> 일단 기본값 null로 설정해서 반환
+			this.name = null;
+			this.formattedAddress = null;
+			this.location = null;
 		}
 		if (place != null) {
 			this.placeType = place.getPlaceType();

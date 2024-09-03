@@ -13,7 +13,7 @@ public interface PlaceService {
 	PageResDto<PlaceCompactResDto> findPlacePage(Integer page, String searchString, PlaceType placeType,
 		Integer elementCnt);
 
-	PlaceDetailResDto getPlaceDetails(String placeId, Optional<String> emailOption);
+	PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption);
 
 	List<PlaceCompactResDto> findCityList(CityType cityType);
 }
