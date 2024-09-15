@@ -16,7 +16,7 @@ spring:
     show_sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         auto_quote_keyword: true
