@@ -1,11 +1,13 @@
 package com.jp.backend.domain.place.dto;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.place.enums.ThemeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -18,7 +20,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,11 +33,11 @@ public class PlaceDetailResDto {
 	@Schema(description = "장소명")
 	private String name;
 
+	@Schema(description = "여행지/축제 구분")
+	private ThemeType themeType; //여행지일시에만 구현
+
 	@Schema(description = "장소 주소")
 	private String formattedAddress;
-
-	@Schema(description = "위도, 경도")
-	private Location location;
 
 	@Schema(description = "설명")
 	private String description;
@@ -60,25 +61,40 @@ public class PlaceDetailResDto {
 	@Schema(description = "좋아요 눌렀는지 여부")
 	private Boolean isLiked;
 
+	@Schema(description = "위도,경도")
+	private Location location;
+
 	@Getter
 	@Setter
 	@Builder
 	public static class Location {
+		@Schema(description = "위도")
 		private double lat;
+		@Schema(description = "경도")
 		private double lng;
 	}
 
 	@Builder
 	public PlaceDetailResDto(Place place, String placeId, GooglePlaceDetailsResDto detailsByGoogle,
-		List<String> tagNames, List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {
-		this.id = place != null ? place.getId() : null;
+		List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {
 		this.placeId = placeId;
-		this.name = detailsByGoogle != null ? detailsByGoogle.getName() : null;
-		this.formattedAddress = detailsByGoogle != null ? detailsByGoogle.getFormattedAddress() : null;
-		this.location = detailsByGoogle != null && detailsByGoogle.getLocation() != null ?
-			new Location(detailsByGoogle.getLocation().getLat(), detailsByGoogle.getLocation().getLng()) : null;
-		this.description = place != null ? place.getDescription() : null;
-		this.tags = tagNames;
+		if (detailsByGoogle != null) {
+			this.name = detailsByGoogle.getName();
+			this.formattedAddress = detailsByGoogle.getFullAddress();
+			this.location = Location.builder().lat(detailsByGoogle.getLocation().getLat())
+				.lng(detailsByGoogle.getLocation().getLng()).build();
+		} else { // 혹시 detailsByGoogle가 null일 경우 --> 일단 기본값 null로 설정해서 반환
+			this.name = null;
+			this.formattedAddress = null;
+			this.location = null;
+		}
+		if (place != null) {
+			this.placeType = place.getPlaceType();
+			this.description = place.getDescription();
+			this.tags = Arrays.asList("여름여행", "바닷가", "태그예시", "여행가고싶다"); //TODO PLACE에서 가져오는걸로 수정
+			this.id = place.getId();
+			this.themeType = place.getThemeType();
+		}
 		this.photoUrls = photoUrls;
 		this.likeCount = likeCount;
 		this.userId = userId;

@@ -1,9 +1,16 @@
 spring:
+  sql:
+    init:
+      mode: always
   profiles:
     active: local
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
+  servlet: # 파일 크기 제한
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   security:
     oauth2:
@@ -35,7 +42,7 @@ server:
   port: 8080
   ssl:
     key-store: classpath:keystore.p12
-    key-store-password: codms0525
+    key-store-password: hello12345678
     key-store-type: PKCS12
 
 spring-doc:

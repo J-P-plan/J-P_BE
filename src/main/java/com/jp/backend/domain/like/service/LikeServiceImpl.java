@@ -79,7 +79,7 @@ public class LikeServiceImpl implements LikeService {
 
 			if (like.getTargetName() == null) {
 				like.setTargetName(placeDetails.getName());
-				like.setTargetAddress(placeDetails.getFormattedAddress());
+				like.setTargetAddress(placeDetails.getFullAddress());
 
 				List<String> photoUrls = placeDetails.getPhotoUrls();
 				if (!photoUrls.isEmpty()) {

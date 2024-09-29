@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LocalUploader implements Uploader {
 	@Override
+	@Transactional
 	public String[] upload(MultipartFile file) throws IOException {
 		return new String[] {upload(file, ""), "LOCAL"};
 	}

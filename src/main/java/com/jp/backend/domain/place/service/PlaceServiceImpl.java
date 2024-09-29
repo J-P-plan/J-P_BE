@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
 import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
 import com.jp.backend.domain.user.entity.User;
@@ -49,26 +51,41 @@ public class PlaceServiceImpl implements PlaceService {
 	 * @throws Exception
 	 */
 
-	// TODO 변경 - 채은언니가 쓴 메서드들 필요한지 다시 살펴봐
 	@Override
 	public PageResDto<PlaceCompactResDto> findPlacePage(
 		Integer page,
 		String searchString,
 		PlaceType placeType,
+		CityType cityType,
 		Integer elementCnt
 	) {
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		Page<PlaceCompactResDto> placePage =
-			placeRepository.findPlacePage(placeType, searchString, pageable)
-				.map(place -> PlaceCompactResDto.builder().entity(place).build());
+		Page<Place> placePage = placeRepository.findPlacePage(placeType, cityType, searchString, pageable);
+		List<PlaceCompactResDto> placeCompactList = new ArrayList<>();
+
+		for (Place place : placePage.getContent()) {
+			// google에서 별점 가져와서 넣어주기
+			Double rating = Optional.ofNullable(googlePlaceService.getPlaceDetails(place.getPlaceId(), "rating"))
+				.map(GooglePlaceDetailsResDto::getRating)
+				.orElse(0.0);
+
+			placeCompactList.add(PlaceCompactResDto.builder()
+				.entity(place)
+				.rating(rating)
+				.build());
+		}
+		// TODO photo 안넣어놔서 현재는 response에 photoUrl이 null로 나오는데 --> 이후에 photo 넣어놓고 값 잘 들어가나 확인
+
+		Page<PlaceCompactResDto> placeCompactPage = new PageImpl<>(placeCompactList, pageable,
+			placePage.getTotalElements());
 
 		PageInfo pageInfo =
 			PageInfo.<PlaceCompactResDto>builder()
 				.pageable(pageable)
-				.pageDto(placePage)
+				.pageDto(placeCompactPage)
 				.build();
-		return new PageResDto<>(pageInfo, placePage.getContent());
+		return new PageResDto<>(pageInfo, placeCompactPage.getContent());
 	}
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
@@ -77,7 +94,7 @@ public class PlaceServiceImpl implements PlaceService {
 	// user 정보가 안들어오면 --> 해당 장소의 상세 정보들
 	// user 정보가 들어오면 --> 해당 유저가 좋아요 했는지도 함께 보여줌
 	@Override
-	public PlaceDetailResDto getPlaceDetails(String placeId, Optional<String> emailOption) {
+	public PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption) {
 		User user = emailOption.flatMap(userRepository::findByEmail)
 			.orElse(null);
 		GooglePlaceDetailsResDto detailsByGoogle = googlePlaceService.getPlaceDetails(placeId);
@@ -85,21 +102,17 @@ public class PlaceServiceImpl implements PlaceService {
 
 		// 사진 url 가져오기
 		List<String> photoUrls = new ArrayList<>();
-		if (place != null) {
-			// place의 File 객체에서 URL 추출하여 photoUrls에 추가
+		if (place != null) { // place의 File 객체에서 URL 추출하여 photoUrls에 추가 --> DB에서 사진 가져오기
 			List<File> files = place.getFiles();
 			if (files != null) {
 				files.forEach(file -> photoUrls.add(file.getUrl()));
 			}
 		}
-
-		if (photoUrls.size() < 6
-			|| place == null) { // photoUrls의 크기가 6개 미만이거나 place가 null일 경우, Google에서 추가 사진을 가져와서 넣어줌
-			List<String> additionalPhotoUrls = googlePlaceService.getPlacePhotos(placeId);
-			photoUrls.addAll(additionalPhotoUrls);
+		if (detailsByGoogle != null && detailsByGoogle.getPhotoUrls() != null) { // 구글에서 사진 가져오기
+			photoUrls.addAll(detailsByGoogle.getPhotoUrls());
 		}
 
-		// 태그 가져오기
+		// 태그 가져오기 // TODO 여기 태그?
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
 		// 유저 Id랑 좋아요 여부 가져오기
@@ -115,24 +128,16 @@ public class PlaceServiceImpl implements PlaceService {
 		// Ex. db에 저장되어있는 애면 --> likeCount + googleService detail에서 userTotal
 
 		return PlaceDetailResDto.builder()
-			.id(place != null ? place.getId() : null) // db에 저장되어있는 장소면 나오고, 아닌 경우 null로 들어가서 표시 안됨
+			.place(place)
 			.placeId(placeId)
-			.name(detailsByGoogle.getName())
-			.formattedAddress(detailsByGoogle.getFormattedAddress())
-			.location(PlaceDetailResDto.Location.builder()
-				.lat(detailsByGoogle.getLocation().getLat())
-				.lng(detailsByGoogle.getLocation().getLng())
-				.build())
-			.description(place != null ? place.getDescription() : null)
-			.tags(tagNames)
+			.detailsByGoogle(detailsByGoogle)
 			.photoUrls(photoUrls)
-			// .placeType(placeType) // TODO 같이 넣어줄까 말까 고민이욤
 			.likeCount(likeCount)
 			.userId(userId)
 			.isLiked(isLiked)
 			.build();
 	}
-
+	
 	private Place verifyPlace(String placeId) {
 		return placeRepository.findByPlaceId(placeId)
 			.orElse(null); // 장소가 존재하지 않으면 null 처리

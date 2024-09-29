@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
+import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.place.service.PlaceService;
 import com.jp.backend.global.dto.PageResDto;
@@ -37,16 +38,18 @@ public class PlaceController {
 				" Data 명세 <br>{ <br>" +
 				"page : 조회할 페이지 <br>" +
 				"placeType : 장소 타입 (인기 도시/인기 여행지/테마별 여행지), 선택 안할시 전체조회 <br>" +
+				"cityType : 도시 타입 (서울/경기/강원 등)" +
 				"searchString : 검색어 <br>" +
 				"elementCnt : 10 (default) <br>"
 				+ "} ( 현재 response의 photoUrl은 아직 사진 데이터를 넣지 않아 null로 표시됩니다. )")
 	public ResponseEntity<PageResDto<PlaceCompactResDto>> findPlacePage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "placeType") PlaceType placeType,
+		@RequestParam(required = false, value = "cityType") CityType cityType,
 		@RequestParam(required = false, value = "searchString") String searchString,
 		@RequestParam(required = false, value = "elementCnt", defaultValue = "10") Integer elementCnt
-	) throws Exception {
-		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, elementCnt));
+	) {
+		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, cityType, elementCnt));
 	}
 
 	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
@@ -61,9 +64,8 @@ public class PlaceController {
 	public ResponseEntity<PlaceDetailResDto> findPlaceDetailPage(@PathVariable("placeId") String placeId,
 		@AuthenticationPrincipal UserPrincipal principal) {
 		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
-		PlaceDetailResDto details = placeService.getPlaceDetails(placeId, username);
+		PlaceDetailResDto details = placeService.getPlaceDetailsFromDB(placeId, username);
 
 		return ResponseEntity.ok(details);
 	}
-
 }

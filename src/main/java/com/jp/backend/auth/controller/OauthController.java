@@ -62,6 +62,8 @@ public class OauthController {
 		//@RequestParam(value = "redirectUrl") String redirectUrl
 	) throws
 		Exception {
+
+		System.out.println("code : " + code);
 		String accessToken = googleService.getGoogleAccessToken(code);
 
 		System.out.println("accessToken ---------------------" + accessToken);

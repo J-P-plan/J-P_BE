@@ -68,14 +68,7 @@ public class GoogleService {
 
 		//try {
 		ResponseEntity<String> responseEntity = restTemplate.postForEntity(GOOGLE_TOKEN_URL, params, String.class);
-		// } catch (HttpClientErrorException ex) {
-		// 	// 에러 로그를 기록
-		// 	System.out.println("Request URL: " + GOOGLE_TOKEN_URL);
-		// 	System.out.println("Response Status: " + ex.getStatusCode());
-		// 	System.out.println("Response Body: " + ex.getResponseBodyAsString());
-		// 	// 필요한 추가 조치
-		//}
-		//
+
 		if (responseEntity.getStatusCode() == HttpStatus.OK) {
 			String jsonResponse = responseEntity.getBody();
 
@@ -139,8 +132,10 @@ public class GoogleService {
 		} else {
 
 			User existingUser = userOptional.get();
+			boolean hasNickname = existingUser.getNickname() != null && !existingUser.getNickname().isEmpty();
+
 			makeToken(response, existingUser.getEmail());
-			return OauthLoginResponseDto.builder().user(existingUser).isSignUp(true).build();
+			return OauthLoginResponseDto.builder().user(existingUser).isSignUp(hasNickname).build();
 		}
 	}
 
