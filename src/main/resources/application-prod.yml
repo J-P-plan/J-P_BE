@@ -39,4 +39,4 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "https://localhost:3000/"
+            redirect-uri: "https://localhost:3000/survey"
