@@ -2,15 +2,17 @@ package com.jp.backend.domain.schedule.entity;
 
 import java.awt.*;
 import java.time.LocalTime;
+import java.util.List;
 
-import com.jp.backend.domain.schedule.enums.Mobility;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,11 +40,12 @@ public class DayLocation {
 	private Point location; //위도, 경도
 
 	//비용
-	private Integer expense;
+	@OneToMany(mappedBy = "dayLocation", cascade = CascadeType.REMOVE)
+	private List<Expense> expenses;
 
 	//이동수단
-	private Mobility mobility;
-
+	@ElementCollection
+	private List<String> mobility;
 	private String placeId; //restaurant, cafe
 
 	private String name;

@@ -1,10 +1,10 @@
 package com.jp.backend.domain.schedule.dto;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.schedule.entity.DayLocation;
-import com.jp.backend.domain.schedule.enums.Mobility;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,13 +26,12 @@ public class DayLocationUpdateDto {
 	private Integer expense;
 
 	//이동수단
-	private Mobility mobility;
+	private List<String> mobility;
 
 	public DayLocation toEntity() {
 		return DayLocation.builder()
 			.time(time)
 			.memo(memo)
-			.expense(expense)
 			.mobility(mobility)
 			.build();
 	}

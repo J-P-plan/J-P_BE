@@ -2,10 +2,11 @@ package com.jp.backend.domain.schedule.dto;
 
 import java.awt.*;
 import java.time.LocalTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.schedule.entity.DayLocation;
-import com.jp.backend.domain.schedule.enums.Mobility;
+import com.jp.backend.domain.schedule.entity.Expense;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,10 +36,10 @@ public class DayLocationResDto {
 	private String placeId; //restaurant, cafe
 
 	//비용
-	private Integer expense;
+	private List<ExpenseRes> expense;
 
 	//이동수단
-	private Mobility mobility;
+	private List<String> mobility;
 
 	private String name;
 
@@ -50,7 +51,7 @@ public class DayLocationResDto {
 		this.memo = entity.getMemo();
 		this.location = entity.getLocation();
 		this.placeId = entity.getPlaceId();
-		this.expense = entity.getExpense();
+		this.expense = entity.getExpenses();
 		this.mobility = entity.getMobility();
 		this.name = entity.getName();
 	}

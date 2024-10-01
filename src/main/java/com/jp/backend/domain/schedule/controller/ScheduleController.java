@@ -84,13 +84,13 @@ public class ScheduleController {
 	}
 
 	//todo Day 편집 api (list)
-	@PutMapping("/schedule/{scheduleId}")
-	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다.")
-	public ResponseEntity<DayResDto> findDay(
-		@PathVariable(value = "scheduleId") Long scheduleId
-	) {
-		return ResponseEntity.ok(scheduleService.findDay(dayId));
-	}
+	// @PutMapping("/schedule/{scheduleId}")
+	// @Operation(summary = "일정 편집 API", description = "일정을 편집합니다.")
+	// public ResponseEntity<DayResDto> findDay(
+	// 	@PathVariable(value = "scheduleId") Long scheduleId
+	// ) {
+	// 	return ResponseEntity.ok(scheduleService.findDay(dayId));
+	// }
 
 	// todo Day 조회 api (list)
 	@GetMapping("/schedule/day/{dayId}")
