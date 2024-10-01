@@ -203,11 +203,11 @@ INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, L
 VALUES (300, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '소금산 출렁다리', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'TRAVEL_PLACE',
         37.3676264, 127.8248756);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (301, 'ChIJT8R-JJA1fTURu_F8WZJr7OU', '한탄강 주상절리길', '강원도 철원', '한탄강을 따라 이어지는 신비로운 주상절리길입니다.', 'TRAVEL_PLACE',
-        38.1595893, 127.2859219);
+VALUES (301, 'ChIJo_aEJZk1fTURtJ6iQ3s2yzY', '한탄강 주상절리길', '강원도 철원', '한탄강을 따라 이어지는 신비로운 주상절리길입니다.', 'TRAVEL_PLACE',
+        38.15418340000001, 127.2879289);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (302, 'ChIJVRLdCsjtaDURcdummQTLnRk', '오륙도 스카이워크', '부산광역시 남구', '부산 남구에 위치한 아름다운 해안 절경을 자랑하는 오륙도입니다.',
-        'TRAVEL_PLACE', 35.07805, 129.08751);
+        'TRAVEL_PLACE', 35.1006767, 129.1244009);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (303, 'ChIJW-FwpwdDDDURKKvdKdJhhF8', '용머리 해안', '제주특별자치도 서귀포', '제주 서귀포에 위치한 독특한 지형의 해안가입니다.', 'TRAVEL_PLACE',
         33.2316155, 126.3148321);
@@ -232,10 +232,10 @@ VALUES (309, 'ChIJod7tSseifDUR9hXHLFNGMIs', '경복궁', '서울특별시 종로
         'TRAVEL_PLACE', 37.579617, 126.977041);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (310, 'ChIJxw7HJy_taDUR-xaSTeHwbf8', '광안리해수욕장', '부산광역시 광안리해수욕장', '부산의 대표적인 해변 가운데 하나로, 밤에 보는 광안대교의 야경이 유명합니다.',
-        'TRAVEL_PLACE', 35.15396, 129.11848);
+        'TRAVEL_PLACE', 35.1531696, 129.118666);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (311, 'ChIJn3jj9rkUDTURS7YjOgUyUVU', '제주도 성산일출봉', '제주특별자치도 제주도', '제주도의 대표적인 관광지로, 해안 절벽 위에 위치한 화산 분화구입니다.',
-        'TRAVEL_PLACE', 33.458056, 126.94250);
+        'TRAVEL_PLACE', 33.45805600000001, 126.9425);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
 VALUES (312, 'ChIJQwyfbNqyZzUR31ffyfmvm6w', '경주 불국사', '경상북도 경주', '신라 시대의 불교 사원으로, 유네스코 세계문화유산에 등재되어 있습니다.',
         'TRAVEL_PLACE', 35.7901973, 129.3320806);
