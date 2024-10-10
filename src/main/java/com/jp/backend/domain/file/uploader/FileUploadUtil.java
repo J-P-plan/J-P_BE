@@ -3,6 +3,7 @@ package com.jp.backend.domain.file.uploader;
 import java.io.File;
 import java.util.UUID;
 
+import com.jp.backend.domain.file.enums.FileTargetType;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,16 +12,41 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 // LocalUploader, S3Uploader 에 공통적으로 들어가는 로직
 public class FileUploadUtil {
-	public static String determinePathsBasedOnMimeType(String contentType) {
-		if (contentType != null && contentType.startsWith("image")) {
-			return "images";
-		} else if (contentType != null && contentType.startsWith("video")) {
-			return "videos";
-		} else if (contentType != null && contentType.contains("pdf")) {
-			return "pdfs";
+	public static String generateFilePath(FileTargetType fileTargetType, String contentType) {
+		StringBuilder pathBuilder = new StringBuilder();
+
+		switch (fileTargetType) {
+			case PROFILE:
+				pathBuilder.append("profile");
+				break;
+			case PLACE:
+				pathBuilder.append("place");
+				break;
+			case REVIEW:
+				pathBuilder.append("review");
+				break;
+			case TRAVEL_DIARY:
+				pathBuilder.append("travelDiary");
+				break;
+			default:
+				throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + fileTargetType);
 		}
-		throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + contentType);
+
+		if (contentType != null) {
+			if (contentType.startsWith("image")) {
+				pathBuilder.append("/images");
+			} else if (contentType.startsWith("video")) {
+				pathBuilder.append("/videos");
+			} else if (contentType.contains("pdf")) {
+				pathBuilder.append("/pdfs");
+			} else {
+				throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + contentType);
+			}
+		}
+
+		return pathBuilder.toString();
 	}
+
 
 	public static String generateFileName(String originalFileName) {
 		String uuid = UUID.randomUUID().toString();

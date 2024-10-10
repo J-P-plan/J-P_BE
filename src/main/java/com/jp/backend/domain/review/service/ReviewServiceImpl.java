@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jp.backend.domain.file.enums.FileTargetType;
 import com.jp.backend.domain.file.service.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,7 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<String> fileUrls = fileService.uploadFiles(files, username);
+		List<String> fileUrls = fileService.uploadFiles(files, username, savedReview.getId(), FileTargetType.REVIEW);
 
 		return ReviewResDto.builder().review(savedReview).likeCnt(0L).fileUrls(fileUrls).build();
 	}

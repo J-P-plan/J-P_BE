@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.jp.backend.domain.file.enums.FileTargetType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,12 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 public class LocalUploader implements Uploader {
 	@Override
 	@Transactional
-	public String[] upload(MultipartFile file) throws IOException {
-		return new String[] {upload(file, ""), "LOCAL"};
+	public String[] upload(MultipartFile file, FileTargetType fileTargetType) throws IOException {
+		return new String[] {upload(file, "", fileTargetType), "LOCAL"};
 	}
 
-	public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-		File uploadFile = convertFile(multipartFile)
+	public String upload(MultipartFile multipartFile, String dirName, FileTargetType fileTargetType) throws IOException {
+		File uploadFile = convertFile(multipartFile, fileTargetType)
 			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
 		return uploadToLocal(uploadFile, dirName);
 	}
@@ -41,9 +42,9 @@ public class LocalUploader implements Uploader {
 		return baseUrl + encodedFileName;
 	}
 
-	private Optional<File> convertFile(MultipartFile file) throws IOException {
+	private Optional<File> convertFile(MultipartFile file, FileTargetType fileTargetType) throws IOException {
 		String basePath = "./src/main/resources/static/";
-		String folderName = FileUploadUtil.determinePathsBasedOnMimeType(file.getContentType());
+		String folderName = FileUploadUtil.generateFilePath(fileTargetType, file.getContentType());
 		File directory = new File(basePath + folderName + "/");
 
 		if (!directory.exists()) {

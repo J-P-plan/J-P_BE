@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.jp.backend.domain.file.enums.FileTargetType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,15 +35,15 @@ public class S3Uploader implements Uploader {
 	// S3에 업로드 하는 메서드
 	@Override
 	@Transactional
-	public String[] upload(MultipartFile file) throws IOException {
-		String dirName = FileUploadUtil.determinePathsBasedOnMimeType(file.getContentType());
+	public String[] upload(MultipartFile file, FileTargetType fileTargetType) throws IOException {
+		String dirName = FileUploadUtil.generateFilePath(fileTargetType, file.getContentType());
 		return new String[] {
-			upload(file, "jandp/" + dirName), bucket
+			upload(file, "jandp/" + dirName, fileTargetType), bucket
 		};
 	}
 
-	public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-		File uploadFile = convertFile(multipartFile)
+	public String upload(MultipartFile multipartFile, String dirName, FileTargetType fileTargetType) throws IOException {
+		File uploadFile = convertFile(multipartFile, fileTargetType)
 			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File 전환 실패"));
 
 		String fileName = uploadFile.getName();
@@ -57,9 +58,9 @@ public class S3Uploader implements Uploader {
 	}
 
 	// MultipartFile을 File 객체로 변환하는 메서드
-	private Optional<File> convertFile(MultipartFile file) throws IOException {
+	private Optional<File> convertFile(MultipartFile file, FileTargetType fileTargetType) throws IOException {
 		String mimeType = file.getContentType();
-		String subDir = FileUploadUtil.determinePathsBasedOnMimeType(mimeType); // MIME 타입에 따른 하위 디렉토리 결정
+		String subDir = FileUploadUtil.generateFilePath(fileTargetType, mimeType); // 하위 디렉토리 결정
 		File tmpDir = new File("tmp/" + subDir + "/"); // 결정된 하위 디렉토리를 포함한 경로로 tmpDir 설정
 
 		if (!tmpDir.exists()) {
@@ -100,12 +101,13 @@ public class S3Uploader implements Uploader {
 	}
 
 	// 기존에 업로드된 파일을 S3에서 삭제하고, 새 파일로 교체하는 메서드
-	public String[] updateFile(MultipartFile newFile, String oldFileName) throws IOException {
+	// TODO
+	public String[] updateFile(MultipartFile newFile, String oldFileName, FileTargetType fileTargetType) throws IOException {
 		// 기존 파일 삭제
 		log.info("S3 oldFileName: " + oldFileName);
 		deleteFile(oldFileName);
 		// 새 파일 업로드
-		return upload(newFile); // 수정된 인터페이스에 맞게 반환 형식 변경
+		return upload(newFile, fileTargetType); // 수정된 인터페이스에 맞게 반환 형식 변경
 	}
 
 	// 지정된 파일을 S3에서 삭제하는 메서드
