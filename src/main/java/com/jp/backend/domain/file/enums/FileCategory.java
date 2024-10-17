@@ -7,7 +7,7 @@ public enum FileCategory {
 	PROFILE("프로필 이미지"),
 	PLACE("장소 파일"),
 	REVIEW("리뷰 파일"),
-	TRAVEL_DIARY("여행기 파일");
+	DIARY("여행기 파일");
 
 	private final String value;
 

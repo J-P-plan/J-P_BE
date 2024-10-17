@@ -28,8 +28,8 @@ public class FileUploadUtil {
 			case REVIEW:
 				pathBuilder.append("review");
 				break;
-			case TRAVEL_DIARY:
-				pathBuilder.append("travelDiary");
+			case DIARY:
+				pathBuilder.append("Diary");
 				break;
 			default:
 				throw new IllegalArgumentException("<" + category + ">라는 카테고리는 파일 업로드를 지원하지 않습니다.");

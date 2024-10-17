@@ -54,8 +54,9 @@ public class FileController {
 	@PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",
 		description = "이미지, 영상, pdf 업로드가 가능합니다.<br>"
-			+ "category - PLACE/REVIEW/TRIP_JOURNAL")
+			+ "category - PLACE/REVIEW/DIARY")
 	// TODO 카테고리 RequestParam 고민
+	// TODO 이거 카테고리에 PROFILE도 있어서 고민
 	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(@RequestPart List<MultipartFile> files,
 		@RequestParam(value = "category") FileCategory category,
 		@AuthenticationPrincipal UserPrincipal principal) throws
