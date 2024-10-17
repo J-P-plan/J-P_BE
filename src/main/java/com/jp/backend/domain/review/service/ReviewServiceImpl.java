@@ -1,11 +1,8 @@
 package com.jp.backend.domain.review.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jp.backend.domain.file.enums.FileTargetType;
-import com.jp.backend.domain.file.service.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.ReviewFile;
+import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
+import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
@@ -34,7 +35,6 @@ import com.jp.backend.global.utils.CustomBeanUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -45,11 +45,12 @@ public class ReviewServiceImpl implements ReviewService {
 	private final CustomBeanUtils<Review> beanUtils;
 	private final JpaCommentRepository commentRepository;
 	private final JpaLikeRepository likeRepository;
+	private final JpaReviewFileRepository reviewFileRepository;
 	private final FileService fileService;
 
 	@Override
 	@Transactional
-	public ReviewResDto createReview(ReviewReqDto reqDto, List<MultipartFile> files, String username) throws IOException {
+	public ReviewResDto createReview(ReviewReqDto reqDto, String username) {
 
 		User user = userService.verifyUser(username);
 
@@ -57,9 +58,24 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<String> fileUrls = fileService.uploadFiles(files, username, savedReview.getId(), FileTargetType.REVIEW);
+		List<String> fileUrls = new ArrayList<>();
+		for (ReviewReqDto.FileDetailDto fileDetail : reqDto.getFileDetails()) {
+			File file = fileService.verifyFile(fileDetail.getFileId()); // 파일 검증
 
-		return ReviewResDto.builder().review(savedReview).likeCnt(0L).fileUrls(fileUrls).build();
+			// ReviewFile에 파일 연결
+			ReviewFile reviewFile = new ReviewFile();
+			reviewFile.setFile(file);
+			reviewFile.setReview(savedReview);
+			reviewFileRepository.save(reviewFile);
+
+			fileUrls.add(fileDetail.getFileUrl()); // URL 추가
+		}
+
+		return ReviewResDto.builder()
+			.review(savedReview)
+			.likeCnt(0L)
+			.fileUrls(fileUrls)
+			.build();
 	}
 
 	@Override

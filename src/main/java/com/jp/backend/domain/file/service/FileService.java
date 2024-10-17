@@ -3,15 +3,20 @@ package com.jp.backend.domain.file.service;
 import java.io.IOException;
 import java.util.List;
 
-import com.jp.backend.domain.file.enums.FileTargetType;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.jp.backend.domain.file.dto.FileResDto;
+import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.enums.FileCategory;
 
 public interface FileService {
 	String uploadProfile(MultipartFile file, String email) throws IOException;
 
 	void deleteProfile(String email);
 
-	String uploadFile(MultipartFile file, String email, Long targetId, FileTargetType fileTargetType) throws IOException;
+	List<FileResDto> uploadFiles(List<MultipartFile> files, FileCategory category, String email) throws IOException;
 
-	List<String> uploadFiles(List<MultipartFile> files, String email, Long targetId, FileTargetType fileTargetType) throws IOException;
+	FileResDto uploadFile(MultipartFile file, FileCategory category, String email) throws IOException;
+
+	File verifyFile(String fileId);
 }

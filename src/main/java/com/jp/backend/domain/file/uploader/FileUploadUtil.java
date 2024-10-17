@@ -3,8 +3,9 @@ package com.jp.backend.domain.file.uploader;
 import java.io.File;
 import java.util.UUID;
 
-import com.jp.backend.domain.file.enums.FileTargetType;
 import org.springframework.stereotype.Component;
+
+import com.jp.backend.domain.file.enums.FileCategory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 // LocalUploader, S3Uploader 에 공통적으로 들어가는 로직
 public class FileUploadUtil {
-	public static String generateFilePath(FileTargetType fileTargetType, String contentType) {
+	public static String generateFilePath(String contentType, FileCategory category, Long userId) {
 		StringBuilder pathBuilder = new StringBuilder();
 
-		switch (fileTargetType) {
+		pathBuilder.append("user").append(userId).append("/"); // 경로 맨 앞에 userId
+
+		switch (category) {
 			case PROFILE:
 				pathBuilder.append("profile");
 				break;
@@ -29,7 +32,7 @@ public class FileUploadUtil {
 				pathBuilder.append("travelDiary");
 				break;
 			default:
-				throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + fileTargetType);
+				throw new IllegalArgumentException("<" + category + ">라는 카테고리는 파일 업로드를 지원하지 않습니다.");
 		}
 
 		if (contentType != null) {
@@ -46,7 +49,6 @@ public class FileUploadUtil {
 
 		return pathBuilder.toString();
 	}
-
 
 	public static String generateFileName(String originalFileName) {
 		String uuid = UUID.randomUUID().toString();

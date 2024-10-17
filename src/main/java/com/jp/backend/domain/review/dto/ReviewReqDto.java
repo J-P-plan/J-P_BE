@@ -1,5 +1,7 @@
 package com.jp.backend.domain.review.dto;
 
+import java.util.List;
+
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.entity.User;
 
@@ -26,6 +28,9 @@ public class ReviewReqDto {
 	@Schema(description = "별점")
 	private Double star;
 
+	@Schema(description = "파일 정보 리스트")
+	private List<FileDetailDto> fileDetails; // fileId와 fileUrl
+
 	public Review toEntity(User user, Boolean visitidYn) {
 		return Review.builder()
 			.subject(subject)
@@ -36,6 +41,17 @@ public class ReviewReqDto {
 			//.visitedYn(visitidYn)
 			.user(user)
 			.build();
+	}
+
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class FileDetailDto {
+		@Schema(description = "파일아이디")
+		private String fileId;
+		@Schema(description = "파일 URL")
+		private String fileUrl;
 	}
 
 }

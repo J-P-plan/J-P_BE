@@ -1,7 +1,5 @@
 package com.jp.backend.domain.file.config;
 
-import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
-import com.jp.backend.domain.review.repository.JpaReviewRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,13 +18,11 @@ import lombok.RequiredArgsConstructor;
 @Profile("local")
 public class LocalUploaderConfig {
 	private final JpaFileRepository jpaFileRepository;
-	private final JpaReviewFileRepository reviewFileRepository;
-	private final JpaReviewRepository reviewRepository;
 	private final UserService userService;
 
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), null, jpaFileRepository, reviewFileRepository, reviewRepository, userService);
+		return new FileServiceImpl(this.uploader(), null, jpaFileRepository, userService);
 	}
 
 	@Bean

@@ -6,7 +6,6 @@ import lombok.Getter;
 public enum ExceptionCode {
 	USER_NONE(404, "USER_NONE"),
 	USER_DUPLICATED(409, "USER_DUPLICATED"),
-	FILE_NOT_SUPPORTED(400, "파일 형식이 지원되지 않습니다."),
 	WIDTH_OR_HEIGHT_REQUIRED(400, "너비 또는 높이 중 하나는 필요합니다."),
 
 	// JWT Token
@@ -38,7 +37,11 @@ public enum ExceptionCode {
 	// Like
 	ALREADY_LIKED(409, "ALREADY_LIKED"),
 	LIKE_NONE(404, "LIKE_NONE"),
-	TARGET_NONE(404, "TARGET_NONE");
+	TARGET_NONE(404, "TARGET_NONE"),
+
+	// File
+	FILE_NONE(404, "FILE_NONE"),
+	FILE_NOT_SUPPORTED(400, "파일 형식이 지원되지 않습니다.");
 
 	@Getter
 	private final int code;
