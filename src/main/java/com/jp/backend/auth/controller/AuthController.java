@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.global.dto.SingleResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,7 +40,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	@Operation(summary = "로그인을 진행합니다.")
-	public ResponseEntity login(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<SingleResponse<String>> login(@RequestBody LoginDto loginDto) {
 
 		authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
@@ -47,15 +49,19 @@ public class AuthController {
 	}
 
 	@PostMapping("/refresh")
-	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 갱신합니다.")
-	public ResponseEntity refresh(HttpServletRequest request, HttpServletResponse response) {
-		refreshService.refresh(request, response);
-		return ResponseEntity.ok().build();
+	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 재발급받습니다. <br>"
+		+ "( token 값은 Bearer를 제외하고 넣어주세요. )")
+	public ResponseEntity<String> refresh(
+		@Parameter(description = "만료된 Access Token") @RequestHeader(value = "Authorization") String accessToken,
+		@Parameter(description = "유효한 Refresh Token") @RequestHeader(value = "RefreshToken") String refreshToken,
+		HttpServletResponse response) {
+		refreshService.refresh(accessToken, refreshToken, response);
+		return ResponseEntity.ok("성공적으로 재발급되었습니다.");
 	}
 
 	// @PostMapping("/logout")
 	// @Operation(summary = "로그아웃을 진행합니다.")
-	public ResponseEntity logout(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 		authService.logout(request, response);
 		return ResponseEntity.ok().build();
 	}
