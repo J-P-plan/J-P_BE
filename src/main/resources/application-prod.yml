@@ -39,4 +39,4 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "http://localhost:3000/survey"
+            redirect-uri: "https://j-p-plan.vercel.app/survey"

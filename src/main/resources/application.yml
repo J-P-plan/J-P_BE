@@ -26,7 +26,7 @@ spring:
 
 jwt:
   secret: randomTestValueItisNotUsedInProdEnv
-  expiration: 180000000000 # 7 years
+  expiration: 7200000 # 2 hours
   #  expiration: 60000 # 1 minutes -> 리프레시 토큰 테스트 시 사용
   refresh:
     expiration: 604800000 # 7 days

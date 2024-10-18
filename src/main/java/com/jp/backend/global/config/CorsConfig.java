@@ -9,7 +9,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-// @Configuration
+//@Configuration
 public class CorsConfig {
 
 	@Bean
@@ -20,6 +20,7 @@ public class CorsConfig {
 		// config.addAllowedOriginPattern("*"); // 모든 오리진 패턴 허용
 		config.addAllowedOriginPattern("http://localhost:3000/");
 		config.addAllowedOriginPattern("http://jandp-travel.kro.kr:8080");
+		config.addAllowedOriginPattern("https://j-p-plan.vercel.app/");
 		config.addAllowedHeader("*"); // 모든 헤더 허용
 		config.addAllowedMethod("*"); // 모든 HTTP 메소드 허용
 		config.addExposedHeader(
