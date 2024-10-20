@@ -12,10 +12,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.PlaceFile;
 import com.jp.backend.domain.file.enums.FileCategory;
+import com.jp.backend.domain.file.enums.UserUploadCategory;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
+import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.uploader.S3Uploader;
 import com.jp.backend.domain.file.uploader.Uploader;
+import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.place.service.PlaceService;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.service.UserService;
 import com.jp.backend.global.exception.CustomLogicException;
@@ -29,7 +34,9 @@ public class FileServiceImpl implements FileService {
 	private final Uploader uploader;
 	private final S3Uploader s3Uploader;
 	private final JpaFileRepository fileRepository;
+	private final JpaPlaceFileRepository placeFileRepository;
 	private final UserService userService;
+	private final PlaceService placeService;
 
 	// 유저 프로필 사진 업로드
 	@Override
@@ -84,16 +91,18 @@ public class FileServiceImpl implements FileService {
 		}
 	}
 
-	// 파일 업로드
+	// 리뷰/여행기 파일 업로드
 	@Override
 	@Transactional
-	public List<FileResDto> uploadFiles(List<MultipartFile> files, FileCategory category, String email) throws
-		IOException {
+	public List<FileResDto> uploadFilesForReviewDiary(List<MultipartFile> files, UserUploadCategory category,
+		String email) {
+
+		// TODO 파일 개수 최대 5개로 제한
 
 		return files.stream()
 			.map(file -> {
 				try {
-					return uploadFile(file, category, email);
+					return uploadFileForReviewDiary(file, category.toFileCategory(), email);
 				} catch (IOException e) {
 					throw new RuntimeException("File upload failed", e);
 				}
@@ -103,27 +112,64 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	@Transactional
-	public FileResDto uploadFile(MultipartFile file, FileCategory category, String email) throws IOException {
+	public FileResDto uploadFileForReviewDiary(MultipartFile file, FileCategory category, String email) throws
+		IOException {
+
+		File fileEntity = uploadFile(file, category, email);
+		fileRepository.save(fileEntity);
+
+		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
+	}
+
+	// 장소 파일 업로드
+	@Override
+	@Transactional
+	public List<FileResDto> uploadFilesForPlace(List<MultipartFile> files, String placeId) {
+
+		return files.stream()
+			.map(file -> {
+				try {
+					return uploadFileForPlace(file, placeId);
+				} catch (IOException e) {
+					throw new RuntimeException("File upload failed", e);
+				}
+			})
+			.toList();
+	}
+
+	@Override
+	@Transactional
+	public FileResDto uploadFileForPlace(MultipartFile file, String placeId) throws IOException {
+
+		File fileEntity = uploadFile(file, PLACE, null);
+		fileRepository.save(fileEntity);
+
+		// PlaceFile에 파일 연결
+		Place place = placeService.verifyPlace(placeId);
+		PlaceFile placeFile = new PlaceFile();
+		placeFile.setFile(fileEntity);
+		placeFile.setPlace(place);
+		placeFileRepository.save(placeFile);
+
+		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
+	}
+
+	// 파일 정보 업로드
+	private File uploadFile(MultipartFile file, FileCategory category, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
 			throw new CustomLogicException(ExceptionCode.FILE_NONE);
 		}
 
-		User user = userService.verifyUser(email);
-
+		User user = email != null ? userService.verifyUser(email) : null;
 		File.FileType fileType = determineFileType(file.getContentType());
-		String[] info = uploader.upload(file, category, user.getId());
+		String[] info = uploader.upload(file, category, user != null ? user.getId() : null);
 
-		File fileEntity = File.builder()
+		return File.builder()
 			.bucket(info[1])
 			.url(info[0])
 			.fileType(fileType)
 			.user(user)
 			.build();
-
-		// 파일 정보 저장
-		fileRepository.save(fileEntity);
-
-		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
 	}
 
 	private File.FileType determineFileType(String contentType) {
@@ -138,36 +184,6 @@ public class FileServiceImpl implements FileService {
 		}
 		throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
 	}
-
-	// response로 파일 경로 생성 메서드
-	// private String generateFilePath(FileTargetType fileTargetType, File.FileType fileType) {
-	// 	StringBuilder pathBuilder = new StringBuilder();
-	//
-	// 	switch (fileTargetType) {
-	// 		case PROFILE:
-	// 			pathBuilder.append("profile");
-	// 			break;
-	// 		case REVIEW:
-	// 			pathBuilder.append("review");
-	// 			break;
-	// 		case TRAVEL_DIARY:
-	// 			pathBuilder.append("travelDiary");
-	// 			break;
-	// 		default:
-	// 			throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
-	// 	}
-	//
-	// 	// 파일 타입에 따라 추가적인 경로를 설정
-	// 	if (fileType == File.FileType.IMAGE) {
-	// 		pathBuilder.append("/image");
-	// 	} else if (fileType == File.FileType.VIDEO) {
-	// 		pathBuilder.append("/video");
-	// 	} else if (fileType == File.FileType.PDF) {
-	// 		pathBuilder.append("/pdf");
-	// 	}
-	//
-	// 	return pathBuilder.toString();
-	// }
 
 	@Override
 	public File verifyFile(String fileId) {

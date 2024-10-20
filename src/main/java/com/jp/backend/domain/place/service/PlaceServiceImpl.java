@@ -137,8 +137,9 @@ public class PlaceServiceImpl implements PlaceService {
 			.isLiked(isLiked)
 			.build();
 	}
-	
-	private Place verifyPlace(String placeId) {
+
+	@Override
+	public Place verifyPlace(String placeId) {
 		return placeRepository.findByPlaceId(placeId)
 			.orElse(null); // 장소가 존재하지 않으면 null 처리
 	}
