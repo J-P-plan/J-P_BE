@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,20 +53,18 @@ public class FileController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/files/{category}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "리뷰/여행기의 파일을 업로드합니다.",
 		description = "이미지, 영상, pdf 업로드가 가능합니다.<br>"
 			+ "category - REVIEW/DIARY")
 	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFilesForReviewDiary(
 		@RequestPart List<MultipartFile> files,
-		@RequestParam(value = "category") @Parameter(description = "업로드할 파일의 카테고리") UserUploadCategory category,
+		@PathVariable(value = "category") @Parameter(description = "업로드할 파일의 카테고리") UserUploadCategory category,
 		@AuthenticationPrincipal UserPrincipal principal) {
 		return ResponseEntity.ok()
 			.body(
 				new SingleResponse<>(fileService.uploadFilesForReviewDiary(files, category, principal.getUsername())));
 	}
-
-	// TODO 위에꺼 엔드포인트 변경
 
 	@PostMapping(value = "/files/place", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "장소의 파일을 업로드합니다.",
