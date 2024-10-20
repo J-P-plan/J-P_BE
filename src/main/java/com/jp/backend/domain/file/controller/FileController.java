@@ -57,6 +57,7 @@ public class FileController {
 			+ "category - PLACE/REVIEW/DIARY")
 	// TODO 카테고리 RequestParam 고민
 	// TODO 이거 카테고리에 PROFILE도 있어서 고민
+	// TODO 장소 id 받아서 장소 사진 등록할 수 있도록 만들기 --> auth 없어도 됨 / 만약 이거 따로 api 빼면 카테고리에 review랑 diary만 있어도 됨
 	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(@RequestPart List<MultipartFile> files,
 		@RequestParam(value = "category") FileCategory category,
 		@AuthenticationPrincipal UserPrincipal principal) throws

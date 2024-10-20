@@ -59,8 +59,8 @@ public class ReviewServiceImpl implements ReviewService {
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
 		List<String> fileUrls = new ArrayList<>();
-		for (ReviewReqDto.FileDetailDto fileDetail : reqDto.getFileDetails()) {
-			File file = fileService.verifyFile(fileDetail.getFileId()); // 파일 검증
+		for (String fileid : reqDto.getFileIds()) {
+			File file = fileService.verifyFile(fileid); // 파일 검증
 
 			// ReviewFile에 파일 연결
 			ReviewFile reviewFile = new ReviewFile();
@@ -68,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
 			reviewFile.setReview(savedReview);
 			reviewFileRepository.save(reviewFile);
 
-			fileUrls.add(fileDetail.getFileUrl()); // URL 추가
+			fileUrls.add(file.getUrl()); // URL 추가
 		}
 
 		return ReviewResDto.builder()
