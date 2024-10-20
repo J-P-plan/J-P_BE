@@ -1,7 +1,5 @@
 package com.jp.backend.auth.service;
 
-import static com.jp.backend.auth.utils.HeaderUtils.*;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,17 +41,19 @@ public class RefreshService {
 			);
 	}
 
-	public void refresh(HttpServletRequest request, HttpServletResponse response) {
-		AuthToken accessToken = authTokenProvider.convertAuthToken(getAccessToken(request));
-		validateAccessTokenCheck(accessToken);
+	// refreshToken 으로 accessToken 재발급
+	public void refresh(String accessToken, String refreshToken, HttpServletResponse response) {
+		AuthToken expiredAccessToken = authTokenProvider.convertAuthToken(accessToken);
+		validateAccessTokenCheck(expiredAccessToken);
 
-		String userEmail = accessToken.getExpiredTokenClaims().getSubject();
-		RefreshToken refreshToken = refreshTokenRepository.findById(userEmail)
+		String userEmail = expiredAccessToken.getExpiredTokenClaims().getSubject();
+		RefreshToken refreshTokenForReissue = refreshTokenRepository.findById(userEmail)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.REFRESH_TOKEN_NOT_FOUND));
-		validateRefreshTokenCheck(refreshToken, authTokenProvider.convertAuthToken(getHeaderRefreshToken(request)));
+		validateRefreshTokenCheck(refreshTokenForReissue,
+			authTokenProvider.convertAuthToken(refreshToken));
 
 		AuthToken newAccessToken = authTokenProvider.createAccessToken(userEmail,
-			(List<String>)accessToken.getExpiredTokenClaims().get("role"));
+			(List<String>)expiredAccessToken.getExpiredTokenClaims().get("role"));
 
 		response.addHeader("Authorization", "Bearer " + newAccessToken.getToken());
 	}
