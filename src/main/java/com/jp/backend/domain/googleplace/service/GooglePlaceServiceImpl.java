@@ -163,15 +163,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		// 결과가 없으면 장소 정보 없다고 null 처리
+		// 결과가 없으면 --> place none
 		if (apiResponse == null || apiResponse.getResult() == null) {
 			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
 		}
 
-		// null 처리
-		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
-			.orElse(new GooglePlaceDetailsDto.Result());
+		GooglePlaceDetailsDto.Result result = apiResponse.getResult();
 
+		// null 처리
 		boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
 			.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
 			.orElse(false);

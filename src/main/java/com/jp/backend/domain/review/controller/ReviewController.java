@@ -1,5 +1,6 @@
 package com.jp.backend.domain.review.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -34,8 +35,9 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController {
 	private final ReviewService reviewService;
 
-	@Operation(summary = "리뷰 작성 API")
-	@PostMapping("/review")
+	@Operation(summary = "리뷰 작성 API",
+		description = "리뷰와 파일 업로드를 할 수 있습니다.")
+	@PostMapping(value = "/review", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReviewResDto> postReview(
 		@Valid @RequestBody ReviewReqDto reqDto,
 		@AuthenticationPrincipal UserPrincipal principal

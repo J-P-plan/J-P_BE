@@ -1,5 +1,6 @@
 package com.jp.backend.domain.review.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.ReviewFile;
+import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
+import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
@@ -40,6 +45,8 @@ public class ReviewServiceImpl implements ReviewService {
 	private final CustomBeanUtils<Review> beanUtils;
 	private final JpaCommentRepository commentRepository;
 	private final JpaLikeRepository likeRepository;
+	private final JpaReviewFileRepository reviewFileRepository;
+	private final FileService fileService;
 
 	@Override
 	@Transactional
@@ -50,7 +57,25 @@ public class ReviewServiceImpl implements ReviewService {
 		//todo 방문여부 계산
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
-		return ReviewResDto.builder().review(savedReview).likeCnt(0L).build();
+
+		List<String> fileUrls = new ArrayList<>();
+		for (String fileid : reqDto.getFileIds()) {
+			File file = fileService.verifyFile(fileid); // 파일 검증
+
+			// ReviewFile에 파일 연결
+			ReviewFile reviewFile = new ReviewFile();
+			reviewFile.setFile(file);
+			reviewFile.setReview(savedReview);
+			reviewFileRepository.save(reviewFile);
+
+			fileUrls.add(file.getUrl()); // URL 추가
+		}
+
+		return ReviewResDto.builder()
+			.review(savedReview)
+			.likeCnt(0L)
+			.fileUrls(fileUrls)
+			.build();
 	}
 
 	@Override
