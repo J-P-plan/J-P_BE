@@ -390,15 +390,66 @@ INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, L
 VALUES (314, 'ChIJda9gFeQmYzURIsXnKaOqStY', '남이섬', '강원도 춘천',
         '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
         'TRAVEL_PLACE', 37.7899352, 127.5258072);
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
+VALUES (900, 'ChIJJ-wqKnLzYTUR_Tro9d6ViAU', '대관령 양떼목장', '강원도 평창',
+        '대관령 양떼목장은 아름다운 자연 속에서 양들과 함께하는 체험을 제공하는 목장입니다.',
+        'TRAVEL_PLACE', 37.688488, 128.7527571);
 
--- place - THEME_TRAVEL
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
+VALUES (901, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '제주 새별오름', '제주도',
+        '제주 새별오름은 아름다운 경관과 함께 하이킹을 즐길 수 있는 인기 있는 장소입니다.',
+        'TRAVEL_PLACE', 33.3659432, 126.35644);
+
+-- place - THEME_TRAVEL/FESTIVAL
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (500, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '테마여행지 축제 예시', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'THEME',
-        37.3676264, 127.8248756, 'FESTIVAL');
+VALUES (500, 'ChIJA9lRtLGqfDURyWWCAEvlS_A', '광주 화담숲', '광주광역시',
+        '화담숲은 가을의 단풍과 겨울의 눈꽃이 아름다운 화담숲은 사계절 내내 매력적인 장소입니다.', 'THEME',
+        37.3412584, 127.2892037, 'TRAVEL');
 
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (501, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '테마여행지 여행지 예시', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'THEME',
-        37.3676264, 127.8248756, 'TRAVEL');
+VALUES (501, 'ChIJ9z9q8xRhYzUR1OCCur9d4XA', '여주 강천섬', '경기도 여주',
+        '가을 단풍과 겨울의 맑은 공기를 만끽할 수 있는 강천섬은 자연과 함께하는 힐링 장소입니다.', 'THEME',
+        37.2339212, 127.6955603, 'TRAVEL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (502, 'ChIJxZQsAfTXfDURpJBS-kMCYm0', '포천 허브아일랜드 핑크뮬리', '경기도 포천',
+        '가을의 핑크뮬리와 겨울의 차가운 바람 속에서 힐링할 수 있는 공간입니다.', 'THEME',
+        37.9654806, 127.131773, 'TRAVEL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (503, 'ChIJdySJbz8rejURa17dmzpN3Xc', '인천 굴업도', '인천광역시',
+        '가을의 여유로운 바다와 겨울철의 맑은 하늘이 어우러진 굴업도는 완벽한 여행지입니다.', 'THEME',
+        37.1915355, 125.9798551, 'TRAVEL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (504, 'ChIJpbP86vIlbzURA5H-TxfQwfY', '함양 곶감축제', '경상남도 함양',
+        '가을의 풍성한 곶감과 겨울의 따뜻한 정을 느낄 수 있는 축제입니다.', 'THEME',
+        35.2506332, 128.4202145, 'FESTIVAL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (505, 'ChIJtZ6jupmqDTURppQwD7fxFKU', '제주 동백축제', '제주도',
+        '겨울철 동백꽃이 만개하는 시기에 열리는 축제로, 따뜻한 제주에서 겨울을 즐길 수 있습니다.', 'THEME',
+        33.3087565, 126.6337938, 'FESTIVAL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (506, 'ChIJoUN_1UduYjURJtyaYzGnfVI', '인제 자작나무숲', '강원도 인제',
+        '가을의 단풍과 겨울의 설경이 아름다운 자작나무숲은 자연 속에서 힐링할 수 있는 곳입니다.', 'THEME',
+        37.9883101, 128.199084, 'TRAVEL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (507, 'ChIJRxSQ5FH_DDURJGgM5HCZeJ4', '제주 한라산', '제주도',
+        '가을의 단풍과 겨울의 눈 덮인 풍경이 아름다운 한라산은 등산객들에게 인기 있는 장소입니다.', 'THEME',
+        33.3616666, 126.5291666, 'TRAVEL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (508, 'ChIJhzI9RjAkYjURskp7QN2zCzM', '평창 송어축제', '강원도 평창',
+        '겨울철 송어 낚시와 다양한 체험을 즐길 수 있는 축제로, 가족과 함께하기 좋은 곳입니다.', 'THEME',
+        37.6331225, 128.5569903, 'FESTIVAL');
+
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
+VALUES (509, 'ChIJj7dwjy9kYjURVh-S2hxkVQg', '인제 빙어축제', '강원도 인제',
+        '겨울철 얼음낚시와 다양한 즐길거리가 있는 축제로, 추운 겨울을 따뜻하게 보내는 방법입니다.', 'THEME',
+        37.99764, 128.0985467, 'FESTIVAL');
 
 -- 전북
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
