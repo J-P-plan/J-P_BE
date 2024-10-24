@@ -141,14 +141,24 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 					.thenComparing(GooglePlaceSearchResDto.Result::getRating, Comparator.reverseOrder()));
 	}
 
-	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
 	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
+		return getPlaceDetails(placeId, null);
+	}
+
+	// placeId로 장소 상세 정보 가져오는 메서드
+	@Override
+	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.DETAILS_URL)
 			.queryParam("placeid", placeId)
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
+
+		// 따로 필드가 있으면 요청 url에 추가
+		if (fields != null) {
+			uriBuilder.queryParam("fields", fields);
+		}
 
 		URI uri = uriBuilder.build().toUri();
 

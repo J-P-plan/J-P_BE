@@ -52,7 +52,7 @@ public class PlaceController {
 		return ResponseEntity.ok(placeService.findPlacePage(page, searchString, placeType, cityType, elementCnt));
 	}
 
-	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
+	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 거 나중에 만들기
 
 	@GetMapping("/details/{placeId}")
 	@Operation(summary = "장소 상세 페이지를 조회합니다.",
