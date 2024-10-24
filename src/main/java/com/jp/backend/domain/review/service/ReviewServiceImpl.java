@@ -1,7 +1,10 @@
 package com.jp.backend.domain.review.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.jp.backend.domain.file.service.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +33,7 @@ import com.jp.backend.global.utils.CustomBeanUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -40,17 +44,21 @@ public class ReviewServiceImpl implements ReviewService {
 	private final CustomBeanUtils<Review> beanUtils;
 	private final JpaCommentRepository commentRepository;
 	private final JpaLikeRepository likeRepository;
+	private final FileService fileService;
 
 	@Override
 	@Transactional
-	public ReviewResDto createReview(ReviewReqDto reqDto, String username) {
+	public ReviewResDto createReview(ReviewReqDto reqDto, List<MultipartFile> files, String username) throws IOException {
 
 		User user = userService.verifyUser(username);
 
 		//todo 방문여부 계산
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
-		return ReviewResDto.builder().review(savedReview).likeCnt(0L).build();
+
+		List<String> fileUrls = fileService.uploadFiles(files, username);
+
+		return ReviewResDto.builder().review(savedReview).likeCnt(0L).fileUrls(fileUrls).build();
 	}
 
 	@Override
