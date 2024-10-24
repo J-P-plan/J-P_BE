@@ -67,9 +67,8 @@ public class GooglePlaceController {
 	@GetMapping("/details")
 	@Operation(summary = "해당 장소의 상세 정보를 가져옵니다.",
 		description = "리뷰 정보만 가져오고 싶다면, fields 파라미터에 <reviews>를 넣어 요청하세요.")
-	public ResponseEntity<GooglePlaceDetailsResDto> getPlaceDetails(@RequestParam("placeId") String placeId,
-		@RequestParam(required = false, name = "fields") String fields) {
-		GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(placeId, fields);
+	public ResponseEntity<GooglePlaceDetailsResDto> getPlaceDetails(@RequestParam("placeId") String placeId) {
+		GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(placeId);
 		return new ResponseEntity<>(placeDetails, HttpStatus.OK);
 	}
 

@@ -38,7 +38,7 @@ public class GooglePlaceSearchResDto { // search 결과에 따른 장소 list re
 		private int userRatingsTotal;
 		@JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 프론트에게 전해주는 response에는 포함 X
 		private List<Photo> photos;
-		private List<String> photoUrls;
+		private String photoUrl;
 	}
 
 	@Getter
