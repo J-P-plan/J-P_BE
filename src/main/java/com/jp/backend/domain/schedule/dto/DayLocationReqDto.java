@@ -1,9 +1,9 @@
 package com.jp.backend.domain.schedule.dto;
 
-import java.awt.*;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jp.backend.domain.place.dto.Location;
 import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.DayLocation;
 
@@ -26,13 +26,19 @@ public class DayLocationReqDto {
 	@Schema(description = "시간", example = "14:30")
 	private LocalTime time;
 	//private String memo;
-	private Point location; //위도, 경도
+	@Schema(description = "순서", example = "1")
+	private Integer index;
+	@Schema(description = "위,경도")
+	private Location location; //위도, 경도
+	@Schema(description = "장소 ID", example = "ChIJsYmocVaifDUR99wwIJ9jOmU")
 	private String placeId; //restaurant, cafe
+	@Schema(description = "장소명", example = "남산서울타워")
 	private String name;
 
 	public DayLocation toEntity(int index, Day day) {
 		return DayLocation.builder()
-			.location(location)
+			.lat(location.getLat())
+			.lng(location.getLng())
 			.placeId(placeId)
 			.locationIndex(index)
 			.day(day)

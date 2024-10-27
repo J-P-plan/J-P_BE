@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.jp.backend.domain.place.entity.Place;
-import com.jp.backend.domain.schedule.enums.Status;
+import com.jp.backend.global.audit.Auditable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @Builder
-public class Schedule {
+public class Schedule extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,10 +40,8 @@ public class Schedule {
 
 	private LocalDate endDate;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<ScheduleUser> member;
-
-	private Status status;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
+	private List<ScheduleUser> scheduleUsers;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Day> dayList;

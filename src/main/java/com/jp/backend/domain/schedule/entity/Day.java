@@ -3,6 +3,8 @@ package com.jp.backend.domain.schedule.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.jp.backend.global.audit.Auditable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "days") //day -> 예약어
-public class Day {
+public class Day extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -36,13 +38,17 @@ public class Day {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Schedule schedule;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "day")
 	private List<DayLocation> dayLocationList;
 
 	//private PlanType planType;
 
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
+	}
+
+	public void setLocationList(List<DayLocation> dayLocationList) {
+		this.dayLocationList = dayLocationList;
 	}
 
 	public void addLocation(List<DayLocation> dayLocationList) {

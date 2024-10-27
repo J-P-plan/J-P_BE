@@ -39,6 +39,7 @@ public class ScheduleReqDto {
 		return Schedule.builder()
 			.startDate(startDate)
 			.endDate(endDate)
+			.isOpen(false)
 			.title(title + " 여행")
 			.dayList(new ArrayList<Day>())
 			.city(city)

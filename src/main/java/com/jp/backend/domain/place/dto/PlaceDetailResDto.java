@@ -64,16 +64,6 @@ public class PlaceDetailResDto {
 	@Schema(description = "위도,경도")
 	private Location location;
 
-	@Getter
-	@Setter
-	@Builder
-	public static class Location {
-		@Schema(description = "위도")
-		private double lat;
-		@Schema(description = "경도")
-		private double lng;
-	}
-
 	@Builder
 	public PlaceDetailResDto(Place place, String placeId, GooglePlaceDetailsResDto detailsByGoogle,
 		List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {

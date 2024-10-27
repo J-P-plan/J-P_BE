@@ -14,4 +14,6 @@ public interface JpaDayLocationRepository extends JpaRepository<DayLocation, Lon
 
 	List<DayLocation> findAllByDay(Day day);
 
+	void deleteAllByDay(Day day);
+
 }

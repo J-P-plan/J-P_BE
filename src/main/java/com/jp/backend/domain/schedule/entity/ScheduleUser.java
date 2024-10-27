@@ -1,6 +1,7 @@
 package com.jp.backend.domain.schedule.entity;
 
 import com.jp.backend.domain.user.entity.User;
+import com.jp.backend.global.audit.Auditable;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,16 +22,16 @@ import lombok.Setter;
 @Entity
 @AllArgsConstructor
 @Builder
-public class ScheduleUser {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class ScheduleUser extends Auditable {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
 
-  private Boolean createrYn;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Schedule schedule;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Schedule schedule;
+	private Boolean isCreater;
 }

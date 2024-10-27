@@ -19,10 +19,11 @@ public class ExpenseReqDto {
 
 	private Long expense;
 
-	public Expense toEntity(DayLocation dayLocation){
+	public Expense toEntity(DayLocation dayLocation) {
 		return Expense.builder()
 			.expense(expense)
 			.name(name)
+			.type(type)
 			.expense(expense)
 			.dayLocation(dayLocation)
 			.build();

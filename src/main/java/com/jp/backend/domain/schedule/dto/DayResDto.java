@@ -1,9 +1,11 @@
 package com.jp.backend.domain.schedule.dto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.schedule.entity.Day;
 
 import lombok.AllArgsConstructor;
@@ -18,9 +20,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DayResDto {
 	private Long id;
-	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;
 	private Integer dayIndex;
+
+	private DayOfWeek dayOfWeek;
 	private List<DayLocationResDto> dayLocationResDtoList;
 
 	@Builder
@@ -28,6 +31,10 @@ public class DayResDto {
 		this.id = day.getId();
 		this.date = day.getDate();
 		this.dayIndex = day.getDayIndex();
-		this.dayLocationResDtoList = dayLocationResDtos;
+		this.dayOfWeek = day.getDate().getDayOfWeek();
+		this.dayLocationResDtoList = dayLocationResDtos.stream().sorted(Comparator.comparing(
+			DayLocationResDto::getIndex)).collect(
+			Collectors.toList());
 	}
+
 }

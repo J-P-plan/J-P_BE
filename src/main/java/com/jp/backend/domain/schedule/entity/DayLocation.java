@@ -1,8 +1,9 @@
 package com.jp.backend.domain.schedule.entity;
 
-import java.awt.*;
 import java.time.LocalTime;
 import java.util.List;
+
+import com.jp.backend.domain.schedule.dto.PlanUpdateDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
@@ -37,11 +38,13 @@ public class DayLocation {
 	//description
 	private String memo;
 
-	private Point location; //위도, 경도
+	private Double lat; //위도
+
+	private Double lng; //경도
 
 	//비용
 	@OneToMany(mappedBy = "dayLocation", cascade = CascadeType.REMOVE)
-	private List<Expense> expenses;
+	private List<Expense> expense;
 
 	//이동수단
 	@ElementCollection
@@ -52,5 +55,17 @@ public class DayLocation {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Day day;
+
+	public void updatePlan(PlanUpdateDto updateDto, List<Expense> expense) {
+		this.memo = updateDto.getMemo();
+		this.expense = expense;
+		this.mobility = updateDto.getMobility();
+	}
+
+	public void moveDay(Day day, Integer locationIndex, LocalTime time) {
+		this.day = day;
+		this.locationIndex = locationIndex;
+		this.time = time;
+	}
 
 }
