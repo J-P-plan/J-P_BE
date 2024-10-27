@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,25 @@ public class ScheduleController {
 	}
 
 	//todo 장소 삭제 api
+	@DeleteMapping("/schedule/location/{locationId}")
+	@Operation(summary = "장소 삭제 API", description = "일정에 장소를 삭제합니다.")
+	public ResponseEntity<Boolean> deleteDayLocation(
+		@PathVariable(value = "locationId") Long locationId
+	) {
+		Boolean result = scheduleService.deleteDayLocation(locationId);
+		//webSocketHandler.broadcast("유저가 장소를 삭제했습니다. username : " + principal.getUsername());
+		return ResponseEntity.ok(result);
+	}
+
+	@DeleteMapping("/schedule/{scheduleId}")
+	@Operation(summary = "일정 삭제 API", description = "일정을 삭제합니다.")
+	public ResponseEntity<Boolean> deleteSchedule(
+		@PathVariable(value = "scheduleId") Long scheduleId
+	) {
+		Boolean result = scheduleService.deleteSchedule(scheduleId);
+		//webSocketHandler.broadcast("유저가 장소를 삭제했습니다. username : " + principal.getUsername());
+		return ResponseEntity.ok(result);
+	}
 
 	//todo 장소 편집 api
 	@PutMapping("/schedule/location/plan/{dayLocationId}")
@@ -100,7 +120,7 @@ public class ScheduleController {
 	//삭제된 리스트를 보내주세
 
 	@PutMapping("/schedule/day/{dayId}")
-	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다.")
+	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다. DayLocation Request Dto에 index 넣어주셔야 합니다.")
 	public ResponseEntity<Long> updateDay(
 		@PathVariable(value = "dayId") Long dayId,
 		@RequestBody List<DayLocationReqDto> dayLocationReqDtoList

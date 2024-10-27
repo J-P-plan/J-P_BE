@@ -61,6 +61,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	private final JpaUserRepository userRepository;
 
+	// 일정 생성 메서드
 	@Override
 	@Transactional
 	public Long createSchedule(ScheduleReqDto postDto, String username) {
@@ -80,7 +81,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		scheduleUserRepository.save(scheduleUser);
 		schedule.setScheduleUsers(scheduleUserList);
 
-		//TODO DAY가 날짜만큼 만들어지게
+		// 날짜별로 DAY 생성
 		LocalDate date = postDto.getStartDate();
 		int dayIndex = 1;
 		while (!date.isAfter(postDto.getEndDate())) {
@@ -94,22 +95,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return savedSchedule.getId();
 	}
 
-	//todo 장소 추가 api
+	// 장소 추가 메서드
 	@Override
 	@Transactional
-	public Boolean addDayLocation(
-		Long dayId,
-		List<DayLocationReqDto> dayLocationReqDtoList) {
-
+	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
 		Day day = dayRepository.findById(dayId).orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
-
 		AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
 
-		//인덱스 자동추가
+		// 인덱스 자동 증가하여 DayLocation 리스트 생성 및 저장
 		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> {
-				return dayLocationReqDto.toEntity(index.getAndIncrement(), day);
-			}
+			dayLocationReqDto -> dayLocationReqDto.toEntity(index.getAndIncrement(), day)
 		).toList();
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
@@ -117,7 +112,37 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return true;
 	}
 
-	//장소 편집 api
+	// 장소 삭제 메서드
+	@Override
+	@Transactional
+	public Boolean deleteDayLocation(Long dayLocationId) {
+		DayLocation dayLocation = dayLocationRepository.findById(dayLocationId)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_LOCATION_NONE));
+
+		Day day = dayLocation.getDay();
+		List<DayLocation> dayLocations = day.getDayLocationList();
+		dayLocations.remove(dayLocation);
+
+		reorderDayLocations(dayLocations);
+
+		dayLocationRepository.deleteById(dayLocationId);
+
+		return true;
+	}
+
+	// 일정 삭제 메서드
+	@Override
+	@Transactional
+	public Boolean deleteSchedule(Long scheduleId) {
+		Schedule schedule = scheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
+
+		scheduleRepository.delete(schedule);
+
+		return true;
+	}
+
+	// 장소 수정 메서드
 	@Override
 	@Transactional
 	public Boolean updateDayLocation(Long locationId, PlanUpdateDto updateDto) {
@@ -134,7 +159,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return true;
 	}
 
-	//장소 상세조회
+	// 장소 상세 조회 메서드
 	@Override
 	@Transactional
 	public DayLocationResDto findDayLocation(Long locationId) {
@@ -144,6 +169,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return DayLocationResDto.builder().entity(dayLocation).build();
 	}
 
+	// 일정 상세 조회 메서드
 	@Override
 	@Transactional
 	public ScheduleResDto findSchedule(Long scheduleId) {
@@ -158,7 +184,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 			return DayResDto.builder()
 				.day(day)
 				.dayLocationResDtos(dayLocations)
-				.dayLocationResDtos(dayLocations)
 				.build();
 		}).toList();
 
@@ -168,10 +193,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 			.toList();
 
 		return ScheduleResDto.builder().schedule(schedule).dayResDtos(dayResDtos).users(userCompactResDtos).build();
-
 	}
 
-	//장소 LIST 조회
+	// 장소 목록 조회 메서드
 	public List<DayLocationResDto> findDayLocation(DayLocationSearchType searchType, Long id) {
 		List<DayLocation> dayLocationList = new ArrayList<>();
 		switch (searchType) {
@@ -181,7 +205,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				dayLocationList = dayLocationRepository.findAllByDay(day);
 			}
 			case SCHEDULE -> {
-				//Schedule schedule = scheduleRepository.findById(id);
+				// Schedule 조회 로직 필요
 			}
 			default -> throw new CustomLogicException(ExceptionCode.NONE_TYPE);
 		}
@@ -191,6 +215,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			.toList();
 	}
 
+	// DAY 상세 조회 메서드
 	@Override
 	@Transactional
 	public DayResDto findDay(Long dayId) {
@@ -204,27 +229,23 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return DayResDto.builder().day(day).dayLocationResDtos(dayLocations).build();
 	}
 
+	// 일정의 모든 DAY 조회 메서드
 	@Override
 	@Transactional
 	public List<DayResDto> findDays(Long scheduleId) {
 		Schedule schedule = scheduleRepository.findById(scheduleId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
-		List<DayResDto> result = dayRepository.findAllBySchedule(schedule)
+		return dayRepository.findAllBySchedule(schedule)
 			.stream().map(day -> DayResDto.builder().day(day).build()).toList();
-
-		return result;
 	}
 
+	// 사용자별 일정 페이지 조회 메서드
 	@Override
 	@Transactional
 	public PageResDto<ScheduleResDto> findMySchedules(
-		Integer page,
-		ScheduleSort sort,
-		Integer elementCnt,
-		String username) {
+		Integer page, ScheduleSort sort, Integer elementCnt, String username) {
 		User user = userService.verifyUser(username);
-
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
 		Page<ScheduleResDto> schedules = scheduleRepository.getSchedulePage(pageable, user.getId(), null, sort)
@@ -238,13 +259,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return new PageResDto<>(pageInfo, schedules.getContent());
 	}
 
+	// 전체 일정 페이지 조회 메서드
 	@Override
 	@Transactional
 	public PageResDto<ScheduleResDto> findSchedules(
-		Integer page,
-		Long placeId,
-		ScheduleSort sort,
-		Integer elementCnt) {
+		Integer page, Long placeId, ScheduleSort sort, Integer elementCnt) {
 
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
@@ -259,69 +278,55 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return new PageResDto<>(pageInfo, schedules.getContent());
 	}
 
-	//todo DAY 편집 api (list)
+	// DAY 수정 메서드
 	@Override
 	@Transactional
 	public Long updateDay(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
 		Day day = dayRepository.findById(dayId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
 
-		// 기존 DayLocation들의 참조를 해제한 후 삭제
 		day.getDayLocationList().forEach(dayLocation -> dayLocation.setDay(null));
 		dayLocationRepository.deleteAllByDay(day);
-		// 변경 가능한 리스트 생성
-		AtomicInteger index = new AtomicInteger(1);
-		//인덱스 자동추가
+
 		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> {
-				return dayLocationReqDto.toEntity(index.getAndIncrement(), day);
-			}
+			dayLocationReqDto -> dayLocationReqDto.toEntity(dayLocationReqDto.getIndex(), day)
 		).toList();
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
 		return dayId;
 	}
 
+	// 장소 이동 메서드
 	@Override
 	@Transactional
-	public Boolean moveDayLocation(
-		Long dayLocationId,
-		DayMoveDto dayMoveDto) {
-
+	public Boolean moveDayLocation(Long dayLocationId, DayMoveDto dayMoveDto) {
 		Day newDay = dayRepository.findById(dayMoveDto.getNewDayId())
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
 
-		// 이동할 DayLocation 조회
 		DayLocation dayLocation = dayLocationRepository.findById(dayLocationId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_LOCATION_NONE));
 
-		// 기존 Day 조회 및 위치 리스트에서 해당 DayLocation 제거
 		Day currentDay = dayLocation.getDay();
 		List<DayLocation> currentDayLocations = currentDay.getDayLocationList();
 		currentDayLocations.remove(dayLocation);
 
-		// 기존 Day의 위치 리스트를 locationIndex 기준으로 정렬
-		currentDayLocations.sort(Comparator.comparingInt(DayLocation::getLocationIndex));
+		reorderDayLocations(currentDayLocations);
 
-		// 기존 Day의 위치 리스트 인덱스 재조정
-		AtomicInteger indexCounter = new AtomicInteger(1);
-		currentDayLocations.forEach(location -> location.setLocationIndex(indexCounter.getAndIncrement()));
-
-		// 새로운 Day에서의 위치 설정
 		Integer newLocationIndex = newDay.getDayLocationList().size() + 1;
 		dayLocation.moveDay(newDay, newLocationIndex, dayMoveDto.getTime());
 
-		// 새로운 Day에 DayLocation 추가
-		List<DayLocation> newDayLocations = newDay.getDayLocationList();
-		newDayLocations.add(dayLocation);
+		newDay.getDayLocationList().add(dayLocation);
 
-		// 변경 사항 저장
-		dayRepository.save(currentDay);  // 기존 Day의 위치 재조정 반영
-		dayRepository.save(newDay);      // 새로운 Day에 DayLocation 추가 반영
+		dayRepository.save(currentDay);
+		dayRepository.save(newDay);
 		dayLocationRepository.save(dayLocation);
 
 		return true;
 	}
 
-	//todo 장소 날짜 변경 api
+	private void reorderDayLocations(List<DayLocation> dayLocations) {
+		dayLocations.sort(Comparator.comparingInt(DayLocation::getLocationIndex));
+		AtomicInteger indexCounter = new AtomicInteger(1);
+		dayLocations.forEach(location -> location.setLocationIndex(indexCounter.getAndIncrement()));
+	}
 }

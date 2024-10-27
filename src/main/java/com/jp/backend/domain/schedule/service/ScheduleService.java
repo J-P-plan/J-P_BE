@@ -17,6 +17,10 @@ public interface ScheduleService {
 
 	Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
 
+	Boolean deleteDayLocation(Long daylocatinoId);
+
+	Boolean deleteSchedule(Long scheduleId);
+
 	Boolean updateDayLocation(Long locationId, PlanUpdateDto updateDto);
 
 	DayLocationResDto findDayLocation(Long locationId);
