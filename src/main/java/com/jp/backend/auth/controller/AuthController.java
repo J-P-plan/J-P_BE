@@ -63,6 +63,7 @@ public class AuthController {
 	// @Operation(summary = "로그아웃을 진행합니다.")
 	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 		authService.logout(request, response);
+		// TODO 로그아웃 --> 리프레시 토큰 삭제
 		return ResponseEntity.ok().build();
 	}
 
