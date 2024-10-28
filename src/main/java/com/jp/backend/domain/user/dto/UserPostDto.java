@@ -23,7 +23,7 @@ public class UserPostDto {
 	@NotNull
 	@Email
 	@Pattern(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$")
-	@Schema(description = "이메일")
+	@Schema(description = "이메일", example = "example@naver.com")
 	private String email;
 	@NotNull
 	@Schema(description = "비밀번호")
