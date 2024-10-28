@@ -1,4 +1,7 @@
 spring:
+  sql:
+    init:
+      mode: never
   security:
     oauth2:
       client:
@@ -9,7 +12,7 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: "https://localhost:8080/login/oauth2/code/google"
+            redirect-uri: "https://jandp-travel.kro.kr/login/oauth2/code/google"
 
   h2:
     console:
@@ -18,7 +21,10 @@ spring:
       enabled: true  # 여기까지만 해도 H2 Browser 생성됨
       path: /h2  # 추가 - Context path 변경
   datasource: # 추가
-    url: jdbc:h2:mem:test  # 추가 - JDBC URL 변경
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file./test2  # H2 접속 정보
+    username: sa  # H2 접속 시 입력할 username 정보 (원하는 것으로 입력)
+    password:  # H2 접속 시 입력할 password 정보 (원하는 것으로 입력)
 
   jpa:
     defer-datasource-initialization: true

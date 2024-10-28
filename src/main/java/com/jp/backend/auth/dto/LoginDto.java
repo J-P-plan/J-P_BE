@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginDto {
-	@Schema(description = "이메일")
+	@Schema(description = "이메일", example = "example@naver.com")
 	private String email;
 	@Schema(description = "비밀번호")
 	private String password;
