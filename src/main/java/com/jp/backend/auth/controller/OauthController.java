@@ -58,7 +58,9 @@ public class OauthController {
 	)
 	public ResponseEntity<OauthLoginResponseDto> GoogleLogin(
 		HttpServletResponse response,
-		@RequestParam(value = "code") String code) throws
+		@RequestParam(value = "code") String code
+		//@RequestParam(value = "redirectUrl") String redirectUrl
+	) throws
 		Exception {
 
 		System.out.println("code : " + code);

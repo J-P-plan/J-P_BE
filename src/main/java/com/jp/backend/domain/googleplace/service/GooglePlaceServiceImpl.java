@@ -43,11 +43,14 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			uriBuilder.queryParam("pagetoken", nextPageToken);
 		}
 
+		System.out.println("-----------------------------");
+		System.out.println(contents);
 		URI uri = uriBuilder.build().toUri();
 
 		// google places api 요청 중 네트워크 에러 등으로 오류 발생 시 catch
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
+		System.out.println(response);
 		if (response != null && response.getResults() != null) {
 			setPhotoUrl(response);
 			sortPlacesByPopularity(response);

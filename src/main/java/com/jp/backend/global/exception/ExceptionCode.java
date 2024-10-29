@@ -41,7 +41,18 @@ public enum ExceptionCode {
 
 	// File
 	FILE_NONE(404, "FILE_NONE"),
-	FILE_NOT_SUPPORTED(400, "파일 형식이 지원되지 않습니다.");
+	FILE_NOT_SUPPORTED(400, "파일 형식이 지원되지 않습니다."),
+
+	//WebSocket
+	WEBSOCKET_IO_EXCEPTION(500, "WEBSOCKET_IO_EXCEPTION"),
+
+	//SCHEDULE
+	DAY_NONE(404, "DAY_NONE"),
+	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
+	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
+
+	//
+	NONE_TYPE(404, "존재하지 않는 타입입니다.");
 
 	@Getter
 	private final int code;
