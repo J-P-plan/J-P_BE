@@ -98,7 +98,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	// 장소 추가 메서드
 	@Override
 	@Transactional
-	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
+	public Long addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
 		Day day = dayRepository.findById(dayId).orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
 		AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
 
@@ -109,7 +109,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
 
-		return true;
+		return day.getSchedule().getId();
 	}
 
 	// 장소 삭제 메서드

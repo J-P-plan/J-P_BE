@@ -1,6 +1,7 @@
 package com.jp.backend.domain.schedule.dto;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
@@ -48,7 +49,7 @@ public class ScheduleResDto {
 		this.member = users;
 		this.status = Status.determineStatus(schedule.getStartDate(), schedule.getEndDate());
 		this.isOpen = schedule.getIsOpen();
-		this.dayResDtos = dayResDtos;
+		this.dayResDtos = dayResDtos.stream().sorted(Comparator.comparing(DayResDto::getDayIndex)).toList();
 		this.place = PlaceCompactResDto.builder().entity(schedule.getCity()).build();
 		this.member = users;
 	}

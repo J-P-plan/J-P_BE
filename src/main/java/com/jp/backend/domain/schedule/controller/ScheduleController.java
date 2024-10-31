@@ -55,14 +55,14 @@ public class ScheduleController {
 	//장소 추가 api
 	@PostMapping("/schedule/location/{dayId}")
 	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다. 시간은 \"HH:mm\"형식으로 보내주세요. index는 보내지 않으셔도 자동 추가됩니다.")
-	public ResponseEntity<Boolean> addDayLocation(
+	public ResponseEntity<Long> addDayLocation(
 		@PathVariable(value = "dayId") Long dayId,
-		@RequestBody List<DayLocationReqDto> postDto,
-		@AuthenticationPrincipal UserPrincipal principal
+		@RequestBody List<DayLocationReqDto> postDto
+		//@AuthenticationPrincipal UserPrincipal principal
 	) {
-		Boolean result = scheduleService.addDayLocation(dayId, postDto);
-		//webSocketHandler.broadcast("유저가 장소를 추가했습니다. username : " + principal.getUsername());
-		return ResponseEntity.ok(result);
+		Long scheduleId = scheduleService.addDayLocation(dayId, postDto);
+		webSocketHandler.broadcastToSchedule(scheduleId, "유저가 장소를 추가했습니다. username : ");
+		return ResponseEntity.ok(scheduleId);
 	}
 
 	//todo 장소 삭제 api

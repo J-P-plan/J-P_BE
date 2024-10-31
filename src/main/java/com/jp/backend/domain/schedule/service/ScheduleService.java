@@ -15,7 +15,7 @@ import com.jp.backend.global.dto.PageResDto;
 public interface ScheduleService {
 	Long createSchedule(ScheduleReqDto postDto, String username);
 
-	Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
+	Long addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
 
 	Boolean deleteDayLocation(Long daylocatinoId);
 
