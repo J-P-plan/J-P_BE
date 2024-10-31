@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jp.backend.auth.config.JwtConfig;
+import com.jp.backend.auth.enums.DeviceType;
 import com.jp.backend.auth.oauth.dto.OauthLoginResponseDto;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthToken;
@@ -47,12 +48,12 @@ public class GoogleService {
 	private String GOOGLE_CLIENT_ID;
 	@Value("${spring.security.oauth2.client.registration.google.client-secret}")
 	private String GOOGLE_CLIENT_SECRET;
-	@Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-	private String LOGIN_REDIRECT_URL;
+	// @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+	// private String LOGIN_REDIRECT_URL;
 
-	public String getGoogleAccessToken(String accessCode) {
+	public String getGoogleAccessToken(String accessCode, DeviceType viewType) {
 
-		System.out.println(LOGIN_REDIRECT_URL);
+		//	System.out.println(LOGIN_REDIRECT_URL);
 		System.out.println(GOOGLE_CLIENT_ID);
 		System.out.println(GOOGLE_CLIENT_SECRET);
 		String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -63,7 +64,7 @@ public class GoogleService {
 		params.put("code", accessCode);
 		params.put("client_id", GOOGLE_CLIENT_ID);
 		params.put("client_secret", GOOGLE_CLIENT_SECRET);
-		params.put("redirect_uri", LOGIN_REDIRECT_URL);
+		params.put("redirect_uri", viewType.getURL());
 		params.put("grant_type", "authorization_code");
 
 		//try {
@@ -152,10 +153,6 @@ public class GoogleService {
 		response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtAccessToken.getToken());
 		CookieUtils.addCookie(response, "RefreshToken", jwtRefreshToken.getToken(),
 			(int)(System.currentTimeMillis() + jwtConfig.getRefreshTokenValidTime()));
-	}
-
-	public String getGoogleRedirectUri() {
-		return LOGIN_REDIRECT_URL;
 	}
 
 }
