@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jp.backend.auth.enums.DeviceType;
 import com.jp.backend.auth.oauth.GoogleService;
 import com.jp.backend.auth.oauth.dto.OauthLoginResponseDto;
 
@@ -60,13 +59,12 @@ public class OauthController {
 	public ResponseEntity<OauthLoginResponseDto> GoogleLogin(
 		HttpServletResponse response,
 		@RequestParam(value = "code") String code,
-		@RequestParam(value = "viewType") DeviceType viewType
-		//@RequestParam(value = "redirectUrl") String redirectUrl
+		@RequestParam(value = "isDev") Boolean isDev
 	) throws
 		Exception {
 
 		System.out.println("code : " + code);
-		String accessToken = googleService.getGoogleAccessToken(code, viewType);
+		String accessToken = googleService.getGoogleAccessToken(code, isDev);
 
 		System.out.println("accessToken ---------------------" + accessToken);
 		return ResponseEntity.ok(googleService.getUserInfo(response, accessToken));
