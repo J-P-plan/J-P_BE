@@ -2,7 +2,6 @@ package com.jp.backend.domain.user.dto;
 
 import java.util.List;
 
-import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;
 
@@ -30,8 +29,8 @@ public class UserResDto {
 	private User.UserStatus userStatus;
 	@Schema(description = "역할")
 	private List<String> roles;
-	@Schema(description = "프로필 이미지 id")
-	private File profileId;
+	@Schema(description = "프로필 이미지 URL")
+	private String profile;
 	// TODO : badge
 
 	@Builder
@@ -41,5 +40,8 @@ public class UserResDto {
 		this.userStatus = user.getUserStatus();
 		this.nickname = user.getNickname();
 		this.providerType = user.getProviderType();
+		if (user.getProfile() != null) {
+			this.profile = user.getProfile().getUrl();
+		}
 	}
 }

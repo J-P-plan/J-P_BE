@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.user.dto.UserPostDto;
+import com.jp.backend.domain.user.dto.UserResDto;
 import com.jp.backend.domain.user.dto.UserUpdateDto;
 import com.jp.backend.domain.user.mapper.UserMapper;
 import com.jp.backend.domain.user.service.UserService;
@@ -47,4 +49,13 @@ public class UserController {
 		@AuthenticationPrincipal UserPrincipal principal) {
 		return ResponseEntity.ok(userService.updateUser(updateDto, principal.getUsername()));
 	}
+
+	@GetMapping("/me")
+	@Operation(summary = "내 정보 조회 API", description = "토큰으로 본인의 정보를 상세조회합니다.")
+	public ResponseEntity<UserResDto> findMe(
+		@AuthenticationPrincipal UserPrincipal principal
+	) {
+		return ResponseEntity.ok(userService.findUser(principal.getUsername()));
+	}
+
 }
