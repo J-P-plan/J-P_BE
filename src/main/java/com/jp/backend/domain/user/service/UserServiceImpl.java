@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.auth.utils.AuthoritiesUtils;
+import com.jp.backend.domain.user.dto.UserResDto;
 import com.jp.backend.domain.user.dto.UserUpdateDto;
 import com.jp.backend.domain.user.entity.ProviderType;
 import com.jp.backend.domain.user.entity.User;
@@ -56,6 +57,13 @@ public class UserServiceImpl implements UserService {
 		user.updateByDto(updateDto);
 
 		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public UserResDto findUser(String username) {
+		User user = verifyUser(username);
+		return UserResDto.builder().user(user).build();
 	}
 
 	@Override

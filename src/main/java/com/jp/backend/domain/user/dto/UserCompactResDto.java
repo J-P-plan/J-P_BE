@@ -20,12 +20,13 @@ public class UserCompactResDto {
 	private String nickname;
 
 	@Schema(description = "프로필 이미지")
-	private String picture;
+	private String profile;
 
 	@Builder
 	public UserCompactResDto(User user) {
 		this.id = user.getId();
 		this.nickname = user.getNickname();
-		this.picture = user.getPicture();
+		if (user.getProfile() != null)
+			this.profile = user.getProfile().getUrl();
 	}
 }

@@ -58,13 +58,13 @@ public class OauthController {
 	)
 	public ResponseEntity<OauthLoginResponseDto> GoogleLogin(
 		HttpServletResponse response,
-		@RequestParam(value = "code") String code
-		//@RequestParam(value = "redirectUrl") String redirectUrl
+		@RequestParam(value = "code") String code,
+		@RequestParam(value = "isDev") Boolean isDev
 	) throws
 		Exception {
 
 		System.out.println("code : " + code);
-		String accessToken = googleService.getGoogleAccessToken(code);
+		String accessToken = googleService.getGoogleAccessToken(code, isDev);
 
 		System.out.println("accessToken ---------------------" + accessToken);
 		return ResponseEntity.ok(googleService.getUserInfo(response, accessToken));

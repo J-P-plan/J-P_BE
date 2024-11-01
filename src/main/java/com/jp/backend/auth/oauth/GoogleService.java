@@ -47,15 +47,18 @@ public class GoogleService {
 	private String GOOGLE_CLIENT_ID;
 	@Value("${spring.security.oauth2.client.registration.google.client-secret}")
 	private String GOOGLE_CLIENT_SECRET;
+	private final String DEV_REDIRECT_URL = "http://localhost:3000/survey";
 	@Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-	private String LOGIN_REDIRECT_URL;
+	private String PROD_REDIRECT_URL;
 
-	public String getGoogleAccessToken(String accessCode) {
+	public String getGoogleAccessToken(String accessCode, Boolean isDev) {
 
-		System.out.println(LOGIN_REDIRECT_URL);
+		//	System.out.println(LOGIN_REDIRECT_URL);
 		System.out.println(GOOGLE_CLIENT_ID);
 		System.out.println(GOOGLE_CLIENT_SECRET);
 		String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+		String redirect_url = isDev ? DEV_REDIRECT_URL : PROD_REDIRECT_URL;
 
 		RestTemplate restTemplate = new RestTemplate();
 		Map<String, String> params = new HashMap<>();
@@ -63,7 +66,7 @@ public class GoogleService {
 		params.put("code", accessCode);
 		params.put("client_id", GOOGLE_CLIENT_ID);
 		params.put("client_secret", GOOGLE_CLIENT_SECRET);
-		params.put("redirect_uri", LOGIN_REDIRECT_URL);
+		params.put("redirect_uri", redirect_url);
 		params.put("grant_type", "authorization_code");
 
 		//try {
@@ -152,10 +155,6 @@ public class GoogleService {
 		response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtAccessToken.getToken());
 		CookieUtils.addCookie(response, "RefreshToken", jwtRefreshToken.getToken(),
 			(int)(System.currentTimeMillis() + jwtConfig.getRefreshTokenValidTime()));
-	}
-
-	public String getGoogleRedirectUri() {
-		return LOGIN_REDIRECT_URL;
 	}
 
 }
