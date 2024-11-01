@@ -21,6 +21,8 @@ import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.enums.UploadCategory;
 import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.global.dto.SingleResponse;
+import com.jp.backend.global.exception.CustomLogicException;
+import com.jp.backend.global.exception.ExceptionCode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,6 +45,18 @@ public class FileController {
 	public ResponseEntity<SingleResponse<FileResDto>> uploadProfile(@RequestParam(value = "file") MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
+
+		// 이미지가 아닌 경우
+		String contentType = file.getContentType();
+		if (contentType == null || !contentType.startsWith("image/")) {
+			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
+		}
+
+		// 파일이 비어있거나 두개 이상인 경우
+		if (file.getSize() > 1 || file.isEmpty()) {
+			throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+		}
+
 		return ResponseEntity.ok().body(new SingleResponse<>(fileService.uploadProfile(file, principal.getUsername())));
 	}
 
