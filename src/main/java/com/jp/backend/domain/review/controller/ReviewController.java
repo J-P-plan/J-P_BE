@@ -55,6 +55,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.updateReview(reviewId, updateDto, principal.getUsername()));
 	}
 
+	// TODO 리뷰 조회할 때 이미지 보이게
 	@Operation(summary = "리뷰 상세조회 API")
 	@GetMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(

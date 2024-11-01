@@ -82,4 +82,7 @@ public class FileController {
 		return ResponseEntity.ok(new SingleResponse<>(fileService.processFileUpload(files, category, placeId, email)));
 	}
 
+	// TODO 사진 수정하는 기능
+	//   PLACE --> 직접 controller 만들어줘야함
+	//   REVIEW/DIARY --> 이거 수정하는 메서드 안에서 같이 받아서 그걸로 해야할듯..? 맞나 모르겠다.
 }

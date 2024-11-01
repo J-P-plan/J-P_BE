@@ -105,7 +105,18 @@ public class ReviewServiceImpl implements ReviewService {
 		//todo null을 넣는게 조금 구런데 리팩토링 필요
 		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, reviewId.toString(), null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
-		return ReviewResDto.builder().review(review).likeCnt(likeCnt).commentList(commentList).build();
+
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
+		List<String> fileUrls = reviewFiles.stream()
+			.map(reviewFile -> reviewFile.getFile().getUrl())
+			.toList();
+
+		return ReviewResDto.builder()
+			.review(review)
+			.likeCnt(likeCnt)
+			.commentList(commentList)
+			.fileUrls(fileUrls)
+			.build();
 	}
 
 	public PageResDto<ReviewCompactResDto> findReviewPage(
@@ -126,10 +137,14 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					String fileUrl =
+						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.fileUrl(fileUrl)
 						.build();
 				});
 
@@ -164,10 +179,14 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					String fileUrl =
+						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.fileUrl(fileUrl)
 						.build();
 				});
 

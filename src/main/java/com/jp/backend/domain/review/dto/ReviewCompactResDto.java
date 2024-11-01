@@ -46,11 +46,13 @@ public class ReviewCompactResDto {
 	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
 	private LocalDateTime createdAt;
 
+	@Schema(description = "리뷰 사진")
+	private String fileUrl;
+
 	//todo 좋아요 갯수
 
-
 	@Builder
-	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt) {
+	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, String fileUrl) {
 		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
@@ -59,6 +61,7 @@ public class ReviewCompactResDto {
 		this.placeId = review.getPlaceId();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.commentCnt = commentCnt; //todo 바꾸기
+		this.fileUrl = fileUrl;
 	}
 
 }
