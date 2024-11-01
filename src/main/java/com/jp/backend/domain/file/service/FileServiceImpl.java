@@ -14,7 +14,7 @@ import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.PlaceFile;
 import com.jp.backend.domain.file.enums.FileCategory;
-import com.jp.backend.domain.file.enums.UserUploadCategory;
+import com.jp.backend.domain.file.enums.UploadCategory;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.uploader.S3Uploader;
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService {
 	// 유저 프로필 사진 업로드
 	@Override
 	@Transactional
-	public String uploadProfile(MultipartFile file, String email) throws IOException {
+	public FileResDto uploadProfile(MultipartFile file, String email) throws IOException {
 		if (file == null || file.isEmpty()) {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
 		}
@@ -67,7 +67,11 @@ public class FileServiceImpl implements FileService {
 
 		fileRepository.save(fileEntity);
 		user.setProfile(fileEntity);
-		return fileEntity.getUrl();
+		return FileResDto.builder()
+			.fileId(fileEntity.getId().toString())
+			.fileUrl(fileEntity.getUrl())
+			.build();
+
 	}
 
 	// 프로필 이미지 업로드
@@ -87,22 +91,37 @@ public class FileServiceImpl implements FileService {
 
 			String fileUrl = user.getProfile().getUrl();
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // 최종 슬래시 이후의 문자열이 파일 이름
-			s3Uploader.deleteFile(fileName); // S3에서 파일 삭제 //TODO 이 부분 삭제 안되는 거 해결
+			s3Uploader.deleteFile(fileName); // TODO S3에서 삭제 안되는 거 해결
 		}
+	}
+
+	// category에 따른 파일 업로드 로직 분기 (PLACE/REVIEW/DIARY)
+	public List<FileResDto> processFileUpload(List<MultipartFile> files, UploadCategory category, String placeId,
+		String email) {
+		if (files.size() > 5) {
+			throw new CustomLogicException(ExceptionCode.TOO_MANY_REQUEST);
+		}
+
+		if (category == UploadCategory.PLACE && (placeId == null || placeId.isBlank())) {
+			throw new CustomLogicException(ExceptionCode.PLACE_ID_REQUIRED);
+		}
+
+		return switch (category) {
+			case PLACE -> uploadFilesForPlace(files, placeId);
+			case REVIEW, DIARY -> uploadFilesForReviewDiary(files, category.toFileCategory(), email);
+			default -> throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+		};
 	}
 
 	// 리뷰/여행기 파일 업로드
 	@Override
 	@Transactional
-	public List<FileResDto> uploadFilesForReviewDiary(List<MultipartFile> files, UserUploadCategory category,
-		String email) {
-
-		// TODO 파일 개수 최대 5개로 제한
+	public List<FileResDto> uploadFilesForReviewDiary(List<MultipartFile> files, FileCategory category, String email) {
 
 		return files.stream()
 			.map(file -> {
 				try {
-					return uploadFileForReviewDiary(file, category.toFileCategory(), email);
+					return uploadFileForReviewDiary(file, category, email);
 				} catch (IOException e) {
 					throw new RuntimeException("File upload failed", e);
 				}

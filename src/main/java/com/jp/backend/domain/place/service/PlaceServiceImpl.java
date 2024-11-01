@@ -27,6 +27,8 @@ import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.repository.JpaUserRepository;
 import com.jp.backend.global.dto.PageInfo;
 import com.jp.backend.global.dto.PageResDto;
+import com.jp.backend.global.exception.CustomLogicException;
+import com.jp.backend.global.exception.ExceptionCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,7 +142,8 @@ public class PlaceServiceImpl implements PlaceService {
 
 	@Override
 	public Place verifyPlace(String placeId) {
+		System.out.println("Verifying place with ID: " + placeId);
 		return placeRepository.findByPlaceId(placeId)
-			.orElse(null); // 장소가 존재하지 않으면 null 처리
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
 	}
 }

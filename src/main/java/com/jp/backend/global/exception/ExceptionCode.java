@@ -22,6 +22,7 @@ public enum ExceptionCode {
 	//Place
 	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
 	PLACE_NONE(404, "PLACE_NONE"),
+	PLACE_ID_REQUIRED(400, "PLACE_ID_REQUIRED"),
 	TOO_MANY_REQUEST(405, "요청한 개수가 너무 많습니다. maxResults는 최대 19까지만 지원합니다."),
 
 	//Review

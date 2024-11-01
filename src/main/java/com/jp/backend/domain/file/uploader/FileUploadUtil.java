@@ -33,7 +33,7 @@ public class FileUploadUtil {
 				throw new IllegalArgumentException("<" + category + ">라는 카테고리는 파일 업로드를 지원하지 않습니다.");
 		}
 
-		if (category != FileCategory.PLACE) { // place는 모두 우리가 직접 넣어주므로 userId 경로는 생략 // TODO placeId 넣을까 말까 생각
+		if (category != FileCategory.PLACE) { // place는 모두 직접 넣어주므로 userId 경로는 생략
 			pathBuilder.append("/user").append(userId).append("/");
 		}
 

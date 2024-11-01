@@ -8,14 +8,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.enums.FileCategory;
-import com.jp.backend.domain.file.enums.UserUploadCategory;
+import com.jp.backend.domain.file.enums.UploadCategory;
 
 public interface FileService {
-	String uploadProfile(MultipartFile file, String email) throws IOException;
+	FileResDto uploadProfile(MultipartFile file, String email) throws IOException;
 
 	void deleteProfile(String email);
 
-	List<FileResDto> uploadFilesForReviewDiary(List<MultipartFile> files, UserUploadCategory category,
+	List<FileResDto> processFileUpload(List<MultipartFile> files, UploadCategory category, String placeId,
+		String email);
+
+	List<FileResDto> uploadFilesForReviewDiary(List<MultipartFile> files, FileCategory category,
 		String email);
 
 	FileResDto uploadFileForReviewDiary(MultipartFile file, FileCategory category, String email) throws IOException;
