@@ -45,6 +45,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.createReview(reqDto, principal.getUsername()));
 	}
 
+	// TODO 파일 수정 가능하도록 리팩토링
 	@Operation(summary = "리뷰 수정 API")
 	@PatchMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(
@@ -55,7 +56,6 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.updateReview(reviewId, updateDto, principal.getUsername()));
 	}
 
-	// TODO 리뷰 조회할 때 이미지 보이게
 	@Operation(summary = "리뷰 상세조회 API")
 	@GetMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(
