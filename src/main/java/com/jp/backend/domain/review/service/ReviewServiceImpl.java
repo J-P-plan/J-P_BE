@@ -1,10 +1,8 @@
 package com.jp.backend.domain.review.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jp.backend.domain.file.service.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.ReviewFile;
+import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
+import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
@@ -33,7 +35,6 @@ import com.jp.backend.global.utils.CustomBeanUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -44,11 +45,12 @@ public class ReviewServiceImpl implements ReviewService {
 	private final CustomBeanUtils<Review> beanUtils;
 	private final JpaCommentRepository commentRepository;
 	private final JpaLikeRepository likeRepository;
+	private final JpaReviewFileRepository reviewFileRepository;
 	private final FileService fileService;
 
 	@Override
 	@Transactional
-	public ReviewResDto createReview(ReviewReqDto reqDto, List<MultipartFile> files, String username) throws IOException {
+	public ReviewResDto createReview(ReviewReqDto reqDto, String username) {
 
 		User user = userService.verifyUser(username);
 
@@ -56,9 +58,24 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<String> fileUrls = fileService.uploadFiles(files, username);
+		List<String> fileUrls = new ArrayList<>();
+		for (String fileid : reqDto.getFileIds()) {
+			File file = fileService.verifyFile(fileid); // 파일 검증
 
-		return ReviewResDto.builder().review(savedReview).likeCnt(0L).fileUrls(fileUrls).build();
+			// ReviewFile에 파일 연결
+			ReviewFile reviewFile = new ReviewFile();
+			reviewFile.setFile(file);
+			reviewFile.setReview(savedReview);
+			reviewFileRepository.save(reviewFile);
+
+			fileUrls.add(file.getUrl()); // URL 추가
+		}
+
+		return ReviewResDto.builder()
+			.review(savedReview)
+			.likeCnt(0L)
+			.fileUrls(fileUrls)
+			.build();
 	}
 
 	@Override
@@ -88,7 +105,18 @@ public class ReviewServiceImpl implements ReviewService {
 		//todo null을 넣는게 조금 구런데 리팩토링 필요
 		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, reviewId.toString(), null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
-		return ReviewResDto.builder().review(review).likeCnt(likeCnt).commentList(commentList).build();
+
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
+		List<String> fileUrls = reviewFiles.stream()
+			.map(reviewFile -> reviewFile.getFile().getUrl())
+			.toList();
+
+		return ReviewResDto.builder()
+			.review(review)
+			.likeCnt(likeCnt)
+			.commentList(commentList)
+			.fileUrls(fileUrls)
+			.build();
 	}
 
 	public PageResDto<ReviewCompactResDto> findReviewPage(
@@ -109,10 +137,14 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					String fileUrl =
+						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.fileUrl(fileUrl)
 						.build();
 				});
 
@@ -147,10 +179,14 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					String fileUrl =
+						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.fileUrl(fileUrl)
 						.build();
 				});
 

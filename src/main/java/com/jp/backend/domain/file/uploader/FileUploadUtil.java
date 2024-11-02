@@ -5,21 +5,51 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import com.jp.backend.domain.file.enums.FileCategory;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 // LocalUploader, S3Uploader 에 공통적으로 들어가는 로직
 public class FileUploadUtil {
-	public static String determinePathsBasedOnMimeType(String contentType) {
-		if (contentType != null && contentType.startsWith("image")) {
-			return "images";
-		} else if (contentType != null && contentType.startsWith("video")) {
-			return "videos";
-		} else if (contentType != null && contentType.contains("pdf")) {
-			return "pdfs";
+	public static String generateFilePath(String contentType, FileCategory category, Long userId) {
+		StringBuilder pathBuilder = new StringBuilder();
+
+		switch (category) {
+			case PROFILE:
+				pathBuilder.append("profile");
+				break;
+			case PLACE:
+				pathBuilder.append("place");
+				break;
+			case REVIEW:
+				pathBuilder.append("review");
+				break;
+			case DIARY:
+				pathBuilder.append("Diary");
+				break;
+			default:
+				throw new IllegalArgumentException("<" + category + ">라는 카테고리는 파일 업로드를 지원하지 않습니다.");
 		}
-		throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + contentType);
+
+		if (category != FileCategory.PLACE) { // place는 모두 직접 넣어주므로 userId 경로는 생략
+			pathBuilder.append("/user").append(userId).append("/");
+		}
+
+		if (contentType != null) {
+			if (contentType.startsWith("image")) {
+				pathBuilder.append("/images");
+			} else if (contentType.startsWith("video")) {
+				pathBuilder.append("/videos");
+			} else if (contentType.contains("pdf")) {
+				pathBuilder.append("/pdfs");
+			} else {
+				throw new IllegalArgumentException("지원하지 않는 파일 타입입니다: " + contentType);
+			}
+		}
+
+		return pathBuilder.toString();
 	}
 
 	public static String generateFileName(String originalFileName) {

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.CityType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.global.dto.PageResDto;
@@ -14,4 +15,6 @@ public interface PlaceService {
 		Integer elementCnt);
 
 	PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption);
+
+	Place verifyPlace(String placeId);
 }

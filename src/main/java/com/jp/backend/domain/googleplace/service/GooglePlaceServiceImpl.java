@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -53,7 +52,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		System.out.println(response);
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response);
+			setPhotoUrl(response);
 			sortPlacesByPopularity(response);
 
 			// response에 shortAddress 추가
@@ -90,7 +89,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		GooglePlaceSearchResDto response = handleGooglePlacesApiException(uri, GooglePlaceSearchResDto.class);
 
 		if (response != null && response.getResults() != null) {
-			setPhotoUrls(response); // photos 정보 가져와서 photoUrl에 넣어 반환
+			setPhotoUrl(response); // photos 정보 가져와서 photoUrl에 넣어 반환
 			sortPlacesByPopularity(response);
 
 			// response에 shortAddress 추가
@@ -116,21 +115,23 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	}
 
 	// 사진 url 만들어서 넣어주는 로직
-	private void setPhotoUrls(GooglePlaceSearchResDto response) {
+	private void setPhotoUrl(GooglePlaceSearchResDto response) {
 		response.getResults().forEach(result -> {
-			List<String> photoUrls = Optional.ofNullable(result.getPhotos())
-				.orElse(Collections.emptyList()) // photos가 null일 경우엔 빈 리스트 반환
-				.stream()
-				.map(photo -> UriComponentsBuilder
+			// 어차피 1개 사진 정보만 들어오기 때문에 첫 번째 사진 URL만 생성
+			if (result.getPhotos() != null && !result.getPhotos().isEmpty()) {
+				GooglePlaceSearchResDto.Photo photo = result.getPhotos().get(0); // 첫 번째 사진만 사용
+				String photoUrl = UriComponentsBuilder
 					.fromUriString(GooglePlaceConfig.PHOTO_URL)
 					.queryParam("maxwidth", photo.getWidth())
 					.queryParam("maxheight", photo.getHeight())
 					.queryParam("photo_reference", photo.getPhotoReference())
 					.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
-					.toUriString())
-				.toList();
+					.toUriString();
 
-			result.setPhotoUrls(photoUrls);
+				result.setPhotoUrl(photoUrl);
+			} else {
+				result.setPhotoUrl(null); // 사진이 없으면 null 처리
+			}
 		});
 	}
 
@@ -157,42 +158,29 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.queryParam("key", googlePlaceConfig.getGooglePlacesApiKey())
 			.queryParam("language", "ko");
 
-		// 리뷰 가져오기
-		if (Objects.equals(fields, "reviews")) {
-			uriBuilder.queryParam("fields", fields + ",user_ratings_total");
+		// 따로 필드가 있으면 요청 url에 추가
+		if (fields != null) {
+			uriBuilder.queryParam("fields", fields);
 		}
 
 		URI uri = uriBuilder.build().toUri();
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		// 결과가 없으면 장소 정보 없다고 null 처리
+		// 결과가 없으면 --> place none
 		if (apiResponse == null || apiResponse.getResult() == null) {
 			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
 		}
 
-		// null 처리
-		GooglePlaceDetailsDto.Result result = Optional.ofNullable(apiResponse.getResult())
-			.orElse(new GooglePlaceDetailsDto.Result());
+		GooglePlaceDetailsDto.Result result = apiResponse.getResult();
 
+		// null 처리
 		boolean isOpenNow = Optional.ofNullable(result.getOpeningHours())
 			.map(GooglePlaceDetailsDto.OpeningHours::isOpenNow)
 			.orElse(false);
 		List<String> weekdayText = Optional.ofNullable(result.getOpeningHours())
 			.map(GooglePlaceDetailsDto.OpeningHours::getWeekdayText)
 			.orElse(null);
-
-		List<GooglePlaceDetailsResDto.Review> reviews = Optional.ofNullable(result.getReviews())
-			.orElse(Collections.emptyList())
-			.stream()
-			.map(review -> GooglePlaceDetailsResDto.Review.builder()
-				.authorName(review.getAuthorName())
-				.rating(review.getRating())
-				.text(review.getText())
-				.time(review.getTime())
-				.profilePhotoUrl(review.getProfilePhotoUrl())
-				.build())
-			.toList();
 
 		// photos를 이용하여 photoUrls 생성
 		List<String> photoUrls = Optional.ofNullable(result.getPhotos())
@@ -232,7 +220,6 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 			.weekdayText(weekdayText)
 			.rating(result.getRating())
 			.userRatingTotal(result.getUserRatingsTotal())
-			.reviews(reviews)
 			.photoUrls(photoUrls)
 			.website(result.getWebsite())
 			.build();
