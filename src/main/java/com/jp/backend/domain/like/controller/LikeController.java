@@ -37,10 +37,10 @@ public class LikeController {
 	@Operation(summary = "좋아요/찜을 누르고 취소합니다.",
 		description = "한 번 누르면 좋아요를 누르는 것이고, 한 번 더 누르면 좋아요를 취소할 수 있습니다.<br>"
 			+ "여행기 기능은 아직 구현되어있지 않아, 현재는 장소, 리뷰에만 가능합니다.<br>" +
-			"likeType - PLACE/REVIEW/TRIP_JOURNAL<br>" +
-			"targetId - PlaceId/reviewId/TripJournalId<br>"
+			"likeType - PLACE/REVIEW/DIARY<br>" +
+			"targetId - PlaceId/reviewId/DiaryId<br>"
 			+ "<br>"
-			+ "응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취")
+			+ "응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소")
 	public ResponseEntity<Boolean> manageLike(@PathVariable Like.LikeType likeType,
 		@PathVariable String targetId,
 		@AuthenticationPrincipal UserPrincipal principal) {

@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.comment.dto.CommentResDto;
 import com.jp.backend.domain.comment.entity.Comment;
-import com.jp.backend.domain.file.entity.ReviewFile;
+import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
@@ -56,11 +56,11 @@ public class ReviewResDto {
 	@Schema(description = "댓글 리스트")
 	private List<CommentResDto> commentResDtoList;
 
-	@Schema(description = "해당 리뷰의 파일 urls")
-	private List<String> fileUrls;
+	@Schema(description = "해당 리뷰의 파일 정보")
+	private List<FileResDto> fileInfos;
 
 	@Builder
-	public ReviewResDto(Review review, List<Comment> commentList, Long likeCnt, List<String> fileUrls) {
+	public ReviewResDto(Review review, List<Comment> commentList, Long likeCnt, List<FileResDto> fileInfos) {
 		this.id = review.getId();
 		this.content = review.getContent();
 		this.placeId = review.getPlaceId();
@@ -74,6 +74,6 @@ public class ReviewResDto {
 			this.commentResDtoList = commentList.stream()
 				.map(comment -> CommentResDto.builder().comment(comment).build())
 				.toList();
-		this.fileUrls = fileUrls != null ? fileUrls : new ArrayList<>();
+		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 	}
 }
