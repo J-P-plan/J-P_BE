@@ -41,3 +41,8 @@ out/
 
 # qClass
 /src/main/generated/
+
+/file
+!**/src/main/**/file
+*.mv.db
+*.trace.db
