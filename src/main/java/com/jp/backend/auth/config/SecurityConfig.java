@@ -95,6 +95,8 @@ public class SecurityConfig {
 					.requestMatchers(
 						AUTHORIZED_URLS
 					).authenticated()
+					// .requestMatchers("/profile/upload", HttpMethod.POST.name()).authenticated()
+					// .requestMatchers(new AntPathRequestMatcher("/profile/delete", HttpMethod.DELETE.name())).authenticated()
 					.anyRequest().permitAll()
 			)//여기부터 추가
 			.logout(logout -> logout
