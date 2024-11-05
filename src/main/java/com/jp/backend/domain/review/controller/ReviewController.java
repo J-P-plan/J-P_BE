@@ -45,7 +45,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.createReview(reqDto, principal.getUsername()));
 	}
 
-	// TODO 파일 수정 가능하도록 리팩토링
+	// TODO 파일 수정 가능하도록 리팩토링 / Put으로 변경
 	@Operation(summary = "리뷰 수정 API")
 	@PatchMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(

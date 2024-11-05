@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
@@ -58,23 +59,26 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<String> fileUrls = new ArrayList<>();
-		for (String fileid : reqDto.getFileIds()) {
-			File file = fileService.verifyFile(fileid); // 파일 검증
+		List<FileResDto> fileInfos = new ArrayList<>();
+		// fileIds가 null이거나 비어있으면 --> 빈 리스트 반환
+		if (reqDto.getFileIds() != null && !reqDto.getFileIds().isEmpty()) {
+			for (String fileId : reqDto.getFileIds()) {
+				File file = fileService.verifyFile(fileId);
 
-			// ReviewFile에 파일 연결
-			ReviewFile reviewFile = new ReviewFile();
-			reviewFile.setFile(file);
-			reviewFile.setReview(savedReview);
-			reviewFileRepository.save(reviewFile);
+				// ReviewFile에 파일 연결
+				ReviewFile reviewFile = new ReviewFile();
+				reviewFile.setFile(file);
+				reviewFile.setReview(savedReview);
+				reviewFileRepository.save(reviewFile);
 
-			fileUrls.add(file.getUrl()); // URL 추가
+				fileInfos.add(new FileResDto(file.getId().toString(), file.getUrl()));
+			}
 		}
 
 		return ReviewResDto.builder()
 			.review(savedReview)
 			.likeCnt(0L)
-			.fileUrls(fileUrls)
+			.fileInfos(fileInfos)
 			.build();
 	}
 
@@ -107,15 +111,13 @@ public class ReviewServiceImpl implements ReviewService {
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
 		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
-		List<String> fileUrls = reviewFiles.stream()
-			.map(reviewFile -> reviewFile.getFile().getUrl())
-			.toList();
+		List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 
 		return ReviewResDto.builder()
 			.review(review)
 			.likeCnt(likeCnt)
 			.commentList(commentList)
-			.fileUrls(fileUrls)
+			.fileInfos(fileInfos)
 			.build();
 	}
 
@@ -138,13 +140,12 @@ public class ReviewServiceImpl implements ReviewService {
 						commentCnt += comment.getReplyList().size();
 					}
 					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					String fileUrl =
-						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
+					List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
-						.fileUrl(fileUrl)
+						.fileInfos(fileInfos)
 						.build();
 				});
 
@@ -180,13 +181,21 @@ public class ReviewServiceImpl implements ReviewService {
 						commentCnt += comment.getReplyList().size();
 					}
 					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					String fileUrl =
-						reviewFiles.isEmpty() ? null : reviewFiles.get(0).getFile().getUrl(); // 첫 번째 파일 URL 가져오기
+					List<FileResDto> fileInfos = new ArrayList<>();
+					if (!reviewFiles.isEmpty()) {
+						ReviewFile firstReviewFile = reviewFiles.get(0); // 첫 번째 파일만
+						FileResDto fileInfo = new FileResDto(
+							firstReviewFile.getFile().getId().toString(),
+							firstReviewFile.getFile().getUrl()
+						);
+						fileInfos.add(fileInfo);
+					}
+
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
-						.fileUrl(fileUrl)
+						.fileInfos(fileInfos)
 						.build();
 				});
 
@@ -197,6 +206,19 @@ public class ReviewServiceImpl implements ReviewService {
 				.build();
 
 		return new PageResDto<>(pageInfo, reviewPage.getContent());
+	}
+
+	private List<FileResDto> getFileInfos(List<ReviewFile> reviewFiles) {
+		if (reviewFiles.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		return reviewFiles.stream()
+			.map(reviewFile -> new FileResDto(
+				reviewFile.getFile().getId().toString(),
+				reviewFile.getFile().getUrl()
+			))
+			.toList();
 	}
 
 	public Review verifyReview(Long reviewId) {

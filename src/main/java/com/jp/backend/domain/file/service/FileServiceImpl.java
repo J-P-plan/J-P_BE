@@ -17,6 +17,7 @@ import com.jp.backend.domain.file.enums.FileCategory;
 import com.jp.backend.domain.file.enums.UploadCategory;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
+import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
 import com.jp.backend.domain.file.uploader.S3Uploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.place.entity.Place;
@@ -35,6 +36,7 @@ public class FileServiceImpl implements FileService {
 	private final S3Uploader s3Uploader;
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
+	private final JpaReviewFileRepository reviewFileRepository;
 	private final UserService userService;
 	private final PlaceService placeService;
 
@@ -42,10 +44,6 @@ public class FileServiceImpl implements FileService {
 	@Override
 	@Transactional
 	public FileResDto uploadProfile(MultipartFile file, String email) throws IOException {
-		if (file == null || file.isEmpty()) {
-			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
-		}
-
 		User user = userService.verifyUser(email);
 
 		String[] info = uploadProfileImage(file, user.getId()); // 이미지 업로드 하고 버킷 이름이랑 url 받음
@@ -83,6 +81,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteProfile(String email) {
 		User user = userService.verifyUser(email);
 
@@ -96,6 +95,8 @@ public class FileServiceImpl implements FileService {
 	}
 
 	// category에 따른 파일 업로드 로직 분기 (PLACE/REVIEW/DIARY)
+	@Override
+	@Transactional
 	public List<FileResDto> processFileUpload(List<MultipartFile> files, UploadCategory category, String placeId,
 		String email) {
 		if (files.size() > 5) {

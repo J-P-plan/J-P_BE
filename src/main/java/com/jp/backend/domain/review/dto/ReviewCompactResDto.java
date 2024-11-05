@@ -1,8 +1,11 @@
 package com.jp.backend.domain.review.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
@@ -46,13 +49,13 @@ public class ReviewCompactResDto {
 	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
 	private LocalDateTime createdAt;
 
-	@Schema(description = "리뷰 사진")
-	private String fileUrl;
+	@Schema(description = "리뷰의 파일 정보")
+	private List<FileResDto> fileInfos;
 
 	//todo 좋아요 갯수
 
 	@Builder
-	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, String fileUrl) {
+	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, List<FileResDto> fileInfos) {
 		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
@@ -61,7 +64,7 @@ public class ReviewCompactResDto {
 		this.placeId = review.getPlaceId();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.commentCnt = commentCnt; //todo 바꾸기
-		this.fileUrl = fileUrl;
+		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 	}
 
 }

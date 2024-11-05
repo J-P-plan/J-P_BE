@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Validated
-@RequestMapping("/upload")
+@RequestMapping
 @Tag(name = "03. [파일 업로드]")
 public class FileController {
 	private final FileService fileService;
@@ -39,9 +39,10 @@ public class FileController {
 		this.fileService = fileService;
 	}
 
-	@PostMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/profile/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "유저의 프로필 사진을 업로드합니다.",
-		description = "이미지만 업로드 가능합니다.")
+		description = "프로필 이미지를 수정할 때에도 사용이 가능합니다. <br>"
+			+ "( 이미지만 업로드 가능합니다. )")
 	public ResponseEntity<SingleResponse<FileResDto>> uploadProfile(@RequestParam(value = "file") MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
@@ -67,7 +68,7 @@ public class FileController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping(value = "/files/{category}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/upload/files/{category}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",
 		description = " 장소/리뷰/여행기에 이미지, 영상, pdf 업로드가 가능합니다. <br>"
 			+ "1. category == PLACE -> placeId 필요 / auth 필요 X <br>"
@@ -82,7 +83,4 @@ public class FileController {
 		return ResponseEntity.ok(new SingleResponse<>(fileService.processFileUpload(files, category, placeId, email)));
 	}
 
-	// TODO 사진 수정하는 기능
-	//   PLACE --> 직접 controller 만들어줘야함
-	//   REVIEW/DIARY --> 이거 수정하는 메서드 안에서 같이 받아서 그걸로 해야할듯..? 맞나 모르겠다.
 }

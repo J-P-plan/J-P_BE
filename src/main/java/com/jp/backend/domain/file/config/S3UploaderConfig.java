@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
+import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
 import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.domain.file.service.FileServiceImpl;
 import com.jp.backend.domain.file.uploader.S3Uploader;
@@ -19,15 +20,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Profile("prod")
 public class S3UploaderConfig {
-	private final JpaFileRepository jpaFileRepository;
+	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
+	private final JpaReviewFileRepository reviewFileRepository;
 	private final UserService userService;
 	private final PlaceService placeService;
 
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), (S3Uploader)this.uploader(), jpaFileRepository, placeFileRepository,
-			userService, placeService);
+		return new FileServiceImpl(this.uploader(), (S3Uploader)this.uploader(), fileRepository, placeFileRepository,
+			reviewFileRepository, userService, placeService);
 	}
 
 	@Bean
