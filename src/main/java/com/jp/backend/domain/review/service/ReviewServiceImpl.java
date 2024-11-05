@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
 import com.jp.backend.domain.file.service.FileService;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
-import com.jp.backend.domain.review.dto.FileInfoResDto;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
@@ -59,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<FileInfoResDto> fileInfos = new ArrayList<>();
+		List<FileResDto> fileInfos = new ArrayList<>();
 		// fileIds가 null이거나 비어있으면 --> 빈 리스트 반환
 		if (reqDto.getFileIds() != null && !reqDto.getFileIds().isEmpty()) {
 			for (String fileId : reqDto.getFileIds()) {
@@ -71,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
 				reviewFile.setReview(savedReview);
 				reviewFileRepository.save(reviewFile);
 
-				fileInfos.add(new FileInfoResDto(file.getId().toString(), file.getUrl()));
+				fileInfos.add(new FileResDto(file.getId().toString(), file.getUrl()));
 			}
 		}
 
@@ -111,7 +111,7 @@ public class ReviewServiceImpl implements ReviewService {
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
 		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
-		List<FileInfoResDto> fileInfos = getFileInfos(reviewFiles);
+		List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 
 		return ReviewResDto.builder()
 			.review(review)
@@ -140,7 +140,7 @@ public class ReviewServiceImpl implements ReviewService {
 						commentCnt += comment.getReplyList().size();
 					}
 					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					List<FileInfoResDto> fileInfos = getFileInfos(reviewFiles);
+					List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
@@ -181,10 +181,10 @@ public class ReviewServiceImpl implements ReviewService {
 						commentCnt += comment.getReplyList().size();
 					}
 					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					List<FileInfoResDto> fileInfos = new ArrayList<>();
+					List<FileResDto> fileInfos = new ArrayList<>();
 					if (!reviewFiles.isEmpty()) {
 						ReviewFile firstReviewFile = reviewFiles.get(0); // 첫 번째 파일만
-						FileInfoResDto fileInfo = new FileInfoResDto(
+						FileResDto fileInfo = new FileResDto(
 							firstReviewFile.getFile().getId().toString(),
 							firstReviewFile.getFile().getUrl()
 						);
@@ -208,13 +208,13 @@ public class ReviewServiceImpl implements ReviewService {
 		return new PageResDto<>(pageInfo, reviewPage.getContent());
 	}
 
-	private List<FileInfoResDto> getFileInfos(List<ReviewFile> reviewFiles) {
+	private List<FileResDto> getFileInfos(List<ReviewFile> reviewFiles) {
 		if (reviewFiles.isEmpty()) {
 			return new ArrayList<>();
 		}
 
 		return reviewFiles.stream()
-			.map(reviewFile -> new FileInfoResDto(
+			.map(reviewFile -> new FileResDto(
 				reviewFile.getFile().getId().toString(),
 				reviewFile.getFile().getUrl()
 			))
