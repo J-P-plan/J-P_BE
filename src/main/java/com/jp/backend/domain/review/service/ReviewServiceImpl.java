@@ -180,22 +180,12 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
-					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					List<FileResDto> fileInfos = new ArrayList<>();
-					if (!reviewFiles.isEmpty()) {
-						ReviewFile firstReviewFile = reviewFiles.get(0); // 첫 번째 파일만
-						FileResDto fileInfo = new FileResDto(
-							firstReviewFile.getFile().getId().toString(),
-							firstReviewFile.getFile().getUrl()
-						);
-						fileInfos.add(fileInfo);
-					}
 
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
-						.fileInfos(fileInfos)
+						.fileInfos(null)
 						.build();
 				});
 

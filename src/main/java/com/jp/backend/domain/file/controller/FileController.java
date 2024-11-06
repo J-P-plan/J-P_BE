@@ -53,8 +53,8 @@ public class FileController {
 			throw new CustomLogicException(ExceptionCode.FILE_NOT_SUPPORTED);
 		}
 
-		// 파일이 비어있거나 두개 이상인 경우
-		if (file.getSize() > 1 || file.isEmpty()) {
+		// 파일이 비어있는 경우
+		if (file.isEmpty()) {
 			throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
 		}
 
