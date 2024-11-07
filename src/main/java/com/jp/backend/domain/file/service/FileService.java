@@ -2,6 +2,7 @@ package com.jp.backend.domain.file.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,8 @@ public interface FileService {
 	List<FileResDto> uploadFilesForPlace(List<MultipartFile> files, String placeId);
 
 	FileResDto uploadFileForPlace(MultipartFile file, String placeId) throws IOException;
+
+	void deleteFiles(UploadCategory category, String targetId, Set<String> fileIds, String email);
 
 	File verifyFile(String fileId);
 }
