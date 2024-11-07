@@ -172,11 +172,14 @@ public class FileServiceImpl implements FileService {
 		fileEntity.setPlace(placeService.verifyPlace(placeId));  // placeId로 Place 엔티티 찾아서 설정
 		fileRepository.save(fileEntity);
 
+		int order = 0; // 파일 순서
+
 		// PlaceFile에 파일 연결
 		Place place = placeService.verifyPlace(placeId);
 		PlaceFile placeFile = new PlaceFile();
 		placeFile.setFile(fileEntity);
 		placeFile.setPlace(place);
+		placeFile.setFileOrder(order++);
 		placeFileRepository.save(placeFile);
 
 		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
@@ -236,7 +239,7 @@ public class FileServiceImpl implements FileService {
 
 	// 리뷰 파일 삭제
 	private void deleteReviewFiles(String reviewId, Set<UUID> fileIds) {
-		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(Long.parseLong(reviewId));
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(Long.parseLong(reviewId));
 		deleteFilesByCategory(reviewFiles, fileIds, reviewFileRepository);
 	}
 
@@ -272,8 +275,8 @@ public class FileServiceImpl implements FileService {
 
 	// 검증 로직
 	@Override
-	public File verifyFile(String fileId) {
-		return fileRepository.findById(UUID.fromString(fileId))
+	public File verifyFile(UUID fileId) {
+		return fileRepository.findById(fileId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.FILE_NONE));
 	}
 

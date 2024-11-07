@@ -36,4 +36,6 @@ public class PlaceFile implements FileReference {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "file_id", nullable = false)
 	private File file;
+
+	private Integer fileOrder; // 업로드되는 순서 (조회 시 순서 똑같이 보이도록)
 }
