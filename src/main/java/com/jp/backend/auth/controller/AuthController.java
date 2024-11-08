@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -49,13 +50,13 @@ public class AuthController {
 	}
 
 	@PostMapping("/refresh")
-	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 재발급받습니다. <br>"
-		+ "( token 값은 Bearer를 제외하고 넣어주세요. )")
+	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 재발급받습니다.")
 	public ResponseEntity<String> refresh(
-		@Parameter(description = "만료된 Access Token") @RequestHeader(value = "Authorization") String accessToken,
-		@Parameter(description = "유효한 Refresh Token") @RequestHeader(value = "RefreshToken") String refreshToken,
+		@CookieValue(value = "RefreshToken") String refreshToken,
+		HttpServletRequest request,
 		HttpServletResponse response) {
-		refreshService.refresh(accessToken, refreshToken, response);
+
+		refreshService.refresh(refreshToken,request,response);
 		return ResponseEntity.ok("성공적으로 재발급되었습니다.");
 	}
 
