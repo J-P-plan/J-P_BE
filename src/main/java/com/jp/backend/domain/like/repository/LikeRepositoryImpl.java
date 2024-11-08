@@ -68,13 +68,13 @@ public class LikeRepositoryImpl implements LikeRepository {
 	public Page<LikeResDto> getAllFavoriteList(Long userId, Pageable pageable) {
 		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(null, userId, pageable);
 
-		// 장소 첫 번째 사진 URL 가져오는 서브쿼리
+		// 장소의 첫번째 fileUrl 조회
 		JPAQuery<String> placeFileSubQuery = jpaQueryFactory
-			.select(qFile.url) // File의 URL을 선택
+			.select(qFile.url)
 			.from(qFile)
-			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id)) // PlaceFile과 File을 join
-			.where(qPlaceFile.place.id.eq(qPlace.id)) // Place ID를 기준으로 필터링
-			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 선택
+			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
+			.where(qPlaceFile.place.id.eq(qPlace.id))
+			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
 			.limit(1);
 
 		// 여행기 첫 번째 사진 URL 가져오는 서브쿼리
@@ -86,7 +86,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 		// 	.orderBy(qDiaryFile.fileOrder.asc())
 		// 	.limit(1);
 
-		// 메인 쿼리 - Like 테이블과 Place 테이블을 Join하여 결과 조회
+		// 메인 쿼리
 		List<LikeResDto> favoriteList = baseQuery
 			.leftJoin(qPlace)
 			.on(qLike.targetId.eq(qPlace.placeId))
@@ -121,13 +121,13 @@ public class LikeRepositoryImpl implements LikeRepository {
 	public Page<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
 		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.PLACE, userId, pageable);
 
-		// 장소에 대한 첫 번째 사진 URL을 조회하는 서브쿼리
+		// 장소의 첫번째 fileUrl 조회
 		JPAQuery<String> subQuery = jpaQueryFactory
-			.select(qFile.url) // File의 URL을 선택
+			.select(qFile.url)
 			.from(qFile)
-			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id)) // PlaceFile과 File을 join
-			.where(qPlaceFile.place.id.eq(qPlace.id)) // Place ID를 기준으로 필터링
-			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 선택
+			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
+			.where(qPlaceFile.place.id.eq(qPlace.id))
+			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
 			.limit(1);
 
 		// 조건에 맞는 좋아요 목록 조회

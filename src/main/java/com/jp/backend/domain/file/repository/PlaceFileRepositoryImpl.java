@@ -12,13 +12,13 @@ public class PlaceFileRepositoryImpl implements PlaceFileRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 	private static final QPlaceFile qPlaceFile = QPlaceFile.placeFile;
 
-	// 해당 Place의 fileOrder 최대값 조회
+	// 해당 장소의 fileOrder 최대값 조회
 	@Override
 	public Integer findMaxFileOrderByPlace(Place place) {
 		return jpaQueryFactory
-			.select(qPlaceFile.fileOrder.max())  // fileOrder의 최대값 조회
+			.select(qPlaceFile.fileOrder.max())
 			.from(qPlaceFile)
-			.where(qPlaceFile.place.eq(place))  // 해당 Place에 연결된 PlaceFile만 조회
-			.fetchOne(); // 단일 결과 반환
+			.where(qPlaceFile.place.eq(place))
+			.fetchOne();
 	}
 }
