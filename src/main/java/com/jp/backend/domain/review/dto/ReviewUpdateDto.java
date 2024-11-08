@@ -1,5 +1,7 @@
 package com.jp.backend.domain.review.dto;
 
+import java.util.List;
+
 import com.jp.backend.domain.review.entity.Review;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,6 +23,9 @@ public class ReviewUpdateDto {
 
 	@Schema(description = "별점")
 	private Double star;
+
+	@Schema(description = "새로 추가할 파일아이디 리스트")
+	private List<String> newFileIds;
 
 	public Review toEntity() {
 		return Review.builder()

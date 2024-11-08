@@ -2,6 +2,7 @@ package com.jp.backend.domain.review.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,21 +60,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Boolean visitedYn = true;
 		Review savedReview = reviewRepository.save(reqDto.toEntity(user, visitedYn));
 
-		List<FileResDto> fileInfos = new ArrayList<>();
-		// fileIds가 null이거나 비어있으면 --> 빈 리스트 반환
-		if (reqDto.getFileIds() != null && !reqDto.getFileIds().isEmpty()) {
-			for (String fileId : reqDto.getFileIds()) {
-				File file = fileService.verifyFile(fileId);
-
-				// ReviewFile에 파일 연결
-				ReviewFile reviewFile = new ReviewFile();
-				reviewFile.setFile(file);
-				reviewFile.setReview(savedReview);
-				reviewFileRepository.save(reviewFile);
-
-				fileInfos.add(new FileResDto(file.getId().toString(), file.getUrl()));
-			}
-		}
+		List<FileResDto> fileInfos = processFiles(reqDto.getFileIds(), savedReview, false);
 
 		return ReviewResDto.builder()
 			.review(savedReview)
@@ -84,21 +71,60 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	@Transactional
-	public ReviewResDto updateReview(
-		Long reviewId,
-		ReviewUpdateDto updateDto,
-		String username) {
+	public ReviewResDto updateReview(Long reviewId, ReviewUpdateDto updateDto, String username) {
 
-		User user = userService.verifyUser(username);
+		userService.verifyUser(username);
 		Review findReview = verifyReview(reviewId);
 		Review review = updateDto.toEntity();
+
 		//작성자가 아니라면 RestException
 		if (!username.equals(findReview.getUser().getEmail())) {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
+
+		List<FileResDto> fileInfos = new ArrayList<>();
+
+		// 기존에 연결된 파일 조회 후 fileInfos에 추가
+		List<ReviewFile> existingReviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(reviewId);
+		for (ReviewFile reviewFile : existingReviewFiles) {
+			File file = reviewFile.getFile();
+			fileInfos.add(new FileResDto(file.getId().toString(), file.getUrl()));
+		}
+
+		// 새 파일 fileInfos에 추가
+		List<FileResDto> newFileInfos = processFiles(updateDto.getNewFileIds(), findReview, true);
+		fileInfos.addAll(newFileInfos);
+
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
-		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).build();
+		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, findReview.getId().toString(), null);
+		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).fileInfos(fileInfos).build();
+	}
+
+	// reviewFile 참조 로직
+	private List<FileResDto> processFiles(List<String> fileIds, Review review, boolean isUpdate) {
+		List<FileResDto> fileInfos = new ArrayList<>();
+
+		if (fileIds != null && !fileIds.isEmpty()) {
+			int order = 0; // 파일 업로드 순서
+
+			// 리뷰 업데이트일 경우 -> 기존 파일 순서대로 order 설정
+			if (isUpdate) {
+				order = reviewFileRepository.countByReviewId(review.getId());
+			}
+
+			for (String fileId : fileIds) {
+				UUID uuid = UUID.fromString(fileId);
+				File file = fileService.verifyFile(uuid);
+				// ReviewFile에 파일 연결
+				ReviewFile reviewFile = new ReviewFile();
+				reviewFile.setFile(file);
+				reviewFile.setReview(review);
+				reviewFile.setFileOrder(order++);
+				reviewFileRepository.save(reviewFile);
+				fileInfos.add(new FileResDto(file.getId().toString(), file.getUrl()));
+			}
+		}
+		return fileInfos;
 	}
 
 	@Override
@@ -110,7 +136,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, reviewId.toString(), null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
-		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(reviewId);
 		List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 
 		return ReviewResDto.builder()
@@ -139,7 +165,7 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
-					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(review.getId());
 					List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 					return ReviewCompactResDto.builder()
 						.review(review)
@@ -180,22 +206,12 @@ public class ReviewServiceImpl implements ReviewService {
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
-					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
-					List<FileResDto> fileInfos = new ArrayList<>();
-					if (!reviewFiles.isEmpty()) {
-						ReviewFile firstReviewFile = reviewFiles.get(0); // 첫 번째 파일만
-						FileResDto fileInfo = new FileResDto(
-							firstReviewFile.getFile().getId().toString(),
-							firstReviewFile.getFile().getUrl()
-						);
-						fileInfos.add(fileInfo);
-					}
 
 					return ReviewCompactResDto.builder()
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
-						.fileInfos(fileInfos)
+						.fileInfos(null)
 						.build();
 				});
 

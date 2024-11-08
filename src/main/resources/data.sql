@@ -102,7 +102,7 @@ INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, L
 VALUES (1, 'ChIJq_vvHybkYjURBDWI49gjy3U', '춘천', '강원도 춘천시',
         '춘천시는 강원도의 도청 소재지로, 소양강과 춘천호를 중심으로 아름다운 자연 경관을 자랑합니다. 닭갈비와 막국수가 유명합니다.',
         'CITY', 37.8897796, 127.7398952, 'GANGWON_DO'),
-       (2, 'ChIJX4TbvUQJaDURb8Ue9BqXAAQ', '원주', '강원도 원주시',
+       (2, 'ChIJ0x17PwR1YzURpfes2eU-Vl4', '원주', '강원도 원주시',
         '원주시는 강원도 남서부에 위치한 도시로, 혁신도시와 의료기기 산업으로 유명합니다. 치악산 국립공원이 인접해 있습니다.',
         'CITY', 37.342218, 127.920162, 'GANGWON_DO'),
        (3, 'ChIJWw9PleHlYTURRh09nFHGt4A', '강릉', '강원도 강릉',
