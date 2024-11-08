@@ -583,6 +583,5 @@ VALUES (650, 'ChIJp4u6RPvqcTURFYICFtg_oZs', '담양', '전라남도 담양군',
         '영암군은 월출산 국립공원과 F1 코리아 그랑프리 서킷으로 유명한 지역입니다.',
         'CITY', 34.8001896, 126.6982696, 'JEOLLANAM_DO');
 
-ALTER TABLE place
-    ALTER COLUMN id RESTART WITH 1000;
+ALTER TABLE place AUTO_INCREMENT = 1000;
 
