@@ -207,7 +207,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 			case SCHEDULE -> {
 				// Schedule 조회 로직 필요
 			}
-			default -> throw new CustomLogicException(ExceptionCode.NONE_TYPE);
+			default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
 
 		return dayLocationList.stream()

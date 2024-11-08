@@ -7,6 +7,7 @@ public enum ExceptionCode {
 	USER_NONE(404, "USER_NONE"),
 	USER_DUPLICATED(409, "USER_DUPLICATED"),
 	WIDTH_OR_HEIGHT_REQUIRED(400, "너비 또는 높이 중 하나는 필요합니다."),
+	TYPE_NONE(404, "TYPE_NONE"),
 
 	// JWT Token
 	TOKEN_INVALID(401, "TOKEN_INVALID"),
@@ -31,7 +32,6 @@ public enum ExceptionCode {
 
 	//Comment
 	COMMENT_NONE(404, "COMMENT_NONE"),
-	TYPE_NONE(401, "타입이 없습니다."),
 	AUTH_FAILED(401, "인증실패"),
 	REPLY_NONE(404, "REPLY_NONE"),
 
@@ -50,10 +50,7 @@ public enum ExceptionCode {
 	//SCHEDULE
 	DAY_NONE(404, "DAY_NONE"),
 	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
-	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
-
-	//
-	NONE_TYPE(404, "존재하지 않는 타입입니다.");
+	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE");
 
 	@Getter
 	private final int code;

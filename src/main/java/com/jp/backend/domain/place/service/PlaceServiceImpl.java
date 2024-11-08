@@ -1,6 +1,6 @@
 package com.jp.backend.domain.place.service;
 
-import static com.jp.backend.domain.like.entity.Like.LikeType.*;
+import static com.jp.backend.domain.like.enums.LikeType.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,5 +145,11 @@ public class PlaceServiceImpl implements PlaceService {
 		System.out.println("Verifying place with ID: " + placeId);
 		return placeRepository.findByPlaceId(placeId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
+	}
+
+	@Override
+	public Place verifyPlaceOptional(String placeId) {
+		System.out.println("Verifying place with ID: " + placeId);
+		return placeRepository.findByPlaceId(placeId).orElse(null); // Place가 없으면 null 반환
 	}
 }

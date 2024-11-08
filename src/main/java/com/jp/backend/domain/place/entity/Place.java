@@ -1,5 +1,6 @@
 package com.jp.backend.domain.place.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jp.backend.domain.file.entity.File;
@@ -58,9 +59,14 @@ public class Place {
 	private Integer sort;
 
 	@OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<File> files;
+	private List<File> files = new ArrayList<>();
 
 	@OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private List<PlaceTag> placeTags;
+
+	public void addFile(File file) {
+		files.add(file);
+		file.setPlace(this);
+	}
 
 }

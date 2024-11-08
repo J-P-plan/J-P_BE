@@ -37,6 +37,7 @@ public class File {
 
 	private String bucket;
 
+	@Column(length = 1000)
 	private String url;
 	@Enumerated(EnumType.STRING)
 	private FileType fileType;
