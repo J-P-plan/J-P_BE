@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
@@ -50,6 +51,7 @@ public class ReviewCompactResDto {
 	private LocalDateTime createdAt;
 
 	@Schema(description = "리뷰의 파일 정보")
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<FileResDto> fileInfos;
 
 	//todo 좋아요 갯수

@@ -5,14 +5,19 @@ import static com.jp.backend.domain.file.enums.FileCategory.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.FileReference;
 import com.jp.backend.domain.file.entity.PlaceFile;
+import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.enums.FileCategory;
 import com.jp.backend.domain.file.enums.UploadCategory;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
@@ -86,11 +91,13 @@ public class FileServiceImpl implements FileService {
 		User user = userService.verifyUser(email);
 
 		if (user.getProfile() != null) {
-			user.setProfile(null);
-
 			String fileUrl = user.getProfile().getUrl();
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // 최종 슬래시 이후의 문자열이 파일 이름
-			s3Uploader.deleteFile(fileName); // TODO S3에서 삭제 안되는 거 해결
+
+			user.setProfile(null); // 프로필 null로 설정
+			// s3Uploader.deleteFile(fileName); // TODO S3에서 삭제 안되는 거 해결
+		} else {
+			throw new CustomLogicException(ExceptionCode.FILE_NONE);
 		}
 	}
 
@@ -162,13 +169,17 @@ public class FileServiceImpl implements FileService {
 	public FileResDto uploadFileForPlace(MultipartFile file, String placeId) throws IOException {
 
 		File fileEntity = uploadFile(file, PLACE, null);
+		fileEntity.setPlace(placeService.verifyPlace(placeId));  // placeId로 Place 엔티티 찾아서 설정
 		fileRepository.save(fileEntity);
+
+		int order = 0; // 파일 순서
 
 		// PlaceFile에 파일 연결
 		Place place = placeService.verifyPlace(placeId);
 		PlaceFile placeFile = new PlaceFile();
 		placeFile.setFile(fileEntity);
 		placeFile.setPlace(place);
+		placeFile.setFileOrder(order++);
 		placeFileRepository.save(placeFile);
 
 		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
@@ -206,8 +217,66 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public File verifyFile(String fileId) {
-		return fileRepository.findById(UUID.fromString(fileId))
+	@Transactional
+	public void deleteFiles(UploadCategory category, String targetId, Set<String> fileIds, String email) {
+		if (category != UploadCategory.PLACE) {
+			userService.verifyUser(email);
+		}
+
+		// fileIds UUID Set으로 변환
+		Set<UUID> fileIdSet = fileIds.stream()
+			.map(UUID::fromString)
+			.collect(Collectors.toSet());
+
+		// category에 따라 삭제 로직 분기
+		switch (category) {
+			case REVIEW -> deleteReviewFiles(targetId, fileIdSet);
+			// case DIARY -> deleteDiaryFiles(targetId, fileIdSet);
+			case PLACE -> deletePlaceFiles(targetId, fileIdSet);
+			default -> throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
+		}
+	}
+
+	// 리뷰 파일 삭제
+	private void deleteReviewFiles(String reviewId, Set<UUID> fileIds) {
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(Long.parseLong(reviewId));
+		deleteFilesByCategory(reviewFiles, fileIds, reviewFileRepository);
+	}
+
+	// TODO 여행기 파일 삭제
+	// private void deleteDiaryFiles(String diaryId, Set<UUID> fileIds) {
+	// 	List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryId(Long.parseLong(diaryId));
+	// 	deleteFilesByCategory(diaryFiles, fileIds, diaryFileRepository);
+	// }
+
+	// 장소 파일 삭제
+	private void deletePlaceFiles(String placeId, Set<UUID> fileIds) {
+		List<PlaceFile> placeFiles = placeFileRepository.findByPlace_PlaceId(placeId);
+		deleteFilesByCategory(placeFiles, fileIds, placeFileRepository);
+	}
+
+	// 공통 삭제 로직
+	private <T extends FileReference> void deleteFilesByCategory(List<T> fileReferences, Set<UUID> fileIds,
+		JpaRepository<T, ?> repository) {
+		List<T> filesToDelete = fileReferences.stream()
+			.filter(ref -> fileIds.contains(ref.getFile().getId()))
+			.toList();
+
+		if (!filesToDelete.isEmpty()) {
+			repository.deleteAll(filesToDelete);
+
+			// TODO S3에서 파일 삭제
+			// filesToDelete.forEach(fileRef -> {
+			// 	String fileName = fileRef.getFile().getUrl().substring(fileRef.getFile().getUrl().lastIndexOf("/") + 1);
+			// 	s3Uploader.deleteFile(fileName);
+			// });
+		}
+	}
+
+	// 검증 로직
+	@Override
+	public File verifyFile(UUID fileId) {
+		return fileRepository.findById(fileId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.FILE_NONE));
 	}
 
