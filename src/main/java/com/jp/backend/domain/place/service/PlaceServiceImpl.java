@@ -1,6 +1,6 @@
 package com.jp.backend.domain.place.service;
 
-import static com.jp.backend.domain.like.entity.Like.LikeType.*;
+import static com.jp.backend.domain.like.enums.LikeType.*;
 
 import java.util.ArrayList;
 import java.util.List;

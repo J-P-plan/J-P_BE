@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.like.dto.LikeResDto;
-import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.like.enums.LikeType;
 import com.jp.backend.domain.like.service.LikeService;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.global.dto.PageResDto;
@@ -41,7 +41,7 @@ public class LikeController {
 			"targetId - PlaceId/reviewId/DiaryId<br>"
 			+ "<br>"
 			+ "응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소")
-	public ResponseEntity<Boolean> manageLike(@PathVariable Like.LikeType likeType,
+	public ResponseEntity<Boolean> manageLike(@PathVariable LikeType likeType,
 		@PathVariable String targetId,
 		@AuthenticationPrincipal UserPrincipal principal) {
 		boolean result = likeService.manageLike(likeType, targetId, principal.getUsername());
@@ -65,7 +65,7 @@ public class LikeController {
 			"- elementCnt : 10 (default)")
 	public ResponseEntity<PageResDto<LikeResDto>> getFavoriteList(
 		@AuthenticationPrincipal UserPrincipal principal,
-		@RequestParam(required = false) Like.LikeType likeType,
+		@RequestParam(required = false) LikeType likeType,
 		@RequestParam(required = false) PlaceType placeType,
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "elementCnt", defaultValue = "10") Integer elementCnt) {
