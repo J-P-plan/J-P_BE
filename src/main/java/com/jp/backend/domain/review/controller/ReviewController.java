@@ -45,14 +45,14 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.createReview(reqDto, principal.getUsername()));
 	}
 
-	// TODO 파일 수정 가능하도록 리팩토링 / Put으로 변경
-	@Operation(summary = "리뷰 수정 API")
+	@Operation(summary = "리뷰 수정 API",
+		description = "newFileIds 필드에는 새로 추가할 파일의 id들만 넣어주세요.")
 	@PatchMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(
 		@PathVariable(value = "reviewId") Long reviewId,
 		@Valid @RequestBody ReviewUpdateDto updateDto,
 		@AuthenticationPrincipal UserPrincipal principal
-	) throws Exception {
+	) {
 		return ResponseEntity.ok(reviewService.updateReview(reviewId, updateDto, principal.getUsername()));
 	}
 

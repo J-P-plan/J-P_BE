@@ -11,6 +11,7 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,9 @@ public class RefreshService {
 	}
 
 	// refreshToken 으로 accessToken 재발급
-	public void refresh(String accessToken, String refreshToken, HttpServletResponse response) {
+	public void refresh( String refreshToken, HttpServletRequest request, HttpServletResponse response) {
+
+		String accessToken = request.getHeader("Authorization");
 		AuthToken expiredAccessToken = authTokenProvider.convertAuthToken(accessToken);
 		validateAccessTokenCheck(expiredAccessToken);
 

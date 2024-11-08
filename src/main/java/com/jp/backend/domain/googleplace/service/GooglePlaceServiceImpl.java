@@ -167,8 +167,9 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 
 		GooglePlaceDetailsDto apiResponse = handleGooglePlacesApiException(uri, GooglePlaceDetailsDto.class);
 
-		// 결과가 없으면 --> place none
+		//결과가 없으면 --> place none
 		if (apiResponse == null || apiResponse.getResult() == null) {
+			log.info(placeId);
 			throw new CustomLogicException(ExceptionCode.PLACE_NONE);
 		}
 
