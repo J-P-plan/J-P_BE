@@ -2,7 +2,6 @@ package com.jp.backend.domain.like.service;
 
 import static com.jp.backend.domain.place.enums.PlaceType.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.PlaceFile;
-import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
@@ -43,7 +41,6 @@ public class LikeServiceImpl implements LikeService {
 	private final GooglePlaceService googlePlaceService;
 	private final JpaReviewRepository reviewRepository;
 	private final JpaPlaceRepository placeRepository;
-	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 
 	// 좋아요/찜 누르기 - 리뷰/여행기/장소
@@ -69,10 +66,7 @@ public class LikeServiceImpl implements LikeService {
 
 		if (likeType == LikeType.PLACE) {
 			Place findPlace = placeRepository.findByPlaceId(targetId).orElse(null);
-
-			if (findPlace == null) { // place가 없으면 기본적으로 travel_place로 설정
-				like.setPlaceType(TRAVEL_PLACE);
-
+			if (findPlace == null) { // place가 없으면 place 정보 저장
 				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(targetId);
 
 				Place place = new Place();
@@ -82,19 +76,21 @@ public class LikeServiceImpl implements LikeService {
 				place.setSubName(placeDetails.getShortAddress());
 
 				File file = File.builder()
-					.bucket("google-place-image") // 미리 정해진 버킷 이름 설정
+					.bucket("google-place-image") // s3에는 저장을 안하기 때문
 					.url(placeDetails.getPhotoUrls().get(0))
-					.fileType(File.FileType.IMAGE) // 이미지 유형으로 설정
+					.place(place)
+					.fileType(File.FileType.IMAGE)
 					.build();
-				fileRepository.save(file); // File 저장
+
+				place.addFile(file);
+				placeRepository.save(place);
 
 				PlaceFile placeFile = new PlaceFile();
 				placeFile.setPlace(place);
 				placeFile.setFile(file);
+				placeFile.setFileOrder(0);
 				placeFileRepository.save(placeFile);
 
-			} else { // place가 있으면, 그 placeType 그대로 설정 (CITY일 경우는 CITY, 나머지는 TRAVEL_PLACE)
-				like.setPlaceType(findPlace.getPlaceType() == PlaceType.CITY ? PlaceType.CITY : TRAVEL_PLACE);
 			}
 		}
 
@@ -104,43 +100,34 @@ public class LikeServiceImpl implements LikeService {
 
 	// 마이페이지 찜목록 - 리뷰/여행기/장소
 	@Override
-	public PageResDto<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, String email,
-		Integer page, Integer elementCnt) {
+	public PageResDto<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, String email, Integer page,
+		Integer elementCnt) {
 		User user = userService.verifyUser(email);
-
-		if (likeType.equals(LikeType.PLACE)) {
-			if (placeType == null) {
-				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
-			}
-		}
 
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		PlaceType finalPlaceType =
-			(placeType != null) ? placeType : TRAVEL_PLACE; // placeType이 null로 들어오면 -> 검색해서
-
-		Page<LikeResDto> likePage = likeRepository.getFavoriteList(likeType, finalPlaceType, user.getId(), pageable);
-
-		// Name 필드가 null인 경우 (PLACE 테이블에 저장된 정보가 없을 경우) --> api에서 가져오도록
-		// --> 이 경우는 여행지의 경우만 해당 (city는 다 들어가 있으니까)
-		List<LikeResDto> updatedContent = likePage.getContent().stream().map(like -> {
-			if (like.getTargetName() == null || like.getFileUrl() == null) {
-				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(like.getTargetId());
-				like.setTargetName(Optional.ofNullable(like.getTargetName()).orElse(placeDetails.getName()));
-				like.setTargetAddress(
-					Optional.ofNullable(like.getTargetAddress()).orElse(placeDetails.getFullAddress()));
-				like.setFileUrl(Optional.ofNullable(like.getFileUrl()).orElse(placeDetails.getPhotoUrls().get(0)));
-				like.setPlaceType(TRAVEL_PLACE); // 도시는 무조건 db에 들어있으니 나머지 경우는 모두 여행지로
+		Page<LikeResDto> likePage;
+		if (likeType == null) { // likeType이 없는 경우 --> 해당 유저의 전체 좋아요 리스트 조회
+			likePage = likeRepository.getAllFavoriteList(user.getId(), pageable);
+		} else if (likeType == LikeType.PLACE) { // likeType이 PLACE인 경우 --> placeType에 따라 필터링한 장소 좋아요 리스트 조회
+			if (placeType == null) {
+				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 			}
-			return like;
-		}).toList();
+			likePage = likeRepository.getFavoriteListForPlace(placeType, user.getId(), pageable);
+		}
+		// else if (likeType == LikeType.DIARY) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
+		// 	likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
+		// }
+		else {
+			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
+		}
 
 		PageInfo<LikeResDto> pageInfo = PageInfo.<LikeResDto>builder()
 			.pageable(pageable)
 			.pageDto(likePage)
 			.build();
 
-		return new PageResDto<>(pageInfo, updatedContent);
+		return new PageResDto<>(pageInfo, likePage.getContent());
 	}
 
 	// TODO  여행기 구현 완료 후 수정

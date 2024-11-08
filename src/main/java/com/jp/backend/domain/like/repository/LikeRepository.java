@@ -15,5 +15,8 @@ public interface LikeRepository {
 
 	long countLike(LikeType likeType, String targetId, Long userId);
 
-	Page<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, Long userId, Pageable pageable);
+	Page<LikeResDto> getAllFavoriteList(Long userId, Pageable pageable);
+
+	// Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable); // 여행기 타입 찜리스트 조회
+	Page<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable);
 }

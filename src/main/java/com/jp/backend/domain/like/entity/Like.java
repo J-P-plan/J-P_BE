@@ -1,7 +1,6 @@
 package com.jp.backend.domain.like.entity;
 
 import com.jp.backend.domain.like.enums.LikeType;
-import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.audit.Auditable;
 
@@ -40,8 +39,5 @@ public class Like extends Auditable {
 
 	@Enumerated(value = EnumType.STRING)
 	private LikeType likeType;
-
-	@Enumerated(value = EnumType.STRING)
-	private PlaceType placeType;
 
 }

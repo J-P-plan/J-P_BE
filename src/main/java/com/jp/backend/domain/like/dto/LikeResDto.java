@@ -3,7 +3,6 @@ package com.jp.backend.domain.like.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jp.backend.domain.like.enums.LikeType;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.querydsl.core.annotations.QueryProjection;
@@ -16,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+// @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LikeResDto {
 	@Schema(description = "아이디")
 	private Long id;

@@ -146,4 +146,10 @@ public class PlaceServiceImpl implements PlaceService {
 		return placeRepository.findByPlaceId(placeId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
 	}
+
+	@Override
+	public Place verifyPlaceOptional(String placeId) {
+		System.out.println("Verifying place with ID: " + placeId);
+		return placeRepository.findByPlaceId(placeId).orElse(null); // Place가 없으면 null 반환
+	}
 }

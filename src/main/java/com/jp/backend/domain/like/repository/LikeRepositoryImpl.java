@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.jp.backend.domain.file.entity.QFile;
+import com.jp.backend.domain.file.entity.QPlaceFile;
 import com.jp.backend.domain.like.dto.LikeResDto;
 import com.jp.backend.domain.like.dto.QLikeResDto;
 import com.jp.backend.domain.like.entity.Like;
@@ -31,6 +32,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 	private static final QLike qLike = QLike.like;
 	private static final QPlace qPlace = QPlace.place;
 	private static final QFile qFile = QFile.file;
+	private static final QPlaceFile qPlaceFile = QPlaceFile.placeFile;
 
 	// Like 객체 찾기
 	@Override
@@ -63,85 +65,122 @@ public class LikeRepositoryImpl implements LikeRepository {
 	// 사용자의 찜목록 페이지 반환
 	// TDOO 여행기 구현 완료 후 수정
 	@Override
-	public Page<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, Long userId, Pageable pageable) {
-		List<LikeResDto> favoriteList =
-			switch (likeType) {
-				case PLACE -> getFavoriteListForPlace(placeType, userId, pageable);
-				// case DIARY ->
-				default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
-			};
+	public Page<LikeResDto> getAllFavoriteList(Long userId, Pageable pageable) {
+		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(null, userId, pageable);
 
-		// 좋아요 목록 개수 조회
-		long totalCount = getTotalCount(likeType, placeType, userId);
-
-		// 결과를 Page로 반환
-		return new PageImpl<>(favoriteList, pageable, totalCount);
-	}
-
-	// 장소에 대한 찜 목록 조회
-	private List<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
-		// 기본 쿼리
-		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.PLACE, userId, pageable);
-
-		// 해당 place에 대한 파일 URL 조회ㅇ
-		JPAQuery<String> subQuery = new JPAQuery<String>()
-			.select(qFile.url)
+		// 장소 첫 번째 사진 URL 가져오는 서브쿼리
+		JPAQuery<String> placeFileSubQuery = jpaQueryFactory
+			.select(qFile.url) // File의 URL을 선택
 			.from(qFile)
-			.where(qFile.place.id.eq(qPlace.id))
-			.limit(1); // 첫번째 사진만 가져옴
+			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id)) // PlaceFile과 File을 join
+			.where(qPlaceFile.place.id.eq(qPlace.id)) // Place ID를 기준으로 필터링
+			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 선택
+			.limit(1);
 
-		// 메인 쿼리 -  Like 테이블과 Place 테이블을 Join하고 결과 조회 ( place 테이블에 저장되어있지 않은 항목들도 불러옴 )
-		return baseQuery
+		// 여행기 첫 번째 사진 URL 가져오는 서브쿼리
+		// JPAQuery<String> diaryFileSubQuery = new JPAQuery<String>()
+		// 	.select(qFile.url)
+		// 	.from(qDiaryFile)
+		// 	.join(qDiaryFile.file, qFile)
+		// 	.where(qDiaryFile.diary.id.eq(qDiary.id))
+		// 	.orderBy(qDiaryFile.fileOrder.asc())
+		// 	.limit(1);
+
+		// 메인 쿼리 - Like 테이블과 Place 테이블을 Join하여 결과 조회
+		List<LikeResDto> favoriteList = baseQuery
 			.leftJoin(qPlace)
-			.on(qLike.targetId.eq(qPlace.placeId)
-				.or(qPlace.placeId.isNull()))  // targetId와 placeId가 일치하거나, Place 테이블에 placeId가 없을 경우도 포함
-			.where(qPlace.placeType.eq(placeType)
-				.or(qPlace.placeId.isNull()))  // placeType에 맞는 필터링 + Place 테이블에 없으면 해당 항목도 포함
+			.on(qLike.targetId.eq(qPlace.placeId))
 			.select(new QLikeResDto(
 				qLike.id,
 				qLike.user.id,
 				qLike.targetId,
 				qPlace.name,
 				qPlace.subName,
-				subQuery,
+				placeFileSubQuery,
+				// qLike.likeType.when(LikeType.PLACE).then(placeFileSubQuery).otherwise(diaryFileSubQuery), // 여행기 구현 후 이걸로
 				qLike.likeType,
 				qPlace.placeType,
 				qLike.createdAt
 			))
 			.fetch();
+
+		// 총 좋아요 개수 조회
+		long totalCount = getTotalCount(null, null, userId);
+
+		// 결과를 Page로 반환
+		return new PageImpl<>(favoriteList, pageable, totalCount);
 	}
 
-	// 기본 쿼리
+	// 여행기에 대한 찜 목록 조회
+	// public Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable) {
+	// 	return new ArrayList<>();
+	// }
+
+	// 장소에 대한 찜 목록 조회
+	@Override
+	public Page<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
+		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.PLACE, userId, pageable);
+
+		// 장소에 대한 첫 번째 사진 URL을 조회하는 서브쿼리
+		JPAQuery<String> subQuery = jpaQueryFactory
+			.select(qFile.url) // File의 URL을 선택
+			.from(qFile)
+			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id)) // PlaceFile과 File을 join
+			.where(qPlaceFile.place.id.eq(qPlace.id)) // Place ID를 기준으로 필터링
+			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 선택
+			.limit(1);
+
+		// 조건에 맞는 좋아요 목록 조회
+		List<LikeResDto> favoriteList = baseQuery
+			.leftJoin(qPlace)
+			.on(qLike.targetId.eq(qPlace.placeId))
+			.where(getPlaceTypeCondition(placeType))
+			.select(new QLikeResDto(
+				qLike.id, qLike.user.id, qLike.targetId, qPlace.name, qPlace.subName,
+				subQuery, qLike.likeType, qPlace.placeType, qLike.createdAt))
+			.fetch();
+
+		// 총 좋아요 개수 조회
+		long totalCount = getTotalCount(LikeType.PLACE, placeType, userId);
+
+		// 결과를 Page로 반환
+		return new PageImpl<>(favoriteList, pageable, totalCount);
+	}
+
+	// placeType에 따른 조건 처리
+	private BooleanExpression getPlaceTypeCondition(PlaceType placeType) {
+		switch (placeType) {
+			case CITY:
+				return qPlace.placeType.eq(PlaceType.CITY);
+			case TRAVEL_PLACE:
+				return qPlace.placeType.eq(PlaceType.TRAVEL_PLACE)
+					.or(qPlace.placeType.eq(PlaceType.THEME)); // placeType이 여행지 또는 테마인 레코드들
+			default:
+				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
+		}
+	}
+
+	// 기본 쿼리 생성 메서드
 	private JPAQuery<Tuple> createBaseFavoriteQuery(LikeType likeType, Long userId, Pageable pageable) {
 		return jpaQueryFactory
 			.select(qLike.id, qLike.user.id, qLike.targetId, qLike.likeType, qLike.createdAt)
 			.from(qLike)
-			.where(qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId))) // userId와 likeType 필터링
-			.orderBy(qLike.createdAt.desc()) // createdAt 기준으로 정렬
-			.offset(pageable.getOffset()) // 페이징 처리
+			.where(
+				likeType == null ? qLike.user.id.eq(userId) : qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId)))
+			.orderBy(qLike.createdAt.desc())
+			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize());
 	}
 
-	// 찜 목록 개수 조회
+	// 총 좋아요 개수 조회 메서드
 	private long getTotalCount(LikeType likeType, PlaceType placeType, Long userId) {
-		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId).and(qLike.likeType.eq(likeType)));
+		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId));
+		if (likeType != null) {
+			whereCondition.and(qLike.likeType.eq(likeType));
+		}
 
-		// likeType이 PLACE일 경우에만 추가 조건 처리
-		if (likeType == LikeType.PLACE) {
-			whereCondition.and(qLike.targetId.eq(qPlace.placeId)); // Like 테이블과 Place 테이블에서 targetId 일치하는 레코드 찾기
-
-			// placeType에 따른 추가 조건 처리
-			switch (placeType) {
-				case TRAVEL_PLACE:
-					whereCondition.and(
-						qLike.placeType.eq(PlaceType.TRAVEL_PLACE).or(qPlace.placeType.isNull())); // 여행지 조건
-					break;
-				case CITY:
-					whereCondition.and(qPlace.placeType.eq(PlaceType.CITY)); // 도시 조건
-					break;
-				default:
-					throw new CustomLogicException(ExceptionCode.TYPE_NONE);
-			}
+		if (likeType == LikeType.PLACE && placeType != null) {
+			whereCondition.and(getPlaceTypeCondition(placeType));
 		}
 
 		return jpaQueryFactory

@@ -2,6 +2,7 @@ package com.jp.backend.domain.review.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +18,7 @@ import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
 import com.jp.backend.domain.file.service.FileService;
-import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.like.enums.LikeType;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
@@ -63,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
 		// fileIds가 null이거나 비어있으면 --> 빈 리스트 반환
 		if (reqDto.getFileIds() != null && !reqDto.getFileIds().isEmpty()) {
 			for (String fileId : reqDto.getFileIds()) {
-				File file = fileService.verifyFile(fileId);
+				File file = fileService.verifyFile(UUID.fromString(fileId));
 
 				// ReviewFile에 파일 연결
 				ReviewFile reviewFile = new ReviewFile();
@@ -97,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
+		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
 		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).build();
 	}
 
@@ -107,10 +108,10 @@ public class ReviewServiceImpl implements ReviewService {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
 		//todo null을 넣는게 조금 구런데 리팩토링 필요
-		Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, reviewId.toString(), null);
+		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, reviewId.toString(), null);
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
-		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(reviewId);
+		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(reviewId);
 		List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 
 		return ReviewResDto.builder()
@@ -135,11 +136,11 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
+					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
-					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(review.getId());
 					List<FileResDto> fileInfos = getFileInfos(reviewFiles);
 					return ReviewCompactResDto.builder()
 						.review(review)
@@ -176,11 +177,11 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(Like.LikeType.REVIEW, review.getId().toString(), null);
+					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
-					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewId(review.getId());
+					List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(review.getId());
 					List<FileResDto> fileInfos = new ArrayList<>();
 					if (!reviewFiles.isEmpty()) {
 						ReviewFile firstReviewFile = reviewFiles.get(0); // 첫 번째 파일만

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -152,11 +153,20 @@ public class FileServiceImpl implements FileService {
 	@Override
 	@Transactional
 	public List<FileResDto> uploadFilesForPlace(List<MultipartFile> files, String placeId) {
+		Place place = placeService.verifyPlaceOptional(placeId);
+
+		AtomicInteger order = new AtomicInteger(0);
+		if (place != null) {
+			// 해당 Place에 업로드된 파일들 중 가장 큰 fileOrder 값 가져옴
+			Integer maxFileOrder = placeFileRepository.findMaxFileOrderByPlace(place);
+			order.set(maxFileOrder != null ? maxFileOrder + 1 : 0); // maxFileOrder가 null이면 0부터 시작
+		}
 
 		return files.stream()
 			.map(file -> {
 				try {
-					return uploadFileForPlace(file, placeId);
+					// 각 파일 업로드 시 증가된 order 값 사용
+					return uploadFileForPlace(file, placeId, order.getAndIncrement());
 				} catch (IOException e) {
 					throw new RuntimeException("File upload failed", e);
 				}
@@ -166,20 +176,18 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	@Transactional
-	public FileResDto uploadFileForPlace(MultipartFile file, String placeId) throws IOException {
+	public FileResDto uploadFileForPlace(MultipartFile file, String placeId, int order) throws IOException {
 
 		File fileEntity = uploadFile(file, PLACE, null);
 		fileEntity.setPlace(placeService.verifyPlace(placeId));  // placeId로 Place 엔티티 찾아서 설정
 		fileRepository.save(fileEntity);
-
-		int order = 0; // 파일 순서
 
 		// PlaceFile에 파일 연결
 		Place place = placeService.verifyPlace(placeId);
 		PlaceFile placeFile = new PlaceFile();
 		placeFile.setFile(fileEntity);
 		placeFile.setPlace(place);
-		placeFile.setFileOrder(order++);
+		placeFile.setFileOrder(order);
 		placeFileRepository.save(placeFile);
 
 		return new FileResDto(fileEntity.getId().toString(), fileEntity.getUrl());
