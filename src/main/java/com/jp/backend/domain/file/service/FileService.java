@@ -27,7 +27,7 @@ public interface FileService {
 
 	List<FileResDto> uploadFilesForPlace(List<MultipartFile> files, String placeId);
 
-	FileResDto uploadFileForPlace(MultipartFile file, String placeId) throws IOException;
+	FileResDto uploadFileForPlace(MultipartFile file, String placeId, int order) throws IOException;
 
 	void deleteFiles(UploadCategory category, String targetId, Set<String> fileIds, String email);
 

@@ -17,4 +17,6 @@ public interface PlaceService {
 	PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption);
 
 	Place verifyPlace(String placeId);
+
+	Place verifyPlaceOptional(String placeId);
 }
