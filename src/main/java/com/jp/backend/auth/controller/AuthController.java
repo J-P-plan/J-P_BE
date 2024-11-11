@@ -52,11 +52,11 @@ public class AuthController {
 	@PostMapping("/refresh")
 	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 재발급받습니다.")
 	public ResponseEntity<String> refresh(
-		@CookieValue(value = "RefreshToken") String refreshToken,
+	//	@CookieValue(value = "RefreshToken") String refreshToken,
 		HttpServletRequest request,
 		HttpServletResponse response) {
 
-		refreshService.refresh(refreshToken,request,response);
+		refreshService.refresh(request,response);
 		return ResponseEntity.ok("성공적으로 재발급되었습니다.");
 	}
 
