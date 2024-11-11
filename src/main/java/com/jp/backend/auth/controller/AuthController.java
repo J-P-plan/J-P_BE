@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +17,6 @@ import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.global.dto.SingleResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,11 +50,13 @@ public class AuthController {
 	@PostMapping("/refresh")
 	@Operation(summary = "리프레시 토큰을 사용하여 엑세스 토큰을 재발급받습니다.")
 	public ResponseEntity<String> refresh(
-	//	@CookieValue(value = "RefreshToken") String refreshToken,
+		@CookieValue(value = "RefreshToken") String refreshToken,
 		HttpServletRequest request,
 		HttpServletResponse response) {
 
-		refreshService.refresh(request,response);
+		System.out.println("리프레시 토큰 ----------------------------- : " + refreshToken);
+
+		refreshService.refresh(refreshToken, request, response);
 		return ResponseEntity.ok("성공적으로 재발급되었습니다.");
 	}
 

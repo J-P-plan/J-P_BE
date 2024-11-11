@@ -44,7 +44,7 @@ public class FileController {
 	@PostMapping(value = "/profile/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "유저의 프로필 사진을 업로드합니다.",
 		description = "프로필 이미지를 수정할 때에도 사용이 가능합니다. <br>"
-			+ "( 이미지만 업로드 가능합니다. )")
+			+ "( 10mb 이하의 이미지만 업로드 가능합니다. )")
 	public ResponseEntity<SingleResponse<FileResDto>> uploadProfile(@RequestParam(value = "file") MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
@@ -72,7 +72,7 @@ public class FileController {
 
 	@PostMapping(value = "/upload/files/{category}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",
-		description = " 장소/리뷰/여행기에 이미지, 영상, pdf 업로드가 가능합니다. <br>"
+		description = " 장소/리뷰/여행기에 10mb 이하의 이미지, 영상, pdf 업로드가 가능합니다. <br>"
 			+ "1. category == PLACE -> placeId 필요 / auth 필요 X <br>"
 			+ "2. category == REVIEW/DIARY -> placeId 필요 X / auth 필요 O")
 	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(@RequestPart List<MultipartFile> files,
