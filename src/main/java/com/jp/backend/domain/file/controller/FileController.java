@@ -44,7 +44,7 @@ public class FileController {
 	@PostMapping(value = "/profile/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "유저의 프로필 사진을 업로드합니다.",
 		description = "프로필 이미지를 수정할 때에도 사용이 가능합니다. <br>"
-			+ "( 이미지만 업로드 가능합니다. )")
+			+ "( 10mb 이하의 이미지만 업로드 가능합니다. )")
 	public ResponseEntity<SingleResponse<FileResDto>> uploadProfile(@RequestParam(value = "file") MultipartFile file,
 		@AuthenticationPrincipal UserPrincipal principal) throws
 		IOException {
@@ -72,7 +72,7 @@ public class FileController {
 
 	@PostMapping(value = "/upload/files/{category}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "파일을 업로드합니다.",
-		description = " 장소/리뷰/여행기에 이미지, 영상, pdf 업로드가 가능합니다. <br>"
+		description = " 장소/리뷰/여행기에 10mb 이하의 이미지, 영상, pdf 업로드가 가능합니다. <br>"
 			+ "1. category == PLACE -> placeId 필요 / auth 필요 X <br>"
 			+ "2. category == REVIEW/DIARY -> placeId 필요 X / auth 필요 O")
 	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(@RequestPart List<MultipartFile> files,
@@ -98,13 +98,5 @@ public class FileController {
 
 		return ResponseEntity.noContent().build();
 	}
-
-	// TODO 사진 수정하는 기능
-	//   PLACE --> 직접 controller 만들어줘야함
-	//   REVIEW/DIARY --> 이거 수정하는 메서드 안에서 같이 받아서 그걸로 해야할듯
-
-	// 리뷰 response에 file id도 같이 보내도록
-	// 사진 삭제 api 만들어야함
-	// 리뷰 사진 업데이트할 때 api 순서는 1.사진 삭제 (혹은 안함) / 2.추가할 사진 업로드 / 3.프론트에서 리뷰에 업로드할 파일 id list 다 보냄 / 4.백엔드에서 파일 그걸로 갈아끼움
 
 }
