@@ -28,7 +28,7 @@ public class LocalUploaderConfig {
 
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), null, fileRepository, placeFileRepository, reviewFileRepository,
+		return new FileServiceImpl(this.uploader(), fileRepository, placeFileRepository, reviewFileRepository,
 			userService, placeService);
 	}
 

@@ -24,7 +24,6 @@ import com.jp.backend.domain.file.enums.UploadCategory;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
-import com.jp.backend.domain.file.uploader.S3Uploader;
 import com.jp.backend.domain.file.uploader.Uploader;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.service.PlaceService;
@@ -34,12 +33,13 @@ import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FileServiceImpl implements FileService {
 	private final Uploader uploader;
-	private final S3Uploader s3Uploader;
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 	private final JpaReviewFileRepository reviewFileRepository;
@@ -66,7 +66,7 @@ public class FileServiceImpl implements FileService {
 			// S3에서도 파일 교체
 			String oldFileUrl = user.getProfile().getUrl();
 			String oldFileName = oldFileUrl.substring(oldFileUrl.lastIndexOf("/") + 1);
-			s3Uploader.updateFile(file, oldFileName, PROFILE, user.getId());
+			uploader.updateFile(file, oldFileName, PROFILE, user.getId());
 		}
 
 		fileRepository.save(fileEntity);
@@ -96,7 +96,7 @@ public class FileServiceImpl implements FileService {
 			String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // 최종 슬래시 이후의 문자열이 파일 이름
 
 			user.setProfile(null); // 프로필 null로 설정
-			// s3Uploader.deleteFile(fileName); // TODO S3에서 삭제 안되는 거 해결
+			// uploader.deleteFile(fileName); // TODO S3에서 삭제 안되는 거 해결
 		} else {
 			throw new CustomLogicException(ExceptionCode.FILE_NONE);
 		}
@@ -276,7 +276,7 @@ public class FileServiceImpl implements FileService {
 			// TODO S3에서 파일 삭제
 			// filesToDelete.forEach(fileRef -> {
 			// 	String fileName = fileRef.getFile().getUrl().substring(fileRef.getFile().getUrl().lastIndexOf("/") + 1);
-			// 	s3Uploader.deleteFile(fileName);
+			// 	uploader.deleteFile(fileName);
 			// });
 		}
 	}

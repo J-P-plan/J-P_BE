@@ -63,4 +63,17 @@ public class LocalUploader implements Uploader {
 		}
 		return Optional.empty();
 	}
+
+	@Override
+	public String[] updateFile(MultipartFile newFile, String oldFileName, FileCategory category, Long userId) throws
+		IOException {
+		return new String[0];
+		// TODO 수정
+	}
+
+	@Override
+	@Transactional
+	public void deleteFile(String fileName) {
+
+	}
 }

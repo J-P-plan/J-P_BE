@@ -11,8 +11,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+
 @Configuration
 @Profile("prod")
+@Slf4j
 public class S3BucketConfig {
 	@Value("${cloud.aws.credentials.accessKey}")
 	private String accessKey;
@@ -20,6 +24,11 @@ public class S3BucketConfig {
 	private String secretKey;
 	@Value("${cloud.aws.region.static}")
 	private String region;
+
+	@PostConstruct
+	public void init() {
+		log.info("AWS Access Key: {}", accessKey);
+	}
 
 	// AWS S3 서비스에 접근하기 위한 Amazon S3 클라이언트 객체를 생성 --> 애플리케이션 전반에서 AWS S3 서비스 사용 가능
 	@Bean
@@ -33,5 +42,9 @@ public class S3BucketConfig {
 			.withCredentials(new AWSStaticCredentialsProvider(credentials)) // 생성된 AmazonS3 클라이언트에 인증 정보 제공
 			.withRegion(region) // 클라이언트가 작업을 수행할 AWS 리전 설정
 			.build();
+	}
+
+	public String getAccessKey() {
+		return accessKey;
 	}
 }

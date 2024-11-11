@@ -15,10 +15,12 @@ import com.jp.backend.domain.place.service.PlaceService;
 import com.jp.backend.domain.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
 @Profile("prod")
+@Slf4j
 public class S3UploaderConfig {
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
@@ -28,12 +30,14 @@ public class S3UploaderConfig {
 
 	@Bean
 	public FileService imageUploader() {
-		return new FileServiceImpl(this.uploader(), (S3Uploader)this.uploader(), fileRepository, placeFileRepository,
+		log.info("업로드 빈 생성됨: {}", this.uploader());
+		return new FileServiceImpl(this.uploader(), fileRepository, placeFileRepository,
 			reviewFileRepository, userService, placeService);
 	}
 
 	@Bean
 	public Uploader uploader() {
+		log.info("AWS Access Key22: {}", s3BucketConfig().getAccessKey());
 		return new S3Uploader(s3BucketConfig().amazonS3Client());
 	}
 
