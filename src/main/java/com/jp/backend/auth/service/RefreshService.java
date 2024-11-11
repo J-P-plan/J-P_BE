@@ -11,7 +11,6 @@ import com.jp.backend.auth.token.AuthTokenProvider;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -44,26 +43,29 @@ public class RefreshService {
 	}
 
 	// refreshToken 으로 accessToken 재발급
-	public void refresh(HttpServletRequest request, HttpServletResponse response) {
+	public void refresh(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
 
-		String refreshToken = null;
+		// String refreshToken = null;
 
 		// 쿠키 정보 확인
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				System.out.println("Cookie Name: " + cookie.getName() + ", Value: " + cookie.getValue());
-				if ("RefreshToken".equals(cookie.getName())) {
-					refreshToken = cookie.getValue();
-					break;
-				}
-			}
-		} else {
-			System.out.println("No cookies found in the request.");
-		}
-
+		// Cookie[] cookies = request.getCookies();
+		// if (cookies != null) {
+		// 	for (Cookie cookie : cookies) {
+		// 		System.out.println("Cookie Name: " + cookie.getName() + ", Value: " + cookie.getValue());
+		// 		if ("RefreshToken".equals(cookie.getName())) {
+		// 			refreshToken = cookie.getValue();
+		// 			break;
+		// 		}
+		// 	}
+		// } else {
+		// 	System.out.println("No cookies found in the request.");
+		// }
 
 		String accessToken = request.getHeader("Authorization");
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			accessToken = accessToken.substring(7); // "Bearer " 제거
+		}
+
 		AuthToken expiredAccessToken = authTokenProvider.convertAuthToken(accessToken);
 		validateAccessTokenCheck(expiredAccessToken);
 

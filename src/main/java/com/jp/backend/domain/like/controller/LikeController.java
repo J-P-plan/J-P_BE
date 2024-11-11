@@ -62,8 +62,12 @@ public class LikeController {
 			"elementCnt: 10 (default)<br><br>" +
 			"<strong>주의사항</strong> :<br>" +
 			"- likeType과 placeType을 넣지 않을 경우 -> 전체 조회가 가능합니다.<br>" +
-			"- likeType이 PLACE일 경우 -> placeType을 넣어야 해당 type의 찜목록 list가 반환됩니다.<br>" +
-			"- likeType이 REVIEW일 경우 -> 찜목록에서 조회되지 않아도 되므로, 타입이 없다고 표시됩니다.")
+			"- likeType이 PLACE일 경우 -> placeType을 넣어야 해당 type의 찜목록 list가 반환됩니다.<br><br>" +
+			"<strong>항목별 상세 설명</strong> :<br>" +
+			"- 여행지 ➜ likeType - place / placeType - travle_place<br>" +
+			"- 도시 ➜ likeType - place / placeType - city<br>" +
+			"- 여행기 ➜ likeType : diary / placeType : x<br>" +
+			"- 리뷰 ➜ 현재 마이페이지에서 리뷰 찜목록 보기는 없으므로 likeType에는 REVIEW가 뜨지만 사용 X<br>")
 	public ResponseEntity<PageResDto<LikeResDto>> getFavoriteList(
 		@AuthenticationPrincipal UserPrincipal principal,
 		@RequestParam(required = false) LikeType likeType,
