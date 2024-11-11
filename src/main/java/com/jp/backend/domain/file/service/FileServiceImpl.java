@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ import com.jp.backend.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Primary
 @Transactional
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
