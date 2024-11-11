@@ -30,14 +30,13 @@ public class S3UploaderConfig {
 
 	@Bean
 	public FileService imageUploader() {
-		log.info("업로드 빈 생성됨: {}", this.uploader());
 		return new FileServiceImpl(this.uploader(), fileRepository, placeFileRepository,
 			reviewFileRepository, userService, placeService);
 	}
 
 	@Bean
 	public Uploader uploader() {
-		log.info("AWS Access Key22: {}", s3BucketConfig().getAccessKey());
+		log.info("AWS Access Key: {}", s3BucketConfig().getAccessKey());
 		return new S3Uploader(s3BucketConfig().amazonS3Client());
 	}
 

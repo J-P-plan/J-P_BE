@@ -33,11 +33,9 @@ import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class FileServiceImpl implements FileService {
 	private final Uploader uploader;
 	private final JpaFileRepository fileRepository;
