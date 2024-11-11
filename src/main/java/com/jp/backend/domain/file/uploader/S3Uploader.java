@@ -103,6 +103,8 @@ public class S3Uploader implements Uploader {
 
 	// 기존에 업로드된 파일을 S3에서 삭제하고, 새 파일로 교체하는 메서드
 	// TODO 여기 수정
+	@Override
+	@Transactional
 	public String[] updateFile(MultipartFile newFile, String oldFileName, FileCategory category, Long userId) throws
 		IOException {
 		// 기존 파일 삭제
@@ -113,6 +115,8 @@ public class S3Uploader implements Uploader {
 	}
 
 	// 지정된 파일을 S3에서 삭제하는 메서드
+	@Override
+	@Transactional
 	public void deleteFile(String fileName) {
 		try {
 			// URL 디코딩을 통해 원래의 파일 이름을 가져옴
