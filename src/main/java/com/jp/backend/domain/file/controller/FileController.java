@@ -99,12 +99,4 @@ public class FileController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// TODO 사진 수정하는 기능
-	//   PLACE --> 직접 controller 만들어줘야함
-	//   REVIEW/DIARY --> 이거 수정하는 메서드 안에서 같이 받아서 그걸로 해야할듯
-
-	// 리뷰 response에 file id도 같이 보내도록
-	// 사진 삭제 api 만들어야함
-	// 리뷰 사진 업데이트할 때 api 순서는 1.사진 삭제 (혹은 안함) / 2.추가할 사진 업로드 / 3.프론트에서 리뷰에 업로드할 파일 id list 다 보냄 / 4.백엔드에서 파일 그걸로 갈아끼움
-
 }

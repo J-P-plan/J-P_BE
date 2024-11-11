@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +35,7 @@ import com.jp.backend.global.exception.ExceptionCode;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @Transactional
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
