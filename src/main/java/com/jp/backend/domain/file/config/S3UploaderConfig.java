@@ -34,7 +34,7 @@ public class S3UploaderConfig {
 			reviewFileRepository, userService, placeService);
 	}
 
-	@Bean
+	@Bean(name = "s3Uploader")
 	public Uploader uploader() {
 		log.info("AWS Access Key: {}", s3BucketConfig().getAccessKey());
 		return new S3Uploader(s3BucketConfig().amazonS3Client());

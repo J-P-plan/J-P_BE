@@ -13,9 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.jp.backend.domain.file.enums.FileCategory;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class LocalUploader implements Uploader {
 	@Override
 	@Transactional
