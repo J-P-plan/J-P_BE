@@ -86,10 +86,15 @@ public class FileController {
 	}
 
 	@DeleteMapping(value = "delete/files/{category}/{targetId}")
-	@Operation(summary = "파일을 삭제합니다.")
+	@Operation(summary = "파일을 삭제합니다.",
+		description = "<strong>Data 명세</strong> <br>" +
+			"category : PLACE(도시) / REVIEW(여행지) / DIARY(여행기) <br>" +
+			"targetId : 파일을 삭제할 타겟의 Id (String 타입)" +
+			"( Ex. 리뷰에서 파일을 삭제할 경우 targetId는 reviewId / 장소에서 파일을 삭제할 경우 targetId는 placeId ) <br>" +
+			"fileIds : 삭제할 파일의 Ids (Set)")
 	public ResponseEntity<Void> deleteProfile(
 		@PathVariable(value = "category") @Parameter(description = "삭제할 파일의 카테고리") UploadCategory category,
-		@PathVariable(value = "targetId") @Parameter(description = "삭제할 파일의 Id") String targetId,
+		@PathVariable(value = "targetId") @Parameter(description = "파일을 삭제할 타겟의 Id") String targetId,
 		@RequestBody Set<String> fileIds,
 		@AuthenticationPrincipal UserPrincipal principal) {
 

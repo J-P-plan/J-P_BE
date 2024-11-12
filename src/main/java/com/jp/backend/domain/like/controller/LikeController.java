@@ -56,7 +56,8 @@ public class LikeController {
 	// 마이페이지 찜목록
 	@GetMapping("/page/my")
 	@Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
-		description = "likeType: PLACE / TRIP_JOURNAL<br>" +
+		description = "<strong>Data 명세</strong> <br>" +
+			"likeType: PLACE / TRIP_JOURNAL<br>" +
 			"placeType: CITY (도시) / TRAVEL_PLACE (여행지)<br>" +
 			"page: 조회할 페이지<br>" +
 			"elementCnt: 10 (default)<br><br>" +
@@ -66,7 +67,7 @@ public class LikeController {
 			"<strong>항목별 상세 설명</strong> :<br>" +
 			"- 여행지 ➜ likeType - place / placeType - travle_place<br>" +
 			"- 도시 ➜ likeType - place / placeType - city<br>" +
-			"- 여행기 ➜ likeType : diary / placeType : x<br>" +
+			"- 여행기 ➜ likeType : diary / placeType : x ( 현재는 여행기 관련 기능이 구현되어있지 않아 NOT_IMPLEMENTED 에러가 나타날 예정입니다. )<br>" +
 			"- 리뷰 ➜ 현재 마이페이지에서 리뷰 찜목록 보기는 없으므로 likeType에는 REVIEW가 뜨지만 사용 X<br>")
 	public ResponseEntity<PageResDto<LikeResDto>> getFavoriteList(
 		@AuthenticationPrincipal UserPrincipal principal,
