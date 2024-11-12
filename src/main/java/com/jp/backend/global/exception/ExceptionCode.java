@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ExceptionCode {
+	NOT_IMPLEMENTED(501, "요청한 기능이 아직 구현되어 있지 않습니다."),
 	USER_NONE(404, "USER_NONE"),
 	USER_DUPLICATED(409, "USER_DUPLICATED"),
 	WIDTH_OR_HEIGHT_REQUIRED(400, "너비 또는 높이 중 하나는 필요합니다."),
@@ -24,7 +25,7 @@ public enum ExceptionCode {
 	PLACES_API_REQUEST_FAILED(500, "Google Places API 요청 중 오류가 발생하였습니다."),
 	PLACE_NONE(404, "PLACE_NONE"),
 	PLACE_ID_REQUIRED(400, "PLACE_ID_REQUIRED"),
-	TOO_MANY_REQUEST(405, "요청한 개수가 너무 많습니다. maxResults는 최대 19까지만 지원합니다."),
+	TOO_MANY_REQUEST(405, "요청한 개수가 너무 많습니다"),
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),
