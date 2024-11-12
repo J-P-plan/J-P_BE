@@ -114,11 +114,11 @@ public class LikeServiceImpl implements LikeService {
 				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 			}
 			likePage = likeRepository.getFavoriteListForPlace(placeType, user.getId(), pageable);
-		}
-		// else if (likeType == LikeType.DIARY) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
-		// 	likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
-		// }
-		else {
+		} else if (likeType == LikeType.DIARY) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
+			// likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
+			throw new CustomLogicException(ExceptionCode.NOT_IMPLEMENTED);
+			// TODO 여행기 구현 완료 후 수정
+		} else {
 			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
 

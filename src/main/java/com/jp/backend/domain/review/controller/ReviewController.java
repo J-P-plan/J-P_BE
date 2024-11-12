@@ -36,7 +36,8 @@ public class ReviewController {
 	private final ReviewService reviewService;
 
 	@Operation(summary = "리뷰 작성 API",
-		description = "리뷰와 파일 업로드를 할 수 있습니다.")
+		description = "리뷰와 파일 업로드를 할 수 있습니다.<br>"
+			+ "리뷰에 파일 업로드 시 --> 파일 업로드 api 먼저 실행 후, fileId를 받아 fileIds 필드에 넣어 요청해주세요.")
 	@PostMapping(value = "/review", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReviewResDto> postReview(
 		@Valid @RequestBody ReviewReqDto reqDto,
