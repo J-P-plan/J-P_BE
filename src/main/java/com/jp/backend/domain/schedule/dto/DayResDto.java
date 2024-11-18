@@ -32,9 +32,11 @@ public class DayResDto {
 		this.date = day.getDate();
 		this.dayIndex = day.getDayIndex();
 		this.dayOfWeek = day.getDate().getDayOfWeek();
-		this.dayLocationResDtoList = dayLocationResDtos.stream().sorted(Comparator.comparing(
-			DayLocationResDto::getIndex)).collect(
-			Collectors.toList());
+		if(dayLocationResDtos != null) {
+			this.dayLocationResDtoList = dayLocationResDtos.stream().sorted(Comparator.comparing(
+				DayLocationResDto::getIndex)).collect(
+				Collectors.toList());
+		}
 	}
 
 }
