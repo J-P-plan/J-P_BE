@@ -1,10 +1,4 @@
 spring:
-  h2:
-    console:
-      settings:
-        web-allow-others: true #배포환경에서 h2 적용
-      enabled: true  # 여기까지만 해도 H2 Browser 생성됨
-      path: /h2  # 추가 - Context path 변경
   datasource: # 추가
     url: jdbc:mysql://jandpdatabasemysql.cfgwceqs251j.ap-northeast-2.rds.amazonaws.com:3306/jandpdatabasemysql?serverTimezone=Asia/Seoul&characterEncoding=UTF-8  # 추가 - JDBC URL 변경
     username: admin
