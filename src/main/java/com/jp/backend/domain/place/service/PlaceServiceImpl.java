@@ -78,7 +78,6 @@ public class PlaceServiceImpl implements PlaceService {
 				.rating(rating)
 				.build());
 		}
-		// TODO photo 안넣어놔서 현재는 response에 photoUrl이 null로 나오는데 --> 이후에 photo 넣어놓고 값 잘 들어가나 확인
 
 		Page<PlaceCompactResDto> placeCompactPage = new PageImpl<>(placeCompactList, pageable,
 			placePage.getTotalElements());
