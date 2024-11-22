@@ -9,9 +9,9 @@ public interface GooglePlaceService {
 	GooglePlaceSearchResDto searchNearbyPlaces(double lat, double lng, Long radius, Long maxResults,
 		String nextPageToken);
 
-	GooglePlaceDetailsResDto getPlaceDetails(String placeId);
+	GooglePlaceDetailsResDto getPlaceDetailsFromGoogle(String placeId);
 
-	GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields);
+	GooglePlaceDetailsResDto getPlaceDetailsFromGoogle(String placeId, String fields);
 
 	boolean verifyPlaceId(String placeId);
 }

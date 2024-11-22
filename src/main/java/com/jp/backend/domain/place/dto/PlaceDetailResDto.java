@@ -68,23 +68,28 @@ public class PlaceDetailResDto {
 	public PlaceDetailResDto(Place place, String placeId, GooglePlaceDetailsResDto detailsByGoogle,
 		List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {
 		this.placeId = placeId;
-		if (detailsByGoogle != null) {
-			this.name = detailsByGoogle.getName();
+		if (detailsByGoogle != null) { // 무조건 google에서 뽑아오는 정보
 			this.formattedAddress = detailsByGoogle.getFullAddress();
 			this.location = Location.builder().lat(detailsByGoogle.getLocation().getLat())
-				.lng(detailsByGoogle.getLocation().getLng()).build();
-		} else { // 혹시 detailsByGoogle가 null일 경우 --> 일단 기본값 null로 설정해서 반환
-			this.name = null;
-			this.formattedAddress = null;
-			this.location = null;
+				.lng(detailsByGoogle.getLocation().getLng()).build(); // 혹시 db에 있는 게 틀릴 수도 있으니까 google에서 가져온 정보로 보내기
 		}
-		if (place != null) {
+
+		if (place != null) { // db에 해당 장소가 있으면
+			this.name = place.getName();
 			this.placeType = place.getPlaceType();
 			this.description = place.getDescription();
 			this.tags = Arrays.asList("여름여행", "바닷가", "태그예시", "여행가고싶다"); //TODO PLACE에서 가져오는걸로 수정
 			this.id = place.getId();
 			this.themeType = place.getThemeType();
+		} else { // db에 해당 장소가 없으면
+			this.name = detailsByGoogle.getName();
+			this.placeType = PlaceType.TRAVEL_PLACE; // 무조건 Travel_Place로 구분
+			this.description = null;
+			this.tags = null;
+			this.id = null;
+			this.themeType = null;
 		}
+
 		this.photoUrls = photoUrls;
 		this.likeCount = likeCount;
 		this.userId = userId;

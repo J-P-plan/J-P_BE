@@ -98,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
+		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
 		return ReviewResDto.builder().review(updatingReview).likeCnt(likeCnt).build();
 	}
 
@@ -108,7 +108,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
 		//todo null을 넣는게 조금 구런데 리팩토링 필요
-		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, reviewId.toString(), null);
+		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, reviewId.toString());
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
 		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(reviewId);
@@ -136,7 +136,7 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
+					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
@@ -177,7 +177,7 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString(), null);
+					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}

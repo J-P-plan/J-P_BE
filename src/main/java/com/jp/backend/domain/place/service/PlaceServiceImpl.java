@@ -68,7 +68,8 @@ public class PlaceServiceImpl implements PlaceService {
 
 		for (Place place : placePage.getContent()) {
 			// google에서 별점 가져와서 넣어주기
-			Double rating = Optional.ofNullable(googlePlaceService.getPlaceDetails(place.getPlaceId(), "rating"))
+			Double rating = Optional.ofNullable(
+					googlePlaceService.getPlaceDetailsFromGoogle(place.getPlaceId(), "rating"))
 				.map(GooglePlaceDetailsResDto::getRating)
 				.orElse(0.0);
 
@@ -90,17 +91,16 @@ public class PlaceServiceImpl implements PlaceService {
 		return new PageResDto<>(pageInfo, placeCompactPage.getContent());
 	}
 
-	// TODO 리팩토링 - 관리자 페이지에서 상세페이지 직접 써서 저장 및 수정하는 것도 만들기
-
 	// 여행지/도시/테마 상세페이지
 	// user 정보가 안들어오면 --> 해당 장소의 상세 정보들
 	// user 정보가 들어오면 --> 해당 유저가 좋아요 했는지도 함께 보여줌
 	@Override
-	public PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption) {
+	public PlaceDetailResDto getPlaceDetails(String placeId, Optional<String> emailOption) {
 		User user = emailOption.flatMap(userRepository::findByEmail)
 			.orElse(null);
-		GooglePlaceDetailsResDto detailsByGoogle = googlePlaceService.getPlaceDetails(placeId);
-		Place place = verifyPlace(placeId);
+
+		Place place = verifyPlaceOptional(placeId);
+		GooglePlaceDetailsResDto detailsByGoogle = googlePlaceService.getPlaceDetailsFromGoogle(placeId);
 
 		// 사진 url 가져오기
 		List<String> photoUrls = new ArrayList<>();
@@ -110,11 +110,11 @@ public class PlaceServiceImpl implements PlaceService {
 				files.forEach(file -> photoUrls.add(file.getUrl()));
 			}
 		}
-		if (detailsByGoogle != null && detailsByGoogle.getPhotoUrls() != null) { // 구글에서 사진 가져오기
+		if (detailsByGoogle.getPhotoUrls() != null) { // + 구글에서 사진 가져와서 추가해줌
 			photoUrls.addAll(detailsByGoogle.getPhotoUrls());
 		}
 
-		// 태그 가져오기 // TODO 여기 태그?
+		// TODO 태그 구현 이후 리팩토링
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
 		// 유저 Id랑 좋아요 여부 가져오기
@@ -122,12 +122,10 @@ public class PlaceServiceImpl implements PlaceService {
 		Long userId = null;
 		if (user != null) { // 로그인 했으면
 			userId = user.getId();
-			isLiked =
-				likeRepository.countLike(PLACE, placeId, user.getId()) > 0;
+			isLiked = likeRepository.findLike(PLACE, placeId, user.getId()).isPresent();
 		}
-		Long likeCount = likeRepository.countLike(PLACE, placeId, null);
-		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수랑 이거 합해서 보여줄까 고민
-		// Ex. db에 저장되어있는 애면 --> likeCount + googleService detail에서 userTotal
+		Long likeCount = likeRepository.countLike(PLACE, placeId);
+		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수(userTotal어쩌구)랑 이거 합해서 보여줄까 고민
 
 		return PlaceDetailResDto.builder()
 			.place(place)
