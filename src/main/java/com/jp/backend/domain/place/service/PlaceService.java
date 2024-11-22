@@ -14,7 +14,7 @@ public interface PlaceService {
 		CityType cityType,
 		Integer elementCnt);
 
-	PlaceDetailResDto getPlaceDetailsFromDB(String placeId, Optional<String> emailOption);
+	PlaceDetailResDto getPlaceDetails(String placeId, Optional<String> emailOption);
 
 	Place verifyPlace(String placeId);
 

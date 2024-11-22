@@ -145,13 +145,13 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	}
 
 	@Override
-	public GooglePlaceDetailsResDto getPlaceDetails(String placeId) {
-		return getPlaceDetails(placeId, null);
+	public GooglePlaceDetailsResDto getPlaceDetailsFromGoogle(String placeId) {
+		return getPlaceDetailsFromGoogle(placeId, null);
 	}
 
 	// placeId로 장소 상세 정보 가져오는 메서드
 	@Override
-	public GooglePlaceDetailsResDto getPlaceDetails(String placeId, String fields) {
+	public GooglePlaceDetailsResDto getPlaceDetailsFromGoogle(String placeId, String fields) {
 		UriComponentsBuilder uriBuilder = UriComponentsBuilder
 			.fromUriString(GooglePlaceConfig.DETAILS_URL)
 			.queryParam("placeid", placeId)
@@ -240,7 +240,7 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 	@Override
 	public boolean verifyPlaceId(String placeId) {
 		try {
-			GooglePlaceDetailsResDto response = getPlaceDetails(placeId);
+			GooglePlaceDetailsResDto response = getPlaceDetailsFromGoogle(placeId);
 			return response != null && response.getPlaceId() != null;
 		} catch (Exception e) {
 			return false;
