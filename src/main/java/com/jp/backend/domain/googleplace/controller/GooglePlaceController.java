@@ -38,8 +38,7 @@ public class GooglePlaceController {
 	}
 
 	// 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
-	// TODO 일정 생성 기능 완료 되면 --> scheduleId만 받고 해당 스케줄 안의 도시의 위도 경도 list 가져와서 요청해서
-	//  그 세 도시의 추천 장소들을 모두 합해, 리뷰 개수 순으로 추천해주기
+	// TODO scheduleId 받아서 해당 스케줄 도시의 위도 경도 가져와서 주변 장소 보여줄까? / 근데 위도 경도 있어서 필요 없을 거 같기도 하고
 	@GetMapping("/nearby-search/page")
 	@Operation(summary = "반경을 선택하여, 해당 장소의 반경 내에 있는 인기 여행지들을 추천합니다.",
 		description =
@@ -67,7 +66,7 @@ public class GooglePlaceController {
 	@GetMapping("/details")
 	@Operation(summary = "해당 장소의 상세 정보를 가져옵니다.")
 	public ResponseEntity<GooglePlaceDetailsResDto> getPlaceDetails(@RequestParam("placeId") String placeId) {
-		GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(placeId);
+		GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetailsFromGoogle(placeId);
 		return new ResponseEntity<>(placeDetails, HttpStatus.OK);
 	}
 

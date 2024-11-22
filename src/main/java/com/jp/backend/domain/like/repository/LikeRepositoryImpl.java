@@ -34,7 +34,7 @@ public class LikeRepositoryImpl implements LikeRepository {
 	private static final QFile qFile = QFile.file;
 	private static final QPlaceFile qPlaceFile = QPlaceFile.placeFile;
 
-	// Like 객체 찾기
+	// Like 객체 찾기 -> 좋아요 여부 판단 가능
 	@Override
 	public Optional<Like> findLike(LikeType likeType, String targetId, Long userId) {
 		return Optional.ofNullable(jpaQueryFactory
@@ -45,16 +45,11 @@ public class LikeRepositoryImpl implements LikeRepository {
 			.fetchFirst());
 	}
 
-	// userId null로 하면 --> 해당 타겟의 좋아요 개수 반환
-	// userId 넣으면 --> 해당 유저의 좋아요 개수 반환 -> 1 이상이면 좋아요 여부 true
+	// target의 좋아요 개수 반환
 	@Override
-	public long countLike(LikeType likeType, String targetId, Long userId) {
+	public long countLike(LikeType likeType, String targetId) {
 		BooleanExpression condition = qLike.likeType.eq(likeType)
 			.and(qLike.targetId.eq(targetId));
-
-		if (userId != null) {
-			condition = condition.and(qLike.user.id.eq(userId));
-		}
 
 		return jpaQueryFactory
 			.selectFrom(qLike)

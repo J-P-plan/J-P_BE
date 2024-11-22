@@ -67,7 +67,7 @@ public class LikeServiceImpl implements LikeService {
 		if (likeType == LikeType.PLACE) {
 			Place findPlace = placeRepository.findByPlaceId(targetId).orElse(null);
 			if (findPlace == null) { // place가 없으면 place 정보 저장
-				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetails(targetId);
+				GooglePlaceDetailsResDto placeDetails = googlePlaceService.getPlaceDetailsFromGoogle(targetId);
 
 				Place place = new Place();
 				place.setPlaceId(targetId);
