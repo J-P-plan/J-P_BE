@@ -25,6 +25,7 @@ import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.dto.ScheduleResDto;
 import com.jp.backend.domain.schedule.enums.ScheduleSort;
 import com.jp.backend.domain.schedule.service.ScheduleService;
+import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.dto.PageResDto;
 import com.jp.backend.global.websocket.WebSocketHandler;
 
@@ -57,10 +58,11 @@ public class ScheduleController {
 	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다. 시간은 \"HH:mm\"형식으로 보내주세요. index는 보내지 않으셔도 자동 추가됩니다.")
 	public ResponseEntity<Boolean> addDayLocation(
 		@PathVariable(value = "dayId") Long dayId,
+		@RequestParam(value = "mbti") User.Mbti mbti,
 		@RequestBody List<DayLocationReqDto> postDto,
 		@AuthenticationPrincipal UserPrincipal principal
 	) {
-		Boolean result = scheduleService.addDayLocation(dayId, postDto);
+		Boolean result = scheduleService.addDayLocation(dayId, postDto, mbti);
 		//webSocketHandler.broadcast("유저가 장소를 추가했습니다. username : " + principal.getUsername());
 		return ResponseEntity.ok(result);
 	}

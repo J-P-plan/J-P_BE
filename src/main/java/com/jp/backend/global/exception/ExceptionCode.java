@@ -51,7 +51,8 @@ public enum ExceptionCode {
 	//SCHEDULE
 	DAY_NONE(404, "DAY_NONE"),
 	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
-	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE");
+	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
+	TOO_MANY_DAY_LOCATION(400, "최대 112개까지만 생성할 수 있습니다.");
 
 	@Getter
 	private final int code;

@@ -31,7 +31,7 @@ public class DayLocation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	//순서
-	private Integer locationIndex;
+	//private Integer locationIndex;
 
 	private LocalTime time; //새로 생성시 이전 시간과 똑같게
 
@@ -64,7 +64,7 @@ public class DayLocation {
 
 	public void moveDay(Day day, Integer locationIndex, LocalTime time) {
 		this.day = day;
-		this.locationIndex = locationIndex;
+	//	this.locationIndex = locationIndex;
 		this.time = time;
 	}
 

@@ -1,10 +1,12 @@
 package com.jp.backend.domain.schedule.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -69,7 +71,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 		Place city = placeRepository.findByPlaceId(postDto.getPlaceId()).orElseThrow(() -> new CustomLogicException(
 			ExceptionCode.PLACE_NONE));
 		String title = city.getName();
-		Schedule schedule = postDto.toEntity(city, title);
+		User.Mbti mbti = (user.getMbti() != null) ? user.getMbti() : User.Mbti.J;
+
+		Schedule schedule = postDto.toEntity(city, title , mbti);
 		ScheduleUser scheduleUser = com.jp.backend.domain.schedule.entity.ScheduleUser.builder()
 			.user(user)
 			.isCreater(true)
@@ -98,14 +102,33 @@ public class ScheduleServiceImpl implements ScheduleService {
 	// 장소 추가 메서드
 	@Override
 	@Transactional
-	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
+	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList, User.Mbti mbti) {
 		Day day = dayRepository.findById(dayId).orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
-		AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
+		//112개 이상 생성 불가
+		if(dayLocationRepository.countByDay(day)>112) {
+			throw new CustomLogicException(ExceptionCode.TOO_MANY_DAY_LOCATION);
+		}
+		List<DayLocation> dayLocationList = new ArrayList<>();
 
-		// 인덱스 자동 증가하여 DayLocation 리스트 생성 및 저장
-		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> dayLocationReqDto.toEntity(index.getAndIncrement(), day)
-		).toList();
+		if(mbti.equals(User.Mbti.P)) {
+			AtomicReference<LocalTime> lastTime = new AtomicReference<>();
+			dayLocationRepository.findTopByDayOrderByTimeDesc(day)
+				.ifPresentOrElse(
+					dayLocation -> lastTime.set(dayLocation.getTime()), // 값이 있으면 time 설정
+					() -> lastTime.set(LocalTime.of(8, 50)) // 값이 없으면 기본값 설정
+				);
+			// 10분씩 추가하며 생성
+			dayLocationList = dayLocationReqDtoList.stream().map(
+				dayLocationReqDto -> {
+					LocalTime currentTime = lastTime.updateAndGet(time -> time.plusMinutes(10));
+					return dayLocationReqDto.toEntity(currentTime, day);
+				}
+			).toList();
+		} else {
+			dayLocationList = dayLocationReqDtoList.stream().map(
+				dayLocationReqDto ->dayLocationReqDto.toEntity(dayLocationReqDto.getTime(), day)).toList();
+		}
+
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
 
@@ -122,8 +145,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 		Day day = dayLocation.getDay();
 		List<DayLocation> dayLocations = day.getDayLocationList();
 		dayLocations.remove(dayLocation);
-
-		reorderDayLocations(dayLocations);
 
 		dayLocationRepository.deleteById(dayLocationId);
 
@@ -224,7 +245,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		List<DayLocationResDto> dayLocations = dayLocationRepository.findAllByDay(day).stream()
 			.map(dayLocation -> DayLocationResDto.builder().entity(dayLocation).build())
-			.sorted(Comparator.comparing(DayLocationResDto::getIndex)).toList();
+			.sorted(Comparator.comparing(DayLocationResDto::getTime)).toList();
 
 		return DayResDto.builder().day(day).dayLocationResDtos(dayLocations).build();
 	}
@@ -289,7 +310,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		dayLocationRepository.deleteAllByDay(day);
 
 		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> dayLocationReqDto.toEntity(dayLocationReqDto.getIndex(), day)
+			dayLocationReqDto -> dayLocationReqDto.toEntity(dayLocationReqDto.getTime(), day)
 		).toList();
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
@@ -310,8 +331,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 		List<DayLocation> currentDayLocations = currentDay.getDayLocationList();
 		currentDayLocations.remove(dayLocation);
 
-		reorderDayLocations(currentDayLocations);
-
 		Integer newLocationIndex = newDay.getDayLocationList().size() + 1;
 		dayLocation.moveDay(newDay, newLocationIndex, dayMoveDto.getTime());
 
@@ -324,9 +343,4 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return true;
 	}
 
-	private void reorderDayLocations(List<DayLocation> dayLocations) {
-		dayLocations.sort(Comparator.comparingInt(DayLocation::getLocationIndex));
-		AtomicInteger indexCounter = new AtomicInteger(1);
-		dayLocations.forEach(location -> location.setLocationIndex(indexCounter.getAndIncrement()));
-	}
 }

@@ -10,12 +10,13 @@ import com.jp.backend.domain.schedule.dto.PlanUpdateDto;
 import com.jp.backend.domain.schedule.dto.ScheduleReqDto;
 import com.jp.backend.domain.schedule.dto.ScheduleResDto;
 import com.jp.backend.domain.schedule.enums.ScheduleSort;
+import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.dto.PageResDto;
 
 public interface ScheduleService {
 	Long createSchedule(ScheduleReqDto postDto, String username);
 
-	Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
+	Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList, User.Mbti mbti);
 
 	Boolean deleteDayLocation(Long daylocatinoId);
 

@@ -34,7 +34,7 @@ public class DayResDto {
 		this.dayOfWeek = day.getDate().getDayOfWeek();
 		if(dayLocationResDtos != null) {
 			this.dayLocationResDtoList = dayLocationResDtos.stream().sorted(Comparator.comparing(
-				DayLocationResDto::getIndex)).collect(
+				DayLocationResDto::getTime)).collect(
 				Collectors.toList());
 		}
 	}
