@@ -133,11 +133,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 	// 일정 삭제 메서드
 	@Override
 	@Transactional
-	public Boolean deleteSchedule(Long scheduleId) {
+	public Boolean deleteSchedule(Long scheduleId, String username) {
 		Schedule schedule = scheduleRepository.findById(scheduleId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
-		scheduleRepository.delete(schedule);
+		User user = userService.verifyUser(username);
+
+		ScheduleUser scheduleUSer = scheduleUserRepository.findByScheduleAndUser(schedule, user)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_USER_NONE));
+		scheduleUserRepository.delete(scheduleUSer);
 
 		return true;
 	}
