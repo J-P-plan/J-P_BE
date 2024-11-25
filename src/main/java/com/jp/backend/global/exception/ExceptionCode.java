@@ -51,7 +51,10 @@ public enum ExceptionCode {
 	//SCHEDULE
 	DAY_NONE(404, "DAY_NONE"),
 	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
-	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE");
+	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
+
+	// Diary
+	DIARY_NONE(404, "DIARY_NONE");
 
 	@Getter
 	private final int code;
