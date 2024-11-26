@@ -1,5 +1,6 @@
 package com.jp.backend.global.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,8 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ErrorResponse {
+	@Schema(description = "타임스탬프")
+	private final LocalDateTime timestamp = LocalDateTime.now(); // 자동으로 현재 시간 설정
 	@Schema(description = "상태 코드")
 	private int status;
 	@Schema(description = "메세지")
