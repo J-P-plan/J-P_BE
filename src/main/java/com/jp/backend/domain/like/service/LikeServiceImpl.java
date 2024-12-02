@@ -46,6 +46,7 @@ public class LikeServiceImpl implements LikeService {
 	// 좋아요/찜 누르기 - 리뷰/여행기/장소
 	@Override
 	public boolean manageLike(LikeType likeType, String targetId, String email) {
+		// TODO 여행기 찜 / 좋아요 어떻게 할지 고민
 		User user = userService.verifyUser(email);
 
 		verifyTargetId(likeType, targetId); // targetId 존재 여부 확인
@@ -99,6 +100,7 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	// 마이페이지 찜목록 - 리뷰/여행기/장소
+	// TODO -> 여행기 찜 / 좋아요 따로 있음 --> 찜 애들만 불러오기
 	@Override
 	public PageResDto<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, String email, Integer page,
 		Integer elementCnt) {

@@ -25,7 +25,7 @@ import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
 import com.jp.backend.domain.review.dto.ReviewUpdateDto;
 import com.jp.backend.domain.review.entity.Review;
-import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.domain.user.service.UserService;
@@ -114,7 +114,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public PageResDto<ReviewCompactResDto> findReviewPage(
 		Integer page,
 		String placeId,
-		ReviewSort sort,
+		SortType sort,
 		Integer elementCnt) {
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 

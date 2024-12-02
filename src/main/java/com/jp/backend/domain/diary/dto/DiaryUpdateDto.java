@@ -26,10 +26,14 @@ public class DiaryUpdateDto {
 	@Schema(description = "새로 추가할 파일아이디 리스트")
 	private List<String> newFileIds;
 
+	@Schema(description = "공개 여부")
+	private Boolean isPublic;
+
 	public Diary toEntity() {
 		return Diary.builder()
 			.subject(subject)
 			.content(content)
+			.isPublic(isPublic)
 			.build();
 	}
 }

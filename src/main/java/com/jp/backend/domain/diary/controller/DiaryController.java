@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jp.backend.auth.entity.UserPrincipal;
+import com.jp.backend.domain.diary.dto.DiaryCompactResDto;
 import com.jp.backend.domain.diary.dto.DiaryReqDto;
 import com.jp.backend.domain.diary.dto.DiaryResDto;
 import com.jp.backend.domain.diary.dto.DiaryUpdateDto;
 import com.jp.backend.domain.diary.service.DiaryService;
-import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.global.dto.PageResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,12 +38,13 @@ public class DiaryController {
 	@Operation(summary = "여행기 작성 API",
 		description = "여행기와 파일 업로드를 할 수 있습니다.<br>"
 			+ "여행기에 파일 업로드 시 --> 파일 업로드 api 먼저 실행 후, fileId를 받아 fileIds 필드에 넣어 요청해주세요.")
-	@PostMapping
+	@PostMapping("/{scheduleId}/diary")
 	public ResponseEntity<DiaryResDto> postDiary(
+		@PathVariable(value = "scheduleId") Long scheduleId,
 		@Valid @RequestBody DiaryReqDto reqDto,
 		@AuthenticationPrincipal UserPrincipal principal) {
 
-		return ResponseEntity.ok(diaryService.createDiary(reqDto, principal.getUsername()));
+		return ResponseEntity.ok(diaryService.createDiary(scheduleId, reqDto, principal.getUsername()));
 	}
 
 	@Operation(summary = "여행기 수정 API",
@@ -82,9 +84,9 @@ public class DiaryController {
 				+ "sort : 최신순/인기순 <br>"
 				+ "elementCnt : 10 (default)")
 	@GetMapping("/diaries")
-	public ResponseEntity<PageResDto<DiaryResDto>> getDiaryPage(
+	public ResponseEntity<PageResDto<DiaryCompactResDto>> getDiaryPage(
 		@RequestParam(value = "page") Integer page,
-		@RequestParam(value = "sort") ReviewSort sort,
+		@RequestParam(value = "sort") SortType sort,
 		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt) {
 
 		return ResponseEntity.ok(diaryService.findDiaryPage(page, sort, elementCnt));
@@ -93,14 +95,14 @@ public class DiaryController {
 
 	@Operation(summary = "내 여행기 조회 API - Pagination",
 		description =
-			"여행기를 elementCnt 개수 만큼 조회한다."
+			"내 여행기를 elementCnt 개수 만큼 조회한다."
 				+ "<br> <br> Data 명세 <br>"
 				+ "page : 조회할 페이지 <br>"
 				+ "placeId : 장소 아이디 <br>"
 				+ "sort : 최신순/인기순 <br>"
 				+ "elementCnt : 10 (default)")
 	@GetMapping("/my/diaries")
-	public ResponseEntity getMyDiaryPage(
+	public ResponseEntity<PageResDto<DiaryCompactResDto>> getMyDiaryPage(
 		@AuthenticationPrincipal UserPrincipal principal,
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt) {
