@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jp.backend.domain.file.dto.FileResDto;
+import com.jp.backend.domain.file.entity.DiaryFile;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.FileReference;
 import com.jp.backend.domain.file.entity.PlaceFile;
 import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.enums.FileCategory;
 import com.jp.backend.domain.file.enums.UploadCategory;
+import com.jp.backend.domain.file.repository.JpaDiaryFileRepository;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
@@ -41,6 +43,7 @@ public class FileServiceImpl implements FileService {
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 	private final JpaReviewFileRepository reviewFileRepository;
+	private final JpaDiaryFileRepository diaryFileRepository;
 	private final UserService userService;
 	private final PlaceService placeService;
 
@@ -237,7 +240,7 @@ public class FileServiceImpl implements FileService {
 		// category에 따라 삭제 로직 분기
 		switch (category) {
 			case REVIEW -> deleteReviewFiles(targetId, fileIdSet);
-			// case DIARY -> deleteDiaryFiles(targetId, fileIdSet);
+			case DIARY -> deleteDiaryFiles(targetId, fileIdSet);
 			case PLACE -> deletePlaceFiles(targetId, fileIdSet);
 			default -> throw new CustomLogicException(ExceptionCode.INVALID_ELEMENT);
 		}
@@ -249,11 +252,11 @@ public class FileServiceImpl implements FileService {
 		deleteFilesByCategory(reviewFiles, fileIds, reviewFileRepository);
 	}
 
-	// TODO 여행기 파일 삭제
-	// private void deleteDiaryFiles(String diaryId, Set<UUID> fileIds) {
-	// 	List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryId(Long.parseLong(diaryId));
-	// 	deleteFilesByCategory(diaryFiles, fileIds, diaryFileRepository);
-	// }
+	// 여행기 파일 삭제
+	private void deleteDiaryFiles(String diaryId, Set<UUID> fileIds) {
+		List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(Long.parseLong(diaryId));
+		deleteFilesByCategory(diaryFiles, fileIds, diaryFileRepository);
+	}
 
 	// 장소 파일 삭제
 	private void deletePlaceFiles(String placeId, Set<UUID> fileIds) {

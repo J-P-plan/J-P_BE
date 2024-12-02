@@ -24,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "diary_file")
-public class DiaryFile {
+public class DiaryFile implements FileReference {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
