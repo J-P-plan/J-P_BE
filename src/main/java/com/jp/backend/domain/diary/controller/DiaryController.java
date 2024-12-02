@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping()
 @RequiredArgsConstructor
-@Tag(name = "17. [여행기]")
+@Tag(name = "45. [여행기]")
 public class DiaryController {
 	private final DiaryService diaryService;
 
