@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiaryResDto {
-	@Schema(description = "아이디")
+	@Schema(description = "여행기 아이디")
 	private Long id;
 
 	@Schema(description = "제목")
@@ -48,10 +48,10 @@ public class DiaryResDto {
 	private Integer viewCnt;
 
 	@Schema(description = "댓글 개수")
-	private Long commentCnt; // TODO null일 때 0으로 나오게 처리
+	private Long commentCnt;
 
 	@Schema(description = "댓글 리스트")
-	private List<CommentResDto> commentResDtoList; // TODO null일 때 빈 리스트 나오게 처리
+	private List<CommentResDto> commentResDtoList;
 
 	@Schema(description = "해당 리뷰의 파일 정보")
 	private List<FileResDto> fileInfos;
@@ -59,7 +59,7 @@ public class DiaryResDto {
 	@Schema(description = "공개 여부")
 	private Boolean isPublic;
 
-	// TODO 태그 필요
+	// TODO 태그
 
 	@Builder
 	public DiaryResDto(Diary diary, Schedule schedule, Long likeCnt, Long commentCnt, List<Comment> commentList,
@@ -70,14 +70,12 @@ public class DiaryResDto {
 		this.scheduleStartDate = schedule.getStartDate();
 		this.scheduleEndDate = schedule.getEndDate();
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();
-		// this.viewCnt = diary.getViewCnt(); // TODO 이거 다시 살펴보기
 		this.likeCnt = likeCnt;
-		this.viewCnt = diary.getViewCnt();
-		this.commentCnt = commentCnt;
-		if (commentList != null)
-			this.commentResDtoList = commentList.stream()
-				.map(comment -> CommentResDto.builder().comment(comment).build())
-				.toList();
+		this.viewCnt = (diary.getViewCnt() != null) ? diary.getViewCnt() : 0;
+		this.commentCnt = (commentCnt != null) ? commentCnt : 0L;
+		this.commentResDtoList = (commentList != null) ? commentList.stream()
+			.map(comment -> CommentResDto.builder().comment(comment).build())
+			.toList() : new ArrayList<>();
 		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 		this.isPublic = diary.getIsPublic();
 	}

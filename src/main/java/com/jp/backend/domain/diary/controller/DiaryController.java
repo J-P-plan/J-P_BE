@@ -78,10 +78,10 @@ public class DiaryController {
 
 	@Operation(summary = "전체 여행기 조회 API - Pagination",
 		description =
-			"여행기를 elementCnt 개수 만큼 조회한다."
+			"공개된 여행기를 elementCnt 개수 만큼 조회한다."
 				+ "<br> <br> Data 명세 <br>"
 				+ "page : 조회할 페이지 <br>"
-				+ "sort : 최신순/인기순 <br>"
+				+ "sort : HOT 인기순 / NEW 최신순 (STAR_HIGH와 SATR_LOW는 아직 사용 불가 -> TYPE_NONE 에러) <br>"
 				+ "elementCnt : 10 (default)")
 	@GetMapping("/diaries")
 	public ResponseEntity<PageResDto<DiaryCompactResDto>> getDiaryPage(
@@ -98,8 +98,6 @@ public class DiaryController {
 			"내 여행기를 elementCnt 개수 만큼 조회한다."
 				+ "<br> <br> Data 명세 <br>"
 				+ "page : 조회할 페이지 <br>"
-				+ "placeId : 장소 아이디 <br>"
-				+ "sort : 최신순/인기순 <br>"
 				+ "elementCnt : 10 (default)")
 	@GetMapping("/my/diaries")
 	public ResponseEntity<PageResDto<DiaryCompactResDto>> getMyDiaryPage(

@@ -143,6 +143,10 @@ public class DiaryServiceImpl implements DiaryService {
 
 	@Override
 	public PageResDto<DiaryCompactResDto> findDiaryPage(Integer page, SortType sort, Integer elementCnt) {
+		if (sort == SortType.STAR_HIGH || sort == SortType.STAR_LOW) {
+			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
+		}
+
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
 		Page<DiaryCompactResDto> diaryPage =

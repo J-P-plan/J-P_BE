@@ -29,7 +29,7 @@ public class DiaryReqDto {
 	@Schema(description = "공개 여부")
 	private Boolean isPublic;
 
-	// TODO 태그?
+	// TODO 태그
 
 	public Diary toEntity(User user, Schedule schedule) {
 		return Diary.builder()

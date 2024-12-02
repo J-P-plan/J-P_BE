@@ -61,6 +61,7 @@ public class DiaryRepositoryImpl implements DiaryRepository {
 	public OrderSpecifier<?> orderBySort(SortType sort) {
 		return switch (sort) {
 			case HOT -> qDiary.viewCnt.desc();
+			// case STAR_HIGH -> // TODO 이거 여행기 찜많은 순 할까
 			// TODO 좋아요 순? Hot이 이미 있어서 상관 없나
 			default -> qDiary.createdAt.desc();
 		};
