@@ -79,9 +79,10 @@ public class ScheduleController {
 	@DeleteMapping("/schedule/{scheduleId}")
 	@Operation(summary = "일정 삭제 API", description = "일정을 삭제합니다.")
 	public ResponseEntity<Boolean> deleteSchedule(
-		@PathVariable(value = "scheduleId") Long scheduleId
+		@PathVariable(value = "scheduleId") Long scheduleId,
+		@AuthenticationPrincipal UserPrincipal principal
 	) {
-		Boolean result = scheduleService.deleteSchedule(scheduleId);
+		Boolean result = scheduleService.deleteSchedule(scheduleId, principal.getUsername());
 		//webSocketHandler.broadcast("유저가 장소를 삭제했습니다. username : " + principal.getUsername());
 		return ResponseEntity.ok(result);
 	}
