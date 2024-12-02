@@ -40,7 +40,7 @@ public class Diary extends Auditable {
 
 	private Boolean isPublic;
 
-	private Integer viewCnt; // TODO 이걸로 인기순 판별하는 거였나?
+	private Integer viewCnt;
 
 	public Diary addViewCnt() {
 		if (this.viewCnt == null) {
