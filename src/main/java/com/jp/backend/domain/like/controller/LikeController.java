@@ -35,11 +35,12 @@ public class LikeController {
 	// 좋아요/찜 누르기 및 취소
 	@PostMapping("/{likeType}/{targetId}")
 	@Operation(summary = "좋아요/찜을 누르고 취소합니다.",
-		description = "likeType - PLACE/REVIEW/DIARY<br>" +
+		description = "likeType - PLACE/REVIEW/DIARY_LIKE/DIARY_BOOKMARK<br>" +
 			"targetId - PlaceId/reviewId/DiaryId<br>" + "<br>" +
 			"<strong>주의사항</strong> :<br>" +
 			"- 한 번 누르면 좋아요를 누르는 것이고, 한 번 더 누르면 좋아요를 취소할 수 있습니다.<br>" +
-			"( 응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소 )<br>")
+			"( 응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소 )<br>" +
+			"- DIARY_LIKE : 여행기 좋아요 / DIARY_BOOKMARK : 여행기 찜")
 	public ResponseEntity<Boolean> manageLike(
 		@PathVariable LikeType likeType,
 		@PathVariable String targetId,
@@ -58,7 +59,7 @@ public class LikeController {
 	@GetMapping("/page/my")
 	@Operation(summary = "사용자가 누른 찜 목록을 조회합니다.",
 		description = "<strong>Data 명세</strong> <br>" +
-			"likeType: PLACE / TRIP_JOURNAL<br>" +
+			"likeType: PLACE / DIARY_BOOKMARK <br>" +
 			"placeType: CITY (도시) / TRAVEL_PLACE (여행지)<br>" +
 			"page: 조회할 페이지<br>" +
 			"elementCnt: 10 (default)<br><br>" +
@@ -68,8 +69,8 @@ public class LikeController {
 			"<strong>항목별 상세 설명</strong> :<br>" +
 			"- 여행지 ➜ likeType - place / placeType - travle_place<br>" +
 			"- 도시 ➜ likeType - place / placeType - city<br>" +
-			"- 여행기 ➜ likeType : diary / placeType : x ( 현재는 여행기 관련 기능이 구현되어있지 않아 NOT_IMPLEMENTED 에러가 나타날 예정입니다. )<br>" +
-			"- 리뷰 ➜ 현재 마이페이지에서 리뷰 찜목록 보기는 없으므로 likeType에는 REVIEW가 뜨지만 사용 X<br>")
+			"- 여행기 ➜ likeType : DIARY_BOOKMARK / placeType : x <br>" +
+			"- Swagger에 뜨지만 사용 불가한 Type  ➜ DIARY_LIKE(여행기 좋아요 기능이므로 사용 X), REVIEW(마이페이지에 존재 X)")
 	public ResponseEntity<PageResDto<LikeResDto>> getFavoriteList(
 		@AuthenticationPrincipal UserPrincipal principal,
 		@RequestParam(required = false) LikeType likeType,

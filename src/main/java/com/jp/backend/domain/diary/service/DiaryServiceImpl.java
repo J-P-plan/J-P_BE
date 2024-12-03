@@ -64,6 +64,12 @@ public class DiaryServiceImpl implements DiaryService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 
+		// 그 일정에 여행기 이미 썼으면 에러
+		boolean diaryExists = diaryRepository.existsBySchedule(schedule);
+		if (diaryExists) {
+			throw new CustomLogicException(ExceptionCode.ALREADY_POSTED);
+		}
+
 		Diary savedDiary = diaryRepository.save(reqDto.toEntity(user, schedule));
 
 		List<FileResDto> fileInfos = addToDiaryFile(reqDto.getFileIds(), savedDiary);
@@ -94,7 +100,7 @@ public class DiaryServiceImpl implements DiaryService {
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
 		Diary updatingDiary = beanUtils.copyNonNullProperties(diary, foundDiary);
-		Long likeCnt = likeRepository.countLike(LikeType.DIARY, diary.getId().toString());
+		Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diary.getId().toString());
 
 		List<FileResDto> fileInfos = addToDiaryFile(updateDto.getNewFileIds(), updatingDiary);
 
@@ -126,7 +132,7 @@ public class DiaryServiceImpl implements DiaryService {
 		Schedule schedule = scheduleRepository.findById(diary.getSchedule().getId())
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
-		Long likeCnt = likeRepository.countLike(LikeType.DIARY, diaryId.toString());
+		Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diaryId.toString());
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.DIARY, diaryId);
 
 		List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(diaryId);
@@ -152,7 +158,7 @@ public class DiaryServiceImpl implements DiaryService {
 		Page<DiaryCompactResDto> diaryPage =
 			diaryRepository.findDiaryPage(sort, pageable)
 				.map(diary -> {
-					Long likeCnt = likeRepository.countLike(LikeType.DIARY, diary.getId().toString());
+					Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diary.getId().toString());
 					Long commentCnt = commentRepository.countByCommentTypeAndTargetId(CommentType.DIARY, diary.getId());
 
 					Schedule schedule = scheduleRepository.findById(diary.getSchedule().getId())

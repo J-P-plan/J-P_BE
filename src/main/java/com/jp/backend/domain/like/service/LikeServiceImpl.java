@@ -48,7 +48,6 @@ public class LikeServiceImpl implements LikeService {
 	// 좋아요/찜 누르기 - 리뷰/여행기/장소
 	@Override
 	public boolean manageLike(LikeType likeType, String targetId, String email) {
-		// TODO 여행기 찜 / 좋아요 어떻게 할지 고민
 		User user = userService.verifyUser(email);
 
 		verifyTargetId(likeType, targetId); // targetId 존재 여부 확인
@@ -101,8 +100,7 @@ public class LikeServiceImpl implements LikeService {
 		return true;
 	}
 
-	// 마이페이지 찜목록 - 리뷰/여행기/장소
-	// TODO -> 여행기 찜 / 좋아요 따로 있음 --> 찜 애들만 불러오기
+	// 마이페이지 찜목록 - 여행기/장소
 	@Override
 	public PageResDto<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, String email, Integer page,
 		Integer elementCnt) {
@@ -118,7 +116,7 @@ public class LikeServiceImpl implements LikeService {
 				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 			}
 			likePage = likeRepository.getFavoriteListForPlace(placeType, user.getId(), pageable);
-		} else if (likeType == LikeType.DIARY) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
+		} else if (likeType == LikeType.DIARY_BOOKMARK) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
 			likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
 		} else {
 			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
@@ -137,7 +135,8 @@ public class LikeServiceImpl implements LikeService {
 		boolean targetExists =
 			switch (likeType) {
 				case REVIEW -> reviewRepository.existsById(Long.valueOf(targetId));
-				case DIARY -> diaryRepository.existsById(Long.valueOf(targetId));
+				case DIARY_LIKE -> diaryRepository.existsById(Long.valueOf(targetId));
+				case DIARY_BOOKMARK -> diaryRepository.existsById(Long.valueOf(targetId));
 				case PLACE -> googlePlaceService.verifyPlaceId(targetId);
 				default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 			};

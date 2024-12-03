@@ -62,6 +62,31 @@ public class LikeResDto {
 	@Schema(description = "좋아요 대상의 작성자 정보")
 	private UserCompactResDto targetUserCompactResDto;
 
+	// 모든 필드를 포함
+	@QueryProjection
+	public LikeResDto(Long id, Long userId, String targetId, LikeType likeType, String targetName, String targetAddress,
+		PlaceType placeType,
+		String targetSubject, LocalDate targetScheduleStartDate, LocalDate targetScheduleEndDate,
+		UserCompactResDto targetUserCompactResDto,
+		String fileUrl, LocalDateTime createdAt) {
+		this.id = id;
+		this.userId = userId;
+		this.targetId = targetId;
+		this.likeType = likeType;
+
+		this.targetName = targetName;
+		this.targetAddress = targetAddress;
+		this.placeType = placeType;
+
+		this.targetSubject = targetSubject;
+		this.targetScheduleStartDate = targetScheduleStartDate;
+		this.targetScheduleEndDate = targetScheduleEndDate;
+		this.targetUserCompactResDto = targetUserCompactResDto;
+
+		this.fileUrl = fileUrl;
+		this.createdAt = createdAt;
+	}
+
 	// place의 경우
 	@QueryProjection
 	public LikeResDto(Long id, Long userId, String targetId, String targetName, String targetAddress,
