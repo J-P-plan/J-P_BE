@@ -54,7 +54,8 @@ public enum ExceptionCode {
 	SCHEDULE_USER_NONE(404, "해당 일정에 유저가 없습니다."),
 
 	// Diary
-	DIARY_NONE(404, "DIARY_NONE");
+	DIARY_NONE(404, "DIARY_NONE"),
+	ALREADY_POSTED(409, "ALREADY_POSTED");
 
 	@Getter
 	private final int code;

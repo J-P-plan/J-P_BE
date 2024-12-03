@@ -62,68 +62,67 @@ public class LikeRepositoryImpl implements LikeRepository {
 			.fetchCount();
 	}
 
+	// TODO 다 파일 id 안나옴
+	// TODO getAll 하면 장소 안나오고 여행기만 나옴
+
+	// 기본 쿼리 생성 메서드
+	private JPAQuery<Tuple> createBaseFavoriteQuery(LikeType likeType, Long userId, Pageable pageable) {
+		return jpaQueryFactory
+			.select(qLike.id, qLike.user.id, qLike.targetId, qLike.likeType, qLike.createdAt)
+			.from(qLike)
+			.where(
+				likeType == null ? qLike.user.id.eq(userId) : qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId)))
+			.orderBy(qLike.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize());
+	}
+
 	// 사용자의 찜목록 페이지 반환
-	// TDOO 여행기 구현 완료 후 수정
 	@Override
 	public Page<LikeResDto> getAllFavoriteList(Long userId, Pageable pageable) {
 		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(null, userId, pageable);
 
-		// 장소의 첫번째 fileUrl 조회
-		JPAQuery<String> placeFileSubQuery = jpaQueryFactory
-			.select(qFile.url)
-			.from(qFile)
-			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
-			.where(qPlaceFile.place.id.eq(qPlace.id))
-			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
-			.limit(1);
-
-		// 여행기 첫번째 fileUrl 조회
-		JPAQuery<String> diaryFileSubQuery = new JPAQuery<String>()
-			.select(qFile.url)
-			.from(qFile)
-			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
-			.where(qDiaryFile.diary.id.eq(qDiary.id))
-			.where(qDiaryFile.fileOrder.eq(0))
-			.limit(1);
-
 		// 메인 쿼리
 		List<LikeResDto> favoriteList = baseQuery
-			.leftJoin(qPlace)
-			.on(qLike.targetId.eq(qPlace.placeId))
+			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId))
+			.leftJoin(qDiary).on(qLike.targetId.eq(qDiary.id.stringValue()))
 			.select(new QLikeResDto(
 				qLike.id,
 				qLike.user.id,
 				qLike.targetId,
+				qLike.likeType,
+
 				qPlace.name,
 				qPlace.subName,
-				qLike.likeType.when(LikeType.PLACE).then(placeFileSubQuery).otherwise(diaryFileSubQuery),
-				// 여행기 구현 후 이걸로
-				qLike.likeType,
 				qPlace.placeType,
+
+				qDiary.subject,
+				qDiary.schedule.startDate,
+				qDiary.schedule.endDate,
+				new QUserCompactResDto(qDiary.user),
+
+				qLike.likeType.when(LikeType.PLACE)
+					.then(getPlaceFileUrlSubQuery())
+					.otherwise(getDiaryFileUrlSubQuery()),
+				// likeType에 따라 fileUrl 결정
 				qLike.createdAt
 			))
+			.where(new BooleanBuilder()
+				.or(qLike.likeType.eq(LikeType.PLACE).and(qPlace.isNotNull()))
+				.or(qLike.likeType.eq(LikeType.DIARY_BOOKMARK).and(qDiary.isNotNull()))
+			)
 			.fetch();
 
-		// 총 좋아요 개수 조회
-		long totalCount = getTotalCount(null, null, userId);
+		long totalCount =
+			getTotalCount(LikeType.PLACE, null, userId) + getTotalCount(LikeType.DIARY_BOOKMARK, null, userId);
 
-		// 결과를 Page로 반환
 		return new PageImpl<>(favoriteList, pageable, totalCount);
 	}
 
 	// 여행기에 대한 찜 목록 조회
 	@Override
 	public Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable) {
-		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.DIARY, userId, pageable);
-
-		// 여행기 첫번째 fileUrl 조회
-		JPAQuery<String> subQuery = new JPAQuery<String>()
-			.select(qFile.url)
-			.from(qFile)
-			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
-			.where(qDiaryFile.diary.id.eq(qDiary.id))
-			.where(qDiaryFile.fileOrder.eq(0))
-			.limit(1);
+		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.DIARY_BOOKMARK, userId, pageable);
 
 		// 조건에 맞는 좋아요 목록 조회
 		List<LikeResDto> favoriteList = baseQuery
@@ -136,17 +135,15 @@ public class LikeRepositoryImpl implements LikeRepository {
 				qDiary.subject,
 				qDiary.schedule.startDate,
 				qDiary.schedule.endDate,
-				subQuery,
+				getDiaryFileUrlSubQuery(),
 				qLike.likeType,
 				new QUserCompactResDto(qLike.user),
 				qLike.createdAt
 			))
 			.fetch();
 
-		// 총 좋아요 개수 조회
-		long totalCount = getTotalCount(LikeType.DIARY, null, userId);
+		long totalCount = getTotalCount(LikeType.DIARY_BOOKMARK, null, userId);
 
-		// 결과를 Page로 반환
 		return new PageImpl<>(favoriteList, pageable, totalCount);
 
 	}
@@ -156,30 +153,48 @@ public class LikeRepositoryImpl implements LikeRepository {
 	public Page<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
 		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.PLACE, userId, pageable);
 
-		// 장소의 첫번째 fileUrl 조회
-		JPAQuery<String> subQuery = jpaQueryFactory
-			.select(qFile.url)
-			.from(qFile)
-			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
-			.where(qPlaceFile.place.id.eq(qPlace.id))
-			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
-			.limit(1);
-
 		// 조건에 맞는 좋아요 목록 조회
 		List<LikeResDto> favoriteList = baseQuery
 			.leftJoin(qPlace)
 			.on(qLike.targetId.eq(qPlace.placeId))
 			.where(getPlaceTypeCondition(placeType))
 			.select(new QLikeResDto(
-				qLike.id, qLike.user.id, qLike.targetId, qPlace.name, qPlace.subName,
-				subQuery, qLike.likeType, qPlace.placeType, qLike.createdAt))
+				qLike.id,
+				qLike.user.id,
+				qLike.targetId,
+				qPlace.name,
+				qPlace.subName,
+				getPlaceFileUrlSubQuery(),
+				qLike.likeType,
+				qPlace.placeType,
+				qLike.createdAt))
 			.fetch();
 
-		// 총 좋아요 개수 조회
 		long totalCount = getTotalCount(LikeType.PLACE, placeType, userId);
 
-		// 결과를 Page로 반환
 		return new PageImpl<>(favoriteList, pageable, totalCount);
+	}
+
+	// 장소의 첫번째 fileUrl 조회 서브쿼리
+	private JPAQuery<String> getPlaceFileUrlSubQuery() {
+		return jpaQueryFactory
+			.select(qFile.url)
+			.from(qFile)
+			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
+			.where(qPlaceFile.place.id.eq(qPlace.id))
+			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
+			.limit(1);
+	}
+
+	// 여행기 첫번째 fileUrl 조회 서브쿼리
+	private JPAQuery<String> getDiaryFileUrlSubQuery() {
+		return jpaQueryFactory
+			.select(qFile.url)
+			.from(qFile)
+			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
+			.where(qDiaryFile.diary.id.eq(qDiary.id))
+			.where(qDiaryFile.fileOrder.eq(0))
+			.limit(1);
 	}
 
 	// placeType에 따른 조건 처리
@@ -193,18 +208,6 @@ public class LikeRepositoryImpl implements LikeRepository {
 			default:
 				throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
-	}
-
-	// 기본 쿼리 생성 메서드
-	private JPAQuery<Tuple> createBaseFavoriteQuery(LikeType likeType, Long userId, Pageable pageable) {
-		return jpaQueryFactory
-			.select(qLike.id, qLike.user.id, qLike.targetId, qLike.likeType, qLike.createdAt)
-			.from(qLike)
-			.where(
-				likeType == null ? qLike.user.id.eq(userId) : qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId)))
-			.orderBy(qLike.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize());
 	}
 
 	// 총 좋아요 개수 조회 메서드

@@ -544,5 +544,5 @@ VALUES (509, 'ChIJj7dwjy9kYjURVh-S2hxkVQg', '인제 빙어축제', '강원도 �
         37.99764, 128.0985467, 'FESTIVAL');
 
 
-ALTER TABLE place AUTO_INCREMENT = 1000;
+-- ALTER TABLE place AUTO_INCREMENT = 1000;
 
