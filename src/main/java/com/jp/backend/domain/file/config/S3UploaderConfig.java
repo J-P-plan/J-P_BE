@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.jp.backend.domain.file.repository.JpaDiaryFileRepository;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
@@ -25,13 +26,14 @@ public class S3UploaderConfig {
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 	private final JpaReviewFileRepository reviewFileRepository;
+	private final JpaDiaryFileRepository diaryFileRepository;
 	private final UserService userService;
 	private final PlaceService placeService;
 
 	@Bean
 	public FileService imageUploader() {
 		return new FileServiceImpl(this.uploader(), fileRepository, placeFileRepository,
-			reviewFileRepository, userService, placeService);
+			reviewFileRepository, diaryFileRepository, userService, placeService);
 	}
 
 	@Bean(name = "s3Uploader")

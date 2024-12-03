@@ -1,6 +1,7 @@
 package com.jp.backend.domain.user.dto;
 
 import com.jp.backend.domain.user.entity.User;
+import com.querydsl.core.annotations.QueryProjection;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class UserCompactResDto {
 	private String profile;
 
 	@Builder
+	@QueryProjection
 	public UserCompactResDto(User user) {
 		this.id = user.getId();
 		this.nickname = user.getNickname();

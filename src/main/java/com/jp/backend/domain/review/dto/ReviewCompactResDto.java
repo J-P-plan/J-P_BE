@@ -24,7 +24,7 @@ import lombok.Setter;
 public class ReviewCompactResDto {
 	@Schema(description = "아이디")
 	private Long id;
-	//대표사진
+
 	@Schema(description = "제목")
 	private String subject;
 
@@ -53,8 +53,6 @@ public class ReviewCompactResDto {
 	@Schema(description = "리뷰의 파일 정보")
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	private List<FileResDto> fileInfos;
-
-	//todo 좋아요 갯수
 
 	@Builder
 	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, List<FileResDto> fileInfos) {
