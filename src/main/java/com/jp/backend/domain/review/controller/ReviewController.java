@@ -18,7 +18,7 @@ import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
 import com.jp.backend.domain.review.dto.ReviewUpdateDto;
-import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.domain.review.service.ReviewService;
 import com.jp.backend.global.dto.PageResDto;
 
@@ -77,7 +77,7 @@ public class ReviewController {
 	public ResponseEntity<PageResDto<ReviewCompactResDto>> getReviewPage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "placeId", required = false) String placeId,
-		@RequestParam(value = "sort") ReviewSort sort,
+		@RequestParam(value = "sort") SortType sort,
 		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt
 	) throws Exception {
 		return ResponseEntity.ok(reviewService.findReviewPage(page, placeId, sort

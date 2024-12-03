@@ -51,7 +51,10 @@ public enum ExceptionCode {
 	DAY_NONE(404, "DAY_NONE"),
 	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
 	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
-	SCHEDULE_USER_NONE(404, "해당 일정에 유저가 없습니다.");
+	SCHEDULE_USER_NONE(404, "해당 일정에 유저가 없습니다."),
+
+	// Diary
+	DIARY_NONE(404, "DIARY_NONE");
 
 	@Getter
 	private final int code;

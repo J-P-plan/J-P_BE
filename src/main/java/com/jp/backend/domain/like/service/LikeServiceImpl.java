@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.jp.backend.domain.diary.repository.JpaDiaryRepository;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.PlaceFile;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
@@ -40,12 +41,14 @@ public class LikeServiceImpl implements LikeService {
 	private final JpaLikeRepository likeRepository;
 	private final GooglePlaceService googlePlaceService;
 	private final JpaReviewRepository reviewRepository;
+	private final JpaDiaryRepository diaryRepository;
 	private final JpaPlaceRepository placeRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 
 	// 좋아요/찜 누르기 - 리뷰/여행기/장소
 	@Override
 	public boolean manageLike(LikeType likeType, String targetId, String email) {
+		// TODO 여행기 찜 / 좋아요 어떻게 할지 고민
 		User user = userService.verifyUser(email);
 
 		verifyTargetId(likeType, targetId); // targetId 존재 여부 확인
@@ -99,6 +102,7 @@ public class LikeServiceImpl implements LikeService {
 	}
 
 	// 마이페이지 찜목록 - 리뷰/여행기/장소
+	// TODO -> 여행기 찜 / 좋아요 따로 있음 --> 찜 애들만 불러오기
 	@Override
 	public PageResDto<LikeResDto> getFavoriteList(LikeType likeType, PlaceType placeType, String email, Integer page,
 		Integer elementCnt) {
@@ -115,9 +119,7 @@ public class LikeServiceImpl implements LikeService {
 			}
 			likePage = likeRepository.getFavoriteListForPlace(placeType, user.getId(), pageable);
 		} else if (likeType == LikeType.DIARY) { // likeType이 DIARY인 경우 --> placeType은 필요 X, 유저의 여행기 좋아요 리스트 조회
-			// likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
-			throw new CustomLogicException(ExceptionCode.NOT_IMPLEMENTED);
-			// TODO 여행기 구현 완료 후 수정
+			likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable);
 		} else {
 			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
@@ -130,13 +132,12 @@ public class LikeServiceImpl implements LikeService {
 		return new PageResDto<>(pageInfo, likePage.getContent());
 	}
 
-	// TODO  여행기 구현 완료 후 수정
 	// targetId 존재 여부 검증
 	private void verifyTargetId(LikeType likeType, String targetId) {
 		boolean targetExists =
 			switch (likeType) {
 				case REVIEW -> reviewRepository.existsById(Long.valueOf(targetId));
-				// case DIARY ->
+				case DIARY -> diaryRepository.existsById(Long.valueOf(targetId));
 				case PLACE -> googlePlaceService.verifyPlaceId(targetId);
 				default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 			};

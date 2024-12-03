@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.jp.backend.domain.review.entity.QReview;
 import com.jp.backend.domain.review.entity.Review;
-import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.domain.review.enums.SortType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,7 +24,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	@Override
 	public Page<Review> findReviewPage(
 		String placeId,
-		ReviewSort sort,
+		SortType sort,
 		Pageable pageable
 	) {
 		JPAQuery<Review> query = queryFactory.selectFrom(review);
@@ -56,7 +56,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 		List<Review> result = query.where(
 				review.user.id.eq(userId)
-			).orderBy(orderBySort(ReviewSort.NEW))
+			).orderBy(orderBySort(SortType.NEW))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -72,7 +72,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 		return new PageImpl<>(result, pageable, totalCount);
 	}
 
-	public OrderSpecifier<?> orderBySort(ReviewSort sort) {
+	public OrderSpecifier<?> orderBySort(SortType sort) {
 		return switch (sort) {
 			case HOT -> review.viewCnt.desc(); //todo 좋아요순
 			case STAR_HIGH -> review.star.desc();

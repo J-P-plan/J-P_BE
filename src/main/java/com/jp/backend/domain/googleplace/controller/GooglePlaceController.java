@@ -38,7 +38,6 @@ public class GooglePlaceController {
 	}
 
 	// 해당 장소의 반경 내의 여행지 추천 ( 반경은 선택 가능 )
-	// TODO scheduleId 받아서 해당 스케줄 도시의 위도 경도 가져와서 주변 장소 보여줄까? / 근데 위도 경도 있어서 필요 없을 거 같기도 하고
 	@GetMapping("/nearby-search/page")
 	@Operation(summary = "반경을 선택하여, 해당 장소의 반경 내에 있는 인기 여행지들을 추천합니다.",
 		description =

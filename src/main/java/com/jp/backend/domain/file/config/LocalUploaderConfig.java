@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.jp.backend.domain.file.repository.JpaDiaryFileRepository;
 import com.jp.backend.domain.file.repository.JpaFileRepository;
 import com.jp.backend.domain.file.repository.JpaPlaceFileRepository;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
@@ -23,12 +24,14 @@ public class LocalUploaderConfig {
 	private final JpaFileRepository fileRepository;
 	private final JpaPlaceFileRepository placeFileRepository;
 	private final JpaReviewFileRepository reviewFileRepository;
+	private final JpaDiaryFileRepository diaryFileRepository;
 	private final UserService userService;
 	private final PlaceService placeService;
 
 	@Bean(name = "localUploader")
 	public FileService imageUploader() {
 		return new FileServiceImpl(this.uploader(), fileRepository, placeFileRepository, reviewFileRepository,
+			diaryFileRepository,
 			userService, placeService);
 	}
 
