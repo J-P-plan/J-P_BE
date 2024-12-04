@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.jp.backend.domain.place.entity.Place;
+import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.audit.Auditable;
 
 import jakarta.persistence.CascadeType;
@@ -52,5 +53,9 @@ public class Schedule extends Auditable {
 	}
 
 	private Boolean isOpen;
+
+	private Boolean isEditing;
+
+	private User.Mbti mbti;
 
 }

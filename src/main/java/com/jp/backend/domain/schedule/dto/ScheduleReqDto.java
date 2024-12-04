@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.schedule.entity.Day;
 import com.jp.backend.domain.schedule.entity.Schedule;
+import com.jp.backend.domain.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class ScheduleReqDto {
 	@Schema(description = "도시 아이다")
 	private String placeId;
 
-	public Schedule toEntity(Place city, String title) {
+	public Schedule toEntity(Place city, String title, User.Mbti mbti) {
 		return Schedule.builder()
 			.startDate(startDate)
 			.endDate(endDate)
@@ -43,6 +44,8 @@ public class ScheduleReqDto {
 			.title(title + " 여행")
 			.dayList(new ArrayList<Day>())
 			.city(city)
+			.mbti(mbti)
+			.isEditing(false)
 			.build();
 	}
 }
