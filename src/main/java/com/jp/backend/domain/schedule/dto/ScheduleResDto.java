@@ -7,6 +7,7 @@ import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.schedule.entity.Schedule;
 import com.jp.backend.domain.schedule.enums.Status;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
+import com.jp.backend.domain.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,10 @@ public class ScheduleResDto {
 
 	private List<DayResDto> dayResDtos;
 
+	private Boolean isEditing;
+
+	private User.Mbti mbti;
+
 	@Builder
 	public ScheduleResDto(Schedule schedule, List<UserCompactResDto> users, List<DayResDto> dayResDtos) {
 		this.id = schedule.getId();
@@ -51,6 +56,8 @@ public class ScheduleResDto {
 		this.dayResDtos = dayResDtos;
 		this.place = PlaceCompactResDto.builder().entity(schedule.getCity()).build();
 		this.member = users;
+		this.isEditing = schedule.getIsEditing();
+		this.mbti = schedule.getMbti();
 	}
 
 }
