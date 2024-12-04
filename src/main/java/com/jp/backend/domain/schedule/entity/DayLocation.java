@@ -1,7 +1,9 @@
 package com.jp.backend.domain.schedule.entity;
 
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.jp.backend.domain.schedule.dto.PlanUpdateDto;
 
@@ -30,8 +32,9 @@ public class DayLocation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	//순서
-	//private Integer locationIndex;
+	private Integer locationIndex;
 
 	private LocalTime time; //새로 생성시 이전 시간과 똑같게
 
@@ -62,10 +65,32 @@ public class DayLocation {
 		this.mobility = updateDto.getMobility();
 	}
 
-	public void moveDay(Day day, Integer locationIndex, LocalTime time) {
-		this.day = day;
-	//	this.locationIndex = locationIndex;
+	public void moveDay(Day newDay, Integer locationIndex, LocalTime time) {
+
+		//기존 데이 순서 재정렬
+		this.day.getDayLocationList().remove(this);
+		reorderDayLocations(this.day.getDayLocationList());
+
+		//값 바꿔 넣어줌
+		this.day = newDay;
+		this.locationIndex = locationIndex;
 		this.time = time;
+
+		//바뀐 데이 순서 재정렬
+		newDay.getDayLocationList().add(this);
+		reorderDayLocations(newDay.getDayLocationList());
+	}
+
+
+	private void reorderDayLocations(List<DayLocation> dayLocations) {
+		// 1순위: 시간, 2순위: 인덱스로 정렬
+		dayLocations.sort(Comparator
+			.comparing(DayLocation::getTime)
+			.thenComparingInt(DayLocation::getLocationIndex));
+
+		// 정렬 후 인덱스를 1부터 다시 설정
+		AtomicInteger indexCounter = new AtomicInteger(1);
+		dayLocations.forEach(location -> location.setLocationIndex(indexCounter.getAndIncrement()));
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.jp.backend.domain.schedule.dto;
 
+import static com.jp.backend.domain.user.entity.User.Mbti.*;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -32,10 +34,10 @@ public class DayResDto {
 		this.date = day.getDate();
 		this.dayIndex = day.getDayIndex();
 		this.dayOfWeek = day.getDate().getDayOfWeek();
-		if(dayLocationResDtos != null) {
-			this.dayLocationResDtoList = dayLocationResDtos.stream().sorted(Comparator.comparing(
-				DayLocationResDto::getTime)).collect(
-				Collectors.toList());
+		if (dayLocationResDtos != null) {
+			this.dayLocationResDtoList = dayLocationResDtos.stream()
+				.sorted(Comparator.comparing(DayLocationResDto::getIndex))
+				.collect(Collectors.toList());
 		}
 	}
 

@@ -55,7 +55,10 @@ public class ScheduleController {
 
 	//장소 추가 api
 	@PostMapping("/schedule/location/{dayId}")
-	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다. 시간은 \"HH:mm\"형식으로 보내주세요. index는 보내지 않으셔도 자동 추가됩니다.")
+	@Operation(summary = "장소 추가 API", description = "일정에 장소를 추가합니다.  <br>  <br>"
+		+ "시간은 \"HH:mm\"형식으로 보내주세요. index는 보내지 않으셔도 자동 추가됩니다.  <br>  <br>"
+	  + "J : 시간 기준으로 순서 부여 (시간 보내주셔야 합니다),  <br>"
+		+ "P : 젤 뒤에 추가 (가장 마지막 Location의 시간과 동일하게 부여)")
 	public ResponseEntity<Boolean> addDayLocation(
 		@PathVariable(value = "dayId") Long dayId,
 		@RequestParam(value = "mbti") User.Mbti mbti,
@@ -122,7 +125,8 @@ public class ScheduleController {
 	//삭제된 리스트를 보내주세
 
 	@PutMapping("/schedule/day/{dayId}")
-	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다. DayLocation Request Dto에 index 넣어주셔야 합니다.")
+	@Operation(summary = "일정 편집 API", description = "일정을 편집합니다.  <br>  <br>"
+		+ "J/P 관계 없이 DayLocation Request Dto에 시간과 index 전부 넣어주셔야 합니다.")
 	public ResponseEntity<Long> updateDay(
 		@PathVariable(value = "dayId") Long dayId,
 		@RequestBody List<DayLocationReqDto> dayLocationReqDtoList
@@ -169,12 +173,15 @@ public class ScheduleController {
 
 	//todo 장소 날짜 변경 api
 	@PutMapping("/schedule/location/{locationId}")
-	@Operation(summary = "장소 날짜 이동 API", description = "장소의 날짜를 이동합니다. 시간도 변경할 수 있습니다.")
+	@Operation(summary = "장소 날짜 이동 API", description = "장소의 날짜를 이동합니다. (J일때는 시간도 변경 가능합니다.)<br> <br>"
+		+"J : 시간 기준으로 순서 부여 (시간 보내주셔야 합니다)  <br> "
+		+ "P : 젤 뒤에 추가 (옮길 Day에 있는 가장 마지막 Location의 시간과 동일하게 부여)")
 	public ResponseEntity<Boolean> moveDay(
 		@PathVariable(value = "locationId") Long locationId,
+		@RequestParam(value = "mbti") User.Mbti mbti,
 		@RequestBody DayMoveDto dayMoveDto
 	) {
-		return ResponseEntity.ok(scheduleService.moveDayLocation(locationId, dayMoveDto));
+		return ResponseEntity.ok(scheduleService.moveDayLocation(locationId, mbti, dayMoveDto));
 	}
 
 }

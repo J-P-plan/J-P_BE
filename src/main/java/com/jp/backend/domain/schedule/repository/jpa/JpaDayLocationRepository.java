@@ -18,5 +18,9 @@ public interface JpaDayLocationRepository extends JpaRepository<DayLocation, Lon
 
 	void deleteAllByDay(Day day);
 	Optional<DayLocation> findTopByDayOrderByTimeDesc(Day day);
+	Optional<DayLocation> findTopByDayOrderByLocationIndexDesc(Day day);
+
+	//파람의 시간보다 적거나 같은 시간이면서 가장 마지막 index를 가진 daylocation의 index를 불러옴 ㅎ
+	Optional<DayLocation> findTopLocationIndexByDayAndTimeLessThanEqualOrderByLocationIndexDesc(Day day, LocalTime time);
 
 }

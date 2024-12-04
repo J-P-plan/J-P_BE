@@ -22,7 +22,7 @@ import lombok.ToString;
 public class DayLocationResDto {
 	private Long id;
 	//순서
-	//private Integer index;
+	private Integer index;
 	//description
 
 	@JsonFormat(pattern = "HH:mm")
@@ -45,7 +45,7 @@ public class DayLocationResDto {
 	@Builder
 	public DayLocationResDto(DayLocation entity) {
 		this.id = entity.getId();
-	//	this.index = entity.getLocationIndex();
+		this.index = entity.getLocationIndex();
 		this.time = entity.getTime();
 		this.memo = entity.getMemo();
 		this.location = Location.builder().lng(entity.getLng()).lat(entity.getLat()).build();

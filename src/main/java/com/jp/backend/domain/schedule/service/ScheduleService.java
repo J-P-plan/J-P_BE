@@ -44,5 +44,5 @@ public interface ScheduleService {
 
 	Long updateDay(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
 
-	Boolean moveDayLocation(Long dayLocationId, DayMoveDto dayMoveDto);
+	Boolean moveDayLocation(Long dayLocationId,User.Mbti mbti, DayMoveDto dayMoveDto);
 }
