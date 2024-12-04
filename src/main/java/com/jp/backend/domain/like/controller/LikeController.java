@@ -39,11 +39,12 @@ public class LikeController {
 			"targetId - PlaceId/reviewId/DiaryId<br>" + "<br>" +
 			"<strong>주의사항</strong> :<br>" +
 			"- 한 번 누르면 좋아요를 누르는 것이고, 한 번 더 누르면 좋아요를 취소할 수 있습니다.<br>" +
-			"( 응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소 )<br>" +
-			"- 여행기 기능은 아직 구현되어있지 않아, 현재는 장소, 리뷰에만 가능합니다.")
-	public ResponseEntity<Boolean> manageLike(@PathVariable LikeType likeType,
+			"( 응답이 true일 경우 좋아요 완료 / false일 경우 좋아요 취소 )<br>")
+	public ResponseEntity<Boolean> manageLike(
+		@PathVariable LikeType likeType,
 		@PathVariable String targetId,
 		@AuthenticationPrincipal UserPrincipal principal) {
+
 		boolean result = likeService.manageLike(likeType, targetId, principal.getUsername());
 
 		if (result) { // 좋아요가 추가된 경우

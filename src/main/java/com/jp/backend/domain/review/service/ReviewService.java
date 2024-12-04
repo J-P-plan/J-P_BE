@@ -6,7 +6,7 @@ import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
 import com.jp.backend.domain.review.dto.ReviewResDto;
 import com.jp.backend.domain.review.dto.ReviewUpdateDto;
-import com.jp.backend.domain.review.enums.ReviewSort;
+import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.global.dto.PageResDto;
 
 public interface ReviewService {
@@ -19,7 +19,7 @@ public interface ReviewService {
 	PageResDto<ReviewCompactResDto> findReviewPage(
 		Integer page,
 		String placeId,
-		ReviewSort sort,
+		SortType sort,
 		Integer elementCnt);
 
 	PageResDto<ReviewCompactResDto> findMyReviewPage(

@@ -15,16 +15,12 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.jp.backend.auth.enums.AuthorizedUrl;
 import com.jp.backend.auth.filter.JwtAuthenticationFilter;
 import com.jp.backend.auth.filter.JwtVerificationFilter;
-import com.jp.backend.auth.handler.UserAccessDeniedHandler;
-import com.jp.backend.auth.handler.UserAuthenticationEntryPoint;
 import com.jp.backend.auth.handler.UserAuthenticationFailureHandler;
 import com.jp.backend.auth.handler.UserAuthenticationSuccessHandler;
 import com.jp.backend.auth.oauth.CustomOauth2UserService;
@@ -33,6 +29,8 @@ import com.jp.backend.auth.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import com.jp.backend.auth.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.jp.backend.auth.service.RefreshService;
 import com.jp.backend.auth.token.AuthTokenProvider;
+import com.jp.backend.global.advice.JwtAccessDeniedHandler;
+import com.jp.backend.global.advice.JwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -43,16 +41,22 @@ public class SecurityConfig {
 	private final JwtConfig jwtConfig;
 
 	private final CustomOauth2UserService customOauth2UserService;
+
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private static final String[] AUTHORIZED_URLS = Arrays.stream(AuthorizedUrl.values())
 		.map(AuthorizedUrl::getUrl)
 		.toList().toArray(new String[0]);
 
 	public SecurityConfig(AuthTokenProvider authTokenProvider, RefreshService refreshService,
-		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig) {
+		CustomOauth2UserService customOauth2UserService, JwtConfig jwtConfig, JwtAccessDeniedHandler jwtAccessDeniedHandler,
+		JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
 		this.authTokenProvider = authTokenProvider;
 		this.refreshService = refreshService;
 		this.jwtConfig = jwtConfig;
 		this.customOauth2UserService = customOauth2UserService;
+		this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
 	}
 
 	@Bean
@@ -88,8 +92,8 @@ public class SecurityConfig {
 			.addFilter(jwtAuthenticationFilter)
 			.exceptionHandling(
 				exceptionHandling -> exceptionHandling
-					.authenticationEntryPoint(authenticationEntryPoint())
-					.accessDeniedHandler(accessDeniedHandler()))
+					.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+					.accessDeniedHandler(jwtAccessDeniedHandler))
 			.authorizeHttpRequests(
 				authorize -> authorize
 					.requestMatchers(
@@ -108,7 +112,8 @@ public class SecurityConfig {
 		// 		.failureHandler(oAuth2AuthenticationFailureHandler())
 		// 리소스 서버(소셜 서비스들)에서 사용자 정보를 가져온 상태에서 추가로 진행하고자 하는 기능을 명시 가능.
 		//);
-
+//					.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+		// 					.accessDeniedHandler(jwtAccessDeniedHandler)) //요기다 추가!
 		return http.build();
 	}
 
@@ -133,13 +138,4 @@ public class SecurityConfig {
 		return new OAuth2AuthorizationRequestBasedOnCookieRepository();
 	}
 
-	@Bean
-	public AuthenticationEntryPoint authenticationEntryPoint() {
-		return new UserAuthenticationEntryPoint();
-	}
-
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler() {
-		return new UserAccessDeniedHandler();
-	}
 }

@@ -20,7 +20,7 @@ public interface ScheduleService {
 
 	Boolean deleteDayLocation(Long daylocatinoId);
 
-	Boolean deleteSchedule(Long scheduleId);
+	Boolean deleteSchedule(Long scheduleId, String username);
 
 	Boolean updateDayLocation(Long locationId, PlanUpdateDto updateDto);
 

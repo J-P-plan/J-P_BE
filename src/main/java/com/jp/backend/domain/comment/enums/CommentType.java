@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum CommentType {
 	REVIEW("리뷰"),
-	TRAVEL_STORY("여행기");
+	DIARY("여행기");
 	//COMMENT("대댓글");
 
 	private final String value;

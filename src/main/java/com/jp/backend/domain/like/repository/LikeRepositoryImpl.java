@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.jp.backend.domain.diary.entity.QDiary;
+import com.jp.backend.domain.file.entity.QDiaryFile;
 import com.jp.backend.domain.file.entity.QFile;
 import com.jp.backend.domain.file.entity.QPlaceFile;
 import com.jp.backend.domain.like.dto.LikeResDto;
@@ -16,6 +18,7 @@ import com.jp.backend.domain.like.entity.QLike;
 import com.jp.backend.domain.like.enums.LikeType;
 import com.jp.backend.domain.place.entity.QPlace;
 import com.jp.backend.domain.place.enums.PlaceType;
+import com.jp.backend.domain.user.dto.QUserCompactResDto;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 import com.querydsl.core.BooleanBuilder;
@@ -30,9 +33,11 @@ import lombok.RequiredArgsConstructor;
 public class LikeRepositoryImpl implements LikeRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 	private static final QLike qLike = QLike.like;
+	private static final QDiary qDiary = QDiary.diary;
 	private static final QPlace qPlace = QPlace.place;
 	private static final QFile qFile = QFile.file;
 	private static final QPlaceFile qPlaceFile = QPlaceFile.placeFile;
+	private static final QDiaryFile qDiaryFile = QDiaryFile.diaryFile;
 
 	// Like 객체 찾기 -> 좋아요 여부 판단 가능
 	@Override
@@ -72,14 +77,14 @@ public class LikeRepositoryImpl implements LikeRepository {
 			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
 			.limit(1);
 
-		// 여행기 첫 번째 사진 URL 가져오는 서브쿼리
-		// JPAQuery<String> diaryFileSubQuery = new JPAQuery<String>()
-		// 	.select(qFile.url)
-		// 	.from(qDiaryFile)
-		// 	.join(qDiaryFile.file, qFile)
-		// 	.where(qDiaryFile.diary.id.eq(qDiary.id))
-		// 	.orderBy(qDiaryFile.fileOrder.asc())
-		// 	.limit(1);
+		// 여행기 첫번째 fileUrl 조회
+		JPAQuery<String> diaryFileSubQuery = new JPAQuery<String>()
+			.select(qFile.url)
+			.from(qFile)
+			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
+			.where(qDiaryFile.diary.id.eq(qDiary.id))
+			.where(qDiaryFile.fileOrder.eq(0))
+			.limit(1);
 
 		// 메인 쿼리
 		List<LikeResDto> favoriteList = baseQuery
@@ -91,8 +96,8 @@ public class LikeRepositoryImpl implements LikeRepository {
 				qLike.targetId,
 				qPlace.name,
 				qPlace.subName,
-				placeFileSubQuery,
-				// qLike.likeType.when(LikeType.PLACE).then(placeFileSubQuery).otherwise(diaryFileSubQuery), // 여행기 구현 후 이걸로
+				qLike.likeType.when(LikeType.PLACE).then(placeFileSubQuery).otherwise(diaryFileSubQuery),
+				// 여행기 구현 후 이걸로
 				qLike.likeType,
 				qPlace.placeType,
 				qLike.createdAt
@@ -107,9 +112,44 @@ public class LikeRepositoryImpl implements LikeRepository {
 	}
 
 	// 여행기에 대한 찜 목록 조회
-	// public Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable) {
-	// 	return new ArrayList<>();
-	// }
+	@Override
+	public Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable) {
+		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.DIARY, userId, pageable);
+
+		// 여행기 첫번째 fileUrl 조회
+		JPAQuery<String> subQuery = new JPAQuery<String>()
+			.select(qFile.url)
+			.from(qFile)
+			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
+			.where(qDiaryFile.diary.id.eq(qDiary.id))
+			.where(qDiaryFile.fileOrder.eq(0))
+			.limit(1);
+
+		// 조건에 맞는 좋아요 목록 조회
+		List<LikeResDto> favoriteList = baseQuery
+			.leftJoin(qDiary)
+			.on(qLike.targetId.eq(qDiary.id.stringValue()))
+			.select(new QLikeResDto(
+				qLike.id,
+				qLike.user.id,
+				qLike.targetId,
+				qDiary.subject,
+				qDiary.schedule.startDate,
+				qDiary.schedule.endDate,
+				subQuery,
+				qLike.likeType,
+				new QUserCompactResDto(qLike.user),
+				qLike.createdAt
+			))
+			.fetch();
+
+		// 총 좋아요 개수 조회
+		long totalCount = getTotalCount(LikeType.DIARY, null, userId);
+
+		// 결과를 Page로 반환
+		return new PageImpl<>(favoriteList, pageable, totalCount);
+
+	}
 
 	// 장소에 대한 찜 목록 조회
 	@Override
