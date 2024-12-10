@@ -5,12 +5,16 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.jp.backend.domain.like.enums.LikeType;
+import com.jp.backend.domain.diary.entity.Diary;
+import com.jp.backend.domain.like.entity.Like;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.enums.PlaceType;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
-import com.querydsl.core.annotations.QueryProjection;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LikeResDto {
+	// TODO 이거 그냥 인터페이스 만들고 구현 클래스 place랑 diary랑 나눠서 할까
 	@Schema(description = "아이디")
 	private Long id;
 
@@ -29,8 +34,11 @@ public class LikeResDto {
 	@Schema(description = "좋아요 대상")
 	private String targetId;
 
-	@Schema(description = "좋아요 대상의 좋아요 타입")
-	private LikeType likeType;
+	@Schema(description = "좋아요 액션 타입 - 좋아요 / 찜")
+	private LikeActionType likeActionType;
+
+	@Schema(description = "좋아요/찜 대상의 타입")
+	private LikeTargetType likeTargetType;
 
 	@Schema(description = "좋아요 작성 일자")
 	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
@@ -62,61 +70,28 @@ public class LikeResDto {
 	@Schema(description = "좋아요 대상의 작성자 정보")
 	private UserCompactResDto targetUserCompactResDto;
 
-	// 모든 필드를 포함
-	@QueryProjection
-	public LikeResDto(Long id, Long userId, String targetId, LikeType likeType, String targetName, String targetAddress,
-		PlaceType placeType,
-		String targetSubject, LocalDate targetScheduleStartDate, LocalDate targetScheduleEndDate,
-		UserCompactResDto targetUserCompactResDto,
-		String fileUrl, LocalDateTime createdAt) {
-		this.id = id;
-		this.userId = userId;
-		this.targetId = targetId;
-		this.likeType = likeType;
+	@Builder
+	public LikeResDto(Like like, Diary diary, Place place, String fileUrl) {
+		this.id = like.getId();
+		this.userId = like.getUser().getId();
+		this.targetId = like.getTargetId();
 
-		this.targetName = targetName;
-		this.targetAddress = targetAddress;
-		this.placeType = placeType;
+		this.targetSubject = (diary != null) ? diary.getSubject() : null;
+		this.targetScheduleStartDate =
+			(diary != null && diary.getSchedule() != null) ? diary.getSchedule().getStartDate() : null;
+		this.targetScheduleEndDate =
+			(diary != null && diary.getSchedule() != null) ? diary.getSchedule().getEndDate() : null;
+		this.targetUserCompactResDto = (diary != null)
+			? UserCompactResDto.builder().user(like.getUser()).build()
+			: null;
 
-		this.targetSubject = targetSubject;
-		this.targetScheduleStartDate = targetScheduleStartDate;
-		this.targetScheduleEndDate = targetScheduleEndDate;
-		this.targetUserCompactResDto = targetUserCompactResDto;
+		this.targetName = (place != null) ? place.getName() : null;
+		this.targetAddress = (place != null) ? place.getSubName() : null;
+		this.placeType = (place != null) ? place.getPlaceType() : null;
 
-		this.fileUrl = fileUrl;
-		this.createdAt = createdAt;
-	}
-
-	// place의 경우
-	@QueryProjection
-	public LikeResDto(Long id, Long userId, String targetId, String targetName, String targetAddress,
-		String fileUrl,
-		LikeType likeType, PlaceType placeType, LocalDateTime createdAt) {
-		this.id = id;
-		this.userId = userId;
-		this.targetId = targetId;
-		this.targetName = targetName;
-		this.targetAddress = targetAddress;
-		this.fileUrl = fileUrl;
-		this.likeType = likeType;
-		this.placeType = placeType;
-		this.createdAt = createdAt;
-	}
-
-	// 여행기의 경우
-	@QueryProjection
-	public LikeResDto(Long id, Long userId, String targetId, String targetSubject, LocalDate targetScheduleStartDate,
-		LocalDate targetScheduleEndDate, String fileUrl, LikeType likeType,
-		UserCompactResDto targetUserCompactResDto, LocalDateTime createdAt) {
-		this.id = id;
-		this.userId = userId;
-		this.targetId = targetId;
-		this.targetSubject = targetSubject;
-		this.targetScheduleStartDate = targetScheduleStartDate;
-		this.targetScheduleEndDate = targetScheduleEndDate;
-		this.fileUrl = fileUrl;
-		this.likeType = likeType;
-		this.targetUserCompactResDto = targetUserCompactResDto;
-		this.createdAt = createdAt;
+		this.fileUrl = (fileUrl == null) ? "" : fileUrl;
+		this.likeActionType = like.getLikeActionType();
+		this.likeTargetType = like.getLikeTargetType();
+		this.createdAt = like.getCreatedAt();
 	}
 }

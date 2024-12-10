@@ -1,6 +1,7 @@
 package com.jp.backend.domain.like.entity;
 
-import com.jp.backend.domain.like.enums.LikeType;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.audit.Auditable;
 
@@ -38,6 +39,9 @@ public class Like extends Auditable {
 	private User user; // 좋아요한 유저 아이디
 
 	@Enumerated(value = EnumType.STRING)
-	private LikeType likeType;
+	private LikeActionType likeActionType;
+
+	@Enumerated(value = EnumType.STRING)
+	private LikeTargetType likeTargetType;
 
 }

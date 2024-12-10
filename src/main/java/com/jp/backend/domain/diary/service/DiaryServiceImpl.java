@@ -23,7 +23,8 @@ import com.jp.backend.domain.file.entity.DiaryFile;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.repository.JpaDiaryFileRepository;
 import com.jp.backend.domain.file.service.FileService;
-import com.jp.backend.domain.like.enums.LikeType;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.domain.schedule.entity.Schedule;
@@ -36,6 +37,7 @@ import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 import com.jp.backend.global.utils.CustomBeanUtils;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -51,6 +53,7 @@ public class DiaryServiceImpl implements DiaryService {
 	private final JpaCommentRepository commentRepository;
 
 	@Override
+	@Transactional
 	public DiaryResDto createDiary(Long scheduleId, DiaryReqDto reqDto, String email) {
 		User user = userService.verifyUser(email);
 
@@ -85,6 +88,7 @@ public class DiaryServiceImpl implements DiaryService {
 	}
 
 	@Override
+	@Transactional
 	public DiaryResDto updateDiary(Long diaryId, DiaryUpdateDto updateDto, String email) {
 		userService.verifyUser(email);
 
@@ -100,7 +104,7 @@ public class DiaryServiceImpl implements DiaryService {
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
 		Diary updatingDiary = beanUtils.copyNonNullProperties(diary, foundDiary);
-		Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diary.getId().toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.DIARY, diary.getId().toString());
 
 		List<FileResDto> fileInfos = addToDiaryFile(updateDto.getNewFileIds(), updatingDiary);
 
@@ -113,6 +117,7 @@ public class DiaryServiceImpl implements DiaryService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteDiary(Long diaryId, String email) {
 		userService.verifyUser(email);
 
@@ -125,14 +130,16 @@ public class DiaryServiceImpl implements DiaryService {
 	}
 
 	@Override
+	@Transactional
 	public DiaryResDto findDiary(Long diaryId) {
 		Diary diary = verifyDiary(diaryId);
 		diary.addViewCnt();
 
+		// TODO 이거 스케줄 삭제하면 diary 자동 삭제되게 하면 필요 X
 		Schedule schedule = scheduleRepository.findById(diary.getSchedule().getId())
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
-		Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diaryId.toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.DIARY, diaryId.toString());
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.DIARY, diaryId);
 
 		List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(diaryId);
@@ -158,7 +165,8 @@ public class DiaryServiceImpl implements DiaryService {
 		Page<DiaryCompactResDto> diaryPage =
 			diaryRepository.findDiaryPage(sort, pageable)
 				.map(diary -> {
-					Long likeCnt = likeRepository.countLike(LikeType.DIARY_LIKE, diary.getId().toString());
+					Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.DIARY,
+						diary.getId().toString());
 					Long commentCnt = commentRepository.countByCommentTypeAndTargetId(CommentType.DIARY, diary.getId());
 
 					Schedule schedule = scheduleRepository.findById(diary.getSchedule().getId())

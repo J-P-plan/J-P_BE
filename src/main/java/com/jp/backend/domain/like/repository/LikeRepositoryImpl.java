@@ -8,21 +8,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.jp.backend.domain.diary.entity.QDiary;
-import com.jp.backend.domain.file.entity.QDiaryFile;
-import com.jp.backend.domain.file.entity.QFile;
-import com.jp.backend.domain.file.entity.QPlaceFile;
-import com.jp.backend.domain.like.dto.LikeResDto;
-import com.jp.backend.domain.like.dto.QLikeResDto;
 import com.jp.backend.domain.like.entity.Like;
 import com.jp.backend.domain.like.entity.QLike;
-import com.jp.backend.domain.like.enums.LikeType;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
 import com.jp.backend.domain.place.entity.QPlace;
 import com.jp.backend.domain.place.enums.PlaceType;
-import com.jp.backend.domain.user.dto.QUserCompactResDto;
 import com.jp.backend.global.exception.CustomLogicException;
 import com.jp.backend.global.exception.ExceptionCode;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -35,25 +29,27 @@ public class LikeRepositoryImpl implements LikeRepository {
 	private static final QLike qLike = QLike.like;
 	private static final QDiary qDiary = QDiary.diary;
 	private static final QPlace qPlace = QPlace.place;
-	private static final QFile qFile = QFile.file;
-	private static final QPlaceFile qPlaceFile = QPlaceFile.placeFile;
-	private static final QDiaryFile qDiaryFile = QDiaryFile.diaryFile;
 
 	// Like 객체 찾기 -> 좋아요 여부 판단 가능
 	@Override
-	public Optional<Like> findLike(LikeType likeType, String targetId, Long userId) {
+	public Optional<Like> findLike(LikeActionType likeActionType, LikeTargetType likeTargetType, String targetId,
+		Long userId) {
 		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qLike)
-			.where(qLike.likeType.eq(likeType)
-				.and(qLike.targetId.eq(targetId))
-				.and(qLike.user.id.eq(userId)))
+			.where(
+				qLike.likeActionType.eq(likeActionType)
+					.and(qLike.likeTargetType.eq(likeTargetType))
+					.and(qLike.targetId.eq(targetId))
+					.and(qLike.user.id.eq(userId))
+			)
 			.fetchFirst());
 	}
 
 	// target의 좋아요 개수 반환
 	@Override
-	public long countLike(LikeType likeType, String targetId) {
-		BooleanExpression condition = qLike.likeType.eq(likeType)
+	public long countLike(LikeActionType likeActionType, LikeTargetType likeTargetType, String targetId) {
+		BooleanExpression condition = qLike.likeActionType.eq(likeActionType)
+			.and(qLike.likeTargetType.eq(likeTargetType))
 			.and(qLike.targetId.eq(targetId));
 
 		return jpaQueryFactory
@@ -62,139 +58,69 @@ public class LikeRepositoryImpl implements LikeRepository {
 			.fetchCount();
 	}
 
-	// TODO 다 파일 id 안나옴
-	// TODO getAll 하면 장소 안나오고 여행기만 나옴
+	@Override
+	public Page<Like> getAllFavoriteList(Long userId, Pageable pageable) {
+		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId))
+			.and(qLike.likeActionType.eq(LikeActionType.BOOKMARK)); // 북마크만 필터링
 
-	// 기본 쿼리 생성 메서드
-	private JPAQuery<Tuple> createBaseFavoriteQuery(LikeType likeType, Long userId, Pageable pageable) {
-		return jpaQueryFactory
-			.select(qLike.id, qLike.user.id, qLike.targetId, qLike.likeType, qLike.createdAt)
-			.from(qLike)
-			.where(
-				likeType == null ? qLike.user.id.eq(userId) : qLike.likeType.eq(likeType).and(qLike.user.id.eq(userId)))
+		JPAQuery<Like> query = jpaQueryFactory.selectFrom(qLike)
+			.leftJoin(qDiary).on(qLike.targetId.eq(qDiary.id.stringValue())
+				.and(qLike.likeTargetType.eq(LikeTargetType.DIARY)))
+			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId)
+				.and(qLike.likeTargetType.eq(LikeTargetType.PLACE)));
+
+		List<Like> result = query.where(whereCondition)
 			.orderBy(qLike.createdAt.desc())
 			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize());
-	}
-
-	// 사용자의 찜목록 페이지 반환
-	@Override
-	public Page<LikeResDto> getAllFavoriteList(Long userId, Pageable pageable) {
-		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(null, userId, pageable);
-
-		// 메인 쿼리
-		List<LikeResDto> favoriteList = baseQuery
-			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId))
-			.leftJoin(qDiary).on(qLike.targetId.eq(qDiary.id.stringValue()))
-			.select(new QLikeResDto(
-				qLike.id,
-				qLike.user.id,
-				qLike.targetId,
-				qLike.likeType,
-
-				qPlace.name,
-				qPlace.subName,
-				qPlace.placeType,
-
-				qDiary.subject,
-				qDiary.schedule.startDate,
-				qDiary.schedule.endDate,
-				new QUserCompactResDto(qDiary.user),
-
-				qLike.likeType.when(LikeType.PLACE)
-					.then(getPlaceFileUrlSubQuery())
-					.otherwise(getDiaryFileUrlSubQuery()),
-				// likeType에 따라 fileUrl 결정
-				qLike.createdAt
-			))
-			.where(new BooleanBuilder()
-				.or(qLike.likeType.eq(LikeType.PLACE).and(qPlace.isNotNull()))
-				.or(qLike.likeType.eq(LikeType.DIARY_BOOKMARK).and(qDiary.isNotNull()))
-			)
+			.limit(pageable.getPageSize())
 			.fetch();
 
-		long totalCount =
-			getTotalCount(LikeType.PLACE, null, userId) + getTotalCount(LikeType.DIARY_BOOKMARK, null, userId);
+		long totalCount = getTotalCount(LikeActionType.BOOKMARK, null, null, userId);
 
-		return new PageImpl<>(favoriteList, pageable, totalCount);
+		return new PageImpl<>(result, pageable, totalCount);
 	}
 
-	// 여행기에 대한 찜 목록 조회
+	// 장소 찜목록 조회
 	@Override
-	public Page<LikeResDto> getFavoriteListForDiary(Long userId, Pageable pageable) {
-		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.DIARY_BOOKMARK, userId, pageable);
+	public Page<Like> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
+		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId))
+			.and(qLike.likeActionType.eq(LikeActionType.BOOKMARK))
+			.and(qLike.likeTargetType.eq(LikeTargetType.PLACE))
+			.and(getPlaceTypeCondition(placeType));
 
-		// 조건에 맞는 좋아요 목록 조회
-		List<LikeResDto> favoriteList = baseQuery
-			.leftJoin(qDiary)
-			.on(qLike.targetId.eq(qDiary.id.stringValue()))
-			.select(new QLikeResDto(
-				qLike.id,
-				qLike.user.id,
-				qLike.targetId,
-				qDiary.subject,
-				qDiary.schedule.startDate,
-				qDiary.schedule.endDate,
-				getDiaryFileUrlSubQuery(),
-				qLike.likeType,
-				new QUserCompactResDto(qLike.user),
-				qLike.createdAt
-			))
+		JPAQuery<Like> query = jpaQueryFactory.selectFrom(qLike)
+			.leftJoin(qPlace).on(qLike.targetId.eq(qPlace.placeId));
+
+		List<Like> result = query.where(whereCondition)
+			.orderBy(qLike.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
-		long totalCount = getTotalCount(LikeType.DIARY_BOOKMARK, null, userId);
+		long total = getTotalCount(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeType, userId);
 
-		return new PageImpl<>(favoriteList, pageable, totalCount);
-
+		return new PageImpl<>(result, pageable, total);
 	}
 
-	// 장소에 대한 찜 목록 조회
+	// 다이어리 찜목록 조회
 	@Override
-	public Page<LikeResDto> getFavoriteListForPlace(PlaceType placeType, Long userId, Pageable pageable) {
-		JPAQuery<Tuple> baseQuery = createBaseFavoriteQuery(LikeType.PLACE, userId, pageable);
+	public Page<Like> getFavoriteListForDiary(Long userId, Pageable pageable) {
+		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId))
+			.and(qLike.likeActionType.eq(LikeActionType.BOOKMARK))
+			.and(qLike.likeTargetType.eq(LikeTargetType.DIARY)); // 다이어리만 필터링
 
-		// 조건에 맞는 좋아요 목록 조회
-		List<LikeResDto> favoriteList = baseQuery
-			.leftJoin(qPlace)
-			.on(qLike.targetId.eq(qPlace.placeId))
-			.where(getPlaceTypeCondition(placeType))
-			.select(new QLikeResDto(
-				qLike.id,
-				qLike.user.id,
-				qLike.targetId,
-				qPlace.name,
-				qPlace.subName,
-				getPlaceFileUrlSubQuery(),
-				qLike.likeType,
-				qPlace.placeType,
-				qLike.createdAt))
+		JPAQuery<Like> query = jpaQueryFactory.selectFrom(qLike)
+			.leftJoin(qDiary).on(qLike.targetId.eq(qDiary.id.stringValue()));
+
+		List<Like> result = query.where(whereCondition)
+			.orderBy(qLike.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
 
-		long totalCount = getTotalCount(LikeType.PLACE, placeType, userId);
+		long total = getTotalCount(LikeActionType.BOOKMARK, LikeTargetType.DIARY, null, userId);
 
-		return new PageImpl<>(favoriteList, pageable, totalCount);
-	}
-
-	// 장소의 첫번째 fileUrl 조회 서브쿼리
-	private JPAQuery<String> getPlaceFileUrlSubQuery() {
-		return jpaQueryFactory
-			.select(qFile.url)
-			.from(qFile)
-			.join(qPlaceFile).on(qFile.id.eq(qPlaceFile.file.id))
-			.where(qPlaceFile.place.id.eq(qPlace.id))
-			.where(qPlaceFile.fileOrder.eq(0)) // fileOrder가 0인 파일만 --> 첫번째 사진
-			.limit(1);
-	}
-
-	// 여행기 첫번째 fileUrl 조회 서브쿼리
-	private JPAQuery<String> getDiaryFileUrlSubQuery() {
-		return jpaQueryFactory
-			.select(qFile.url)
-			.from(qFile)
-			.join(qDiaryFile).on(qFile.id.eq(qDiaryFile.file.id))
-			.where(qDiaryFile.diary.id.eq(qDiary.id))
-			.where(qDiaryFile.fileOrder.eq(0))
-			.limit(1);
+		return new PageImpl<>(result, pageable, total);
 	}
 
 	// placeType에 따른 조건 처리
@@ -210,14 +136,19 @@ public class LikeRepositoryImpl implements LikeRepository {
 		}
 	}
 
-	// 총 좋아요 개수 조회 메서드
-	private long getTotalCount(LikeType likeType, PlaceType placeType, Long userId) {
+	// 특정 사용자의 전체 좋아요 개수 조회 메서드
+	private long getTotalCount(LikeActionType likeActionType, LikeTargetType likeTargetType, PlaceType placeType,
+		Long userId) {
 		BooleanBuilder whereCondition = new BooleanBuilder(qLike.user.id.eq(userId));
-		if (likeType != null) {
-			whereCondition.and(qLike.likeType.eq(likeType));
+		if (likeActionType != null) {
+			whereCondition.and(qLike.likeActionType.eq(likeActionType));
 		}
 
-		if (likeType == LikeType.PLACE && placeType != null) {
+		if (likeTargetType != null) {
+			whereCondition.and(qLike.likeTargetType.eq(likeTargetType));
+		}
+
+		if (likeTargetType == LikeTargetType.PLACE && placeType != null) {
 			whereCondition.and(getPlaceTypeCondition(placeType));
 		}
 
