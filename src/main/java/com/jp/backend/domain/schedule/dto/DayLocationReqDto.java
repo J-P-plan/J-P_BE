@@ -35,7 +35,21 @@ public class DayLocationReqDto {
 	@Schema(description = "장소명", example = "남산서울타워")
 	private String name;
 
-	public DayLocation toEntity(int index, Day day) {
+
+	//J일때 장소 추가시 시간 받아서 넣은 후 인덱스는 나중에 설정
+	public DayLocation toEntity(LocalTime time, Day day) {
+		return DayLocation.builder()
+			.lat(location.getLat())
+			.lng(location.getLng())
+			.placeId(placeId)
+			.locationIndex(index)
+			.day(day)
+			.time(time)
+			.name(name).build();
+	}
+
+	//P일때 장소 추가시 엔티티 생성시부터 시간, 인덱스를 젤 마지막에 오도록 추가
+	public DayLocation toEntity(LocalTime time,Integer index, Day day) {
 		return DayLocation.builder()
 			.lat(location.getLat())
 			.lng(location.getLng())

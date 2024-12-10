@@ -1,9 +1,11 @@
 package com.jp.backend.domain.schedule.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.data.domain.Page;
@@ -58,7 +60,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 	private final JpaDayRepository dayRepository;
 	private final CustomBeanUtils<DayLocation> beanUtils;
 	private final JpaExpenseRepository expenseRepository;
-
 	private final JpaUserRepository userRepository;
 
 	// 일정 생성 메서드
@@ -69,7 +70,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 		Place city = placeRepository.findByPlaceId(postDto.getPlaceId()).orElseThrow(() -> new CustomLogicException(
 			ExceptionCode.PLACE_NONE));
 		String title = city.getName();
-		Schedule schedule = postDto.toEntity(city, title);
+		User.Mbti mbti = (user.getMbti() != null) ? user.getMbti() : User.Mbti.J;
+
+		Schedule schedule = postDto.toEntity(city, title , mbti);
 		ScheduleUser scheduleUser = com.jp.backend.domain.schedule.entity.ScheduleUser.builder()
 			.user(user)
 			.isCreater(true)
@@ -98,16 +101,53 @@ public class ScheduleServiceImpl implements ScheduleService {
 	// 장소 추가 메서드
 	@Override
 	@Transactional
-	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
+	public Boolean addDayLocation(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList, User.Mbti mbti) {
 		Day day = dayRepository.findById(dayId).orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
-		AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
+		List<DayLocation> newDayLocations = new ArrayList<>();
 
-		// 인덱스 자동 증가하여 DayLocation 리스트 생성 및 저장
-		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> dayLocationReqDto.toEntity(index.getAndIncrement(), day)
-		).toList();
-		dayLocationRepository.saveAll(dayLocationList);
-		day.addLocation(dayLocationList);
+		//J면 시간 받아서 시간에 대해 인덱스 재설정
+		//P면 인덱스만 받아서 젤 마지막에 추가(시간은 가장 마지막거랑 동일)
+		if(mbti.equals(User.Mbti.J)) {
+
+			List<DayLocation> existingDayLocations = dayLocationRepository.findAllByDay(day);
+
+			AtomicInteger index = new AtomicInteger(
+				dayLocationRepository.findTopLocationIndexByDayAndTimeLessThanEqualOrderByLocationIndexDesc(
+						day, dayLocationReqDtoList.get(0).getTime())
+					.map(DayLocation::getLocationIndex) // DayLocation 객체에서 locationIndex 가져오기
+					.orElse(0) + 1
+			);
+			newDayLocations = dayLocationReqDtoList.stream().map(
+				dayLocationReqDto -> {
+					return dayLocationReqDto.toEntity(dayLocationReqDto.getTime(), index.getAndIncrement(), day);
+				}
+
+			).toList();
+
+			//이건 중간에 껴넣는거라 인덱스 재정렬 필요
+			//todo 데이터가 많거나, 변경이 잦다면 DB정렬이 유리
+			//1. 시간순으로 정렬 후 2. 인덱스로 재정렬
+
+			// 기존과 새로운 dayLocation 합치기
+			existingDayLocations.addAll(newDayLocations);
+
+			// 정렬 후 인덱스 재설정
+			reorderDayLocations(existingDayLocations);
+
+			dayLocationRepository.saveAll(existingDayLocations);
+			day.addLocation(newDayLocations);
+
+		} else {
+			LocalTime lastTime = dayLocationRepository.findTopByDayOrderByTimeDesc(day)
+				.map(DayLocation::getTime) // 값이 있으면 time 반환
+				.orElse(LocalTime.of(9, 0)); // 값이 없으면 기본값 반환
+			AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
+			newDayLocations = dayLocationReqDtoList.stream().map(
+				dayLocationReqDto ->dayLocationReqDto.toEntity(lastTime, index.getAndIncrement(), day)).toList();
+
+			dayLocationRepository.saveAll(newDayLocations);
+			day.addLocation(newDayLocations);
+		}
 
 		return true;
 	}
@@ -282,7 +322,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return new PageResDto<>(pageInfo, schedules.getContent());
 	}
 
-	// DAY 수정 메서드
+	// DAY 수정 메서드 - 이때는 프론트에서 인덱스까지 다 넘겨줄 것
 	@Override
 	@Transactional
 	public Long updateDay(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList) {
@@ -293,17 +333,17 @@ public class ScheduleServiceImpl implements ScheduleService {
 		dayLocationRepository.deleteAllByDay(day);
 
 		List<DayLocation> dayLocationList = dayLocationReqDtoList.stream().map(
-			dayLocationReqDto -> dayLocationReqDto.toEntity(dayLocationReqDto.getIndex(), day)
+			dayLocationReqDto -> dayLocationReqDto.toEntity(dayLocationReqDto.getTime(), day)
 		).toList();
 		dayLocationRepository.saveAll(dayLocationList);
 		day.addLocation(dayLocationList);
 		return dayId;
 	}
 
-	// 장소 이동 메서드
+	// 장소 이동 메서드 - 이때는 장소추가처럼 J일때는 시간 받아 재정렬, P일때는 젤 마지막에 추가
 	@Override
 	@Transactional
-	public Boolean moveDayLocation(Long dayLocationId, DayMoveDto dayMoveDto) {
+	public Boolean moveDayLocation(Long dayLocationId, User.Mbti mbti, DayMoveDto dayMoveDto) {
 		Day newDay = dayRepository.findById(dayMoveDto.getNewDayId())
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_NONE));
 
@@ -311,16 +351,38 @@ public class ScheduleServiceImpl implements ScheduleService {
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.DAY_LOCATION_NONE));
 
 		Day currentDay = dayLocation.getDay();
-		List<DayLocation> currentDayLocations = currentDay.getDayLocationList();
-		currentDayLocations.remove(dayLocation);
+		currentDay.getDayLocationList().remove(dayLocation);
 
-		reorderDayLocations(currentDayLocations);
+		// 새로운 인덱스와 시간을 계산
+		Integer newLocationIndex;
+		LocalTime newLocationTime;
 
-		Integer newLocationIndex = newDay.getDayLocationList().size() + 1;
-		dayLocation.moveDay(newDay, newLocationIndex, dayMoveDto.getTime());
+		if (mbti.equals(User.Mbti.J)) {
+			// J일 때: 특정 시간 기반으로 인덱스 설정
+			newLocationIndex = dayLocationRepository
+				.findTopLocationIndexByDayAndTimeLessThanEqualOrderByLocationIndexDesc(newDay, dayMoveDto.getTime())
+				.map(DayLocation::getLocationIndex)
+				.orElse(0) + 1;
 
-		newDay.getDayLocationList().add(dayLocation);
+			newLocationTime = dayMoveDto.getTime();
+		} else {
+			// P일 때: 가장 마지막 인덱스와 시간을 가져와 설정
+			Optional<DayLocation> optionalLastDayLocation = dayLocationRepository.findTopByDayOrderByLocationIndexDesc(
+				newDay);
 
+			newLocationIndex = optionalLastDayLocation
+				.map(lastDayLocation -> lastDayLocation.getLocationIndex() + 1)
+				.orElse(1);
+
+			newLocationTime = optionalLastDayLocation
+				.map(DayLocation::getTime)
+				.orElse(LocalTime.of(9, 0));
+		}
+
+		// dayLocation 이동 처리
+		dayLocation.moveDay(newDay, newLocationIndex, newLocationTime);
+
+		// 저장 처리
 		dayRepository.save(currentDay);
 		dayRepository.save(newDay);
 		dayLocationRepository.save(dayLocation);
@@ -328,9 +390,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return true;
 	}
 
+
 	private void reorderDayLocations(List<DayLocation> dayLocations) {
-		dayLocations.sort(Comparator.comparingInt(DayLocation::getLocationIndex));
+		// 1순위: 시간, 2순위: 인덱스로 정렬
+		dayLocations.sort(Comparator
+			.comparing(DayLocation::getTime)
+			.thenComparingInt(DayLocation::getLocationIndex));
+
+		// 정렬 후 인덱스를 1부터 다시 설정
 		AtomicInteger indexCounter = new AtomicInteger(1);
 		dayLocations.forEach(location -> location.setLocationIndex(indexCounter.getAndIncrement()));
 	}
+
 }
