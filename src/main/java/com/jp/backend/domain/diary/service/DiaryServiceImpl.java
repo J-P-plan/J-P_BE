@@ -123,8 +123,9 @@ public class DiaryServiceImpl implements DiaryService {
 
 		Diary diary = verifyDiary(diaryId);
 
-		// TDOO comment에 연결해서 자동 삭제되도록 할까 고민이네 훔
+		// TODO 연관관계 설정해서 자동삭제 할까 고민고민
 		commentRepository.deleteAllByCommentTypeAndTargetId(CommentType.DIARY, diaryId);
+		likeRepository.deleteAllByLikeTargetTypeAndTargetId(LikeTargetType.DIARY, diaryId.toString());
 
 		diaryRepository.delete(diary);
 	}
