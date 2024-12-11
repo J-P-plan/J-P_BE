@@ -1,7 +1,5 @@
 package com.jp.backend.domain.place.service;
 
-import static com.jp.backend.domain.like.enums.LikeType.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.dto.PlaceDetailResDto;
@@ -121,9 +121,10 @@ public class PlaceServiceImpl implements PlaceService {
 		Long userId = null;
 		if (user != null) { // 로그인 했으면
 			userId = user.getId();
-			isLiked = likeRepository.findLike(PLACE, placeId, user.getId()).isPresent();
+			isLiked = likeRepository.findLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId, user.getId())
+				.isPresent();
 		}
-		Long likeCount = likeRepository.countLike(PLACE, placeId);
+		Long likeCount = likeRepository.countLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId);
 		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수(userTotal어쩌구)랑 이거 합해서 보여줄까 고민
 
 		return PlaceDetailResDto.builder()

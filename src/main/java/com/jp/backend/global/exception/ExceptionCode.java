@@ -25,6 +25,7 @@ public enum ExceptionCode {
 	PLACE_NONE(404, "PLACE_NONE"),
 	PLACE_ID_REQUIRED(400, "PLACE_ID_REQUIRED"),
 	TOO_MANY_REQUEST(405, "요청한 개수가 너무 많습니다"),
+	PLACE_TYPE_REQUIRED(400, "PLACE_TYPE_REQUIRED"),
 
 	//Review
 	REVIEW_NONE(404, "REVIEW_NONE"),
@@ -54,7 +55,8 @@ public enum ExceptionCode {
 	SCHEDULE_USER_NONE(404, "해당 일정에 유저가 없습니다."),
   
 	// Diary
-	DIARY_NONE(404, "DIARY_NONE");
+	DIARY_NONE(404, "DIARY_NONE"),
+	ALREADY_POSTED(409, "ALREADY_POSTED");
 
 	@Getter
 	private final int code;

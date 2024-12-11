@@ -37,6 +37,7 @@ public class DiaryReqDto {
 			.subject(subject)
 			.content(content)
 			.isPublic(isPublic)
+			.viewCnt(0)
 			.user(user)
 			.build();
 	}
