@@ -43,9 +43,6 @@ public class Diary extends Auditable {
 	private Integer viewCnt;
 
 	public Diary addViewCnt() {
-		if (this.viewCnt == null) {
-			this.viewCnt = 0;
-		}
 		this.viewCnt++;
 		return this;
 	}

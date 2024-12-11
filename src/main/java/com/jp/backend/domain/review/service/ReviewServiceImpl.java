@@ -18,7 +18,8 @@ import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.ReviewFile;
 import com.jp.backend.domain.file.repository.JpaReviewFileRepository;
 import com.jp.backend.domain.file.service.FileService;
-import com.jp.backend.domain.like.enums.LikeType;
+import com.jp.backend.domain.like.enums.LikeActionType;
+import com.jp.backend.domain.like.enums.LikeTargetType;
 import com.jp.backend.domain.like.repository.JpaLikeRepository;
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
@@ -84,7 +85,7 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW, review.getId().toString());
 
 		List<FileResDto> fileInfos = addToReviewFile(updateDto.getNewFileIds(), updatingReview);
 
@@ -97,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
 
-		Long likeCnt = likeRepository.countLike(LikeType.REVIEW, reviewId.toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW, reviewId.toString());
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
 
 		List<ReviewFile> reviewFiles = reviewFileRepository.findByReviewIdOrderByFileOrder(reviewId);
@@ -125,7 +126,8 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
+					Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+						review.getId().toString());
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
@@ -166,7 +168,8 @@ public class ReviewServiceImpl implements ReviewService {
 						review.getId());
 					int commentCnt = commentList.size();
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
-					Long likeCnt = likeRepository.countLike(LikeType.REVIEW, review.getId().toString());
+					Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+						review.getId().toString());
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
