@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.domain.file.entity.File;
+import com.jp.backend.domain.file.entity.PlaceFile;
 import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
 import com.jp.backend.domain.googleplace.service.GooglePlaceService;
 import com.jp.backend.domain.like.enums.LikeActionType;
@@ -67,15 +68,25 @@ public class PlaceServiceImpl implements PlaceService {
 		List<PlaceCompactResDto> placeCompactList = new ArrayList<>();
 
 		for (Place place : placePage.getContent()) {
-			// google에서 별점 가져와서 넣어주기
-			Double rating = Optional.ofNullable(
-					googlePlaceService.getPlaceDetailsFromGoogle(place.getPlaceId(), "rating"))
+
+			GooglePlaceDetailsResDto googleDetails = googlePlaceService.getPlaceDetailsFromGoogle(place.getPlaceId(),
+				"rating,photo");
+
+			Double rating = Optional.ofNullable(googleDetails)
 				.map(GooglePlaceDetailsResDto::getRating)
 				.orElse(0.0);
+
+			String photoUrl = Optional.ofNullable(googleDetails)
+				.map(GooglePlaceDetailsResDto::getPhotoUrls)
+				.filter(urls -> !urls.isEmpty())
+				.map(urls -> urls.get(0))
+				.orElse(null);
+			// google에서 별점 가져와서 넣어주기
 
 			placeCompactList.add(PlaceCompactResDto.builder()
 				.entity(place)
 				.rating(rating)
+				.photoUrl(photoUrl)
 				.build());
 		}
 
@@ -104,10 +115,8 @@ public class PlaceServiceImpl implements PlaceService {
 		// 사진 url 가져오기
 		List<String> photoUrls = new ArrayList<>();
 		if (place != null) { // place의 File 객체에서 URL 추출하여 photoUrls에 추가 --> DB에서 사진 가져오기
-			List<File> files = place.getFiles();
-			if (files != null) {
-				files.forEach(file -> photoUrls.add(file.getUrl()));
-			}
+			List<File> files = place.getFiles().stream().map(PlaceFile::getFile).toList();
+			files.forEach(file -> photoUrls.add(file.getUrl()));
 		}
 		if (detailsByGoogle.getPhotoUrls() != null) { // + 구글에서 사진 가져와서 추가해줌
 			photoUrls.addAll(detailsByGoogle.getPhotoUrls());
@@ -118,22 +127,19 @@ public class PlaceServiceImpl implements PlaceService {
 
 		// 유저 Id랑 좋아요 여부 가져오기
 		boolean isLiked = false; // 로그인 안했으면 일단 false
-		Long userId = null;
 		if (user != null) { // 로그인 했으면
-			userId = user.getId();
 			isLiked = likeRepository.findLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId, user.getId())
 				.isPresent();
 		}
 		Long likeCount = likeRepository.countLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId);
 		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수(userTotal어쩌구)랑 이거 합해서 보여줄까 고민
 
-		return PlaceDetailResDto.builder()
+		return PlaceDetailResDto.googlePlaceBuilder()
 			.place(place)
 			.placeId(placeId)
 			.detailsByGoogle(detailsByGoogle)
 			.photoUrls(photoUrls)
 			.likeCount(likeCount)
-			.userId(userId)
 			.isLiked(isLiked)
 			.build();
 	}

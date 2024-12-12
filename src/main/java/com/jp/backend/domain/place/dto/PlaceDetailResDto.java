@@ -55,25 +55,21 @@ public class PlaceDetailResDto {
 	@Schema(description = "좋아요 총 개수")
 	private Long likeCount;
 
-	@Schema(description = "좋아요를 누른 유저의 id")
-	private Long userId;
-
 	@Schema(description = "좋아요 눌렀는지 여부")
 	private Boolean isLiked;
 
 	@Schema(description = "위도,경도")
 	private Location location;
 
-	@Builder
+	@Builder(builderMethodName = "googlePlaceBuilder")
 	public PlaceDetailResDto(Place place, String placeId, GooglePlaceDetailsResDto detailsByGoogle,
-		List<String> photoUrls, Long likeCount, Long userId, Boolean isLiked) {
+		List<String> photoUrls, Long likeCount, Boolean isLiked) {
 		this.placeId = placeId;
 		if (detailsByGoogle != null) { // 무조건 google에서 뽑아오는 정보
 			this.formattedAddress = detailsByGoogle.getFullAddress();
 			this.location = Location.builder().lat(detailsByGoogle.getLocation().getLat())
 				.lng(detailsByGoogle.getLocation().getLng()).build(); // 혹시 db에 있는 게 틀릴 수도 있으니까 google에서 가져온 정보로 보내기
 		}
-
 		if (place != null) { // db에 해당 장소가 있으면
 			this.name = place.getName();
 			this.placeType = place.getPlaceType();
@@ -92,7 +88,6 @@ public class PlaceDetailResDto {
 
 		this.photoUrls = photoUrls;
 		this.likeCount = likeCount;
-		this.userId = userId;
 		this.isLiked = isLiked;
 	}
 }

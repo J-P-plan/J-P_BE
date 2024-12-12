@@ -99,7 +99,6 @@ public class LikeServiceImpl implements LikeService {
 					.fileType(File.FileType.IMAGE)
 					.build();
 
-				place.addFile(file);
 				placeRepository.save(place);
 
 				PlaceFile placeFile = new PlaceFile();
