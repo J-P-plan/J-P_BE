@@ -75,9 +75,10 @@ public class FileController {
 		description = " 장소/리뷰/여행기에 10mb 이하의 이미지, 영상, pdf 업로드가 가능합니다. <br>"
 			+ "1. category == PLACE -> placeId 필요 / auth 필요 X <br>"
 			+ "2. category == REVIEW/DIARY -> placeId 필요 X / auth 필요 O")
-	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(@RequestPart List<MultipartFile> files,
+	public ResponseEntity<SingleResponse<List<FileResDto>>> uploadFiles(
+		@RequestPart(value = "files") List<MultipartFile> files,
 		@PathVariable(value = "category") @Parameter(description = "업로드할 파일의 카테고리") UploadCategory category,
-		@RequestPart(required = false) String placeId,
+		@RequestPart(value = "placeId", required = false) String placeId,
 		@AuthenticationPrincipal UserPrincipal principal) {
 
 		String email = (category == UploadCategory.PLACE) ? null : principal.getUsername();
