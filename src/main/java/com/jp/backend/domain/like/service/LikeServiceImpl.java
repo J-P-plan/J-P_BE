@@ -56,11 +56,10 @@ public class LikeServiceImpl implements LikeService {
 	public boolean manageLike(LikeActionType likeActionType, LikeTargetType likeTargetType, String targetId,
 		String email) {
 		if (likeActionType == LikeActionType.LIKE && likeTargetType == LikeTargetType.PLACE) {
-			throw new IllegalArgumentException("LIKE 액션에서는 'PLACE'를 대상으로 사용할 수 없습니다.");
-			// TODO 이거 customException으로 할까 말까 고민
+			throw new IllegalArgumentException("LIKE 액션에서는 'PLACE'를 대상으로 사용할 수 없습니다. BOOKMARK 액션으로 해주세요.");
 		}
 		if (likeActionType == LikeActionType.BOOKMARK && likeTargetType == LikeTargetType.REVIEW) {
-			throw new IllegalArgumentException("BOOKMARK 액션에서는 'REVIEW'를 대상으로 사용할 수 없습니다.");
+			throw new IllegalArgumentException("BOOKMARK 액션에서는 'REVIEW'를 대상으로 사용할 수 없습니다. LIKE 액션으로 해주세요.");
 		}
 
 		User user = userService.verifyUser(email);

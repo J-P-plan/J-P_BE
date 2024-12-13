@@ -94,7 +94,6 @@ public class DiaryServiceImpl implements DiaryService {
 
 		Diary foundDiary = verifyDiary(diaryId);
 		Diary diary = updateDto.toEntity();
-		diary.setId(foundDiary.getId());
 
 		if (!email.equals(foundDiary.getUser().getEmail())) {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
@@ -104,7 +103,8 @@ public class DiaryServiceImpl implements DiaryService {
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 
 		Diary updatingDiary = beanUtils.copyNonNullProperties(diary, foundDiary);
-		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.DIARY, diary.getId().toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.DIARY,
+			diaryId.toString());
 
 		List<FileResDto> fileInfos = addToDiaryFile(updateDto.getNewFileIds(), updatingDiary);
 
@@ -136,7 +136,6 @@ public class DiaryServiceImpl implements DiaryService {
 		Diary diary = verifyDiary(diaryId);
 		diary.addViewCnt();
 
-		// TODO 이거 스케줄 삭제하면 diary 자동 삭제되게 하면 필요 X
 		Schedule schedule = scheduleRepository.findById(diary.getSchedule().getId())
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
 

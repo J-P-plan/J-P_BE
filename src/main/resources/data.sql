@@ -1,4 +1,4 @@
--- place - CITY
+-- place - CITY (도시)
 -- 강원도
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
 VALUES (1, 'ChIJq_vvHybkYjURBDWI49gjy3U', '춘천', '강원도 춘천시',
@@ -174,375 +174,333 @@ VALUES (59, 'ChIJ5a7fvhUoezUR1KkLpiWn_fo', '천안', '충청남도 천안시', '
        (73, 'ChIJZxmSSfASejURQE9m6F6Ov9w', '태안', '충청남도 태안군', '태안군은 서해안의 아름다운 해변과 태안해안국립공원으로 유명한 관광지입니다.',
         'CITY', 36.7456421, 126.2980528, 'CHUNGCHEONGNAM_DO');
 
--- 특별시, 광역시 등
+-- 충청도 - 북도
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
-VALUES (201, 'ChIJzzlcLQGifDURm_JbQKHsEX4', '서울', '서울특별시', '대한민국의 수도이자 가장 큰 도시입니다.', 'CITY', 37.5518911,
-        126.9917937, 'SEOUL'),
-       (202, 'ChIJNc0j6G3raDURpwhxJHTL2DU', '부산', '부산광역시', '대한민국의 제2의 도시이자 주요 항구 도시입니다.', 'CITY', 35.2100142,
-        129.0688702, 'METROPOLITAN_CITY'),
-       (203, 'ChIJ1a3vsrjjZTURMC44oCngkro', '대구', '대구광역시', '대한민국의 주요 대도시 중 하나로 섬유 산업으로 유명합니다.', 'CITY',
-        35.8294374, 128.5655119, 'METROPOLITAN_CITY'),
-       (204, 'ChIJR4ITliVveTURQmG3LJD9N30', '인천', '인천광역시', '대한민국의 주요 항구 도시이자 국제 공항이 위치한 곳입니다.', 'CITY',
-        37.4562557, 126.7052062, 'METROPOLITAN_CITY'),
-       (205, 'ChIJr6f1ASOJcTURSPUlAe3S9AU', '광주', '광주광역시', '대한민국의 주요 도시 중 하나로 예술과 문화의 중심지입니다.', 'CITY',
-        35.1557358, 126.8354271, 'METROPOLITAN_CITY'),
-       (206, 'ChIJAWZKutdIZTURtdOKmJ3WltE', '대전', '대전광역시', '대한민국의 주요 과학과 교육의 중심지입니다.', 'CITY', 36.3398175,
-        127.3940486, 'METROPOLITAN_CITY'),
-       (207, 'ChIJgd6y4osuZjURATHZM3P6g3A', '울산', '울산광역시', '대한민국의 주요 산업 도시로 자동차와 조선업으로 유명합니다.', 'CITY',
-        35.5537228, 129.2380554, 'METROPOLITAN_CITY'),
-       (208, 'ChIJRUDITFTjDDURMb8emNI2vGY', '제주', '제주특별자치도', '대한민국의 대표적인 관광지로 유명한 섬입니다.',
-        'CITY', 33.3846216, 126.5534925, 'JEJU_DO');
---        (209, 'ChIJeTXJmw9F4F8RsVxeo703sV8', '울릉도', '경상북도 울릉군', '대한민국의 동해에 위치한 섬으로 아름다운 자연경관을 자랑합니다.', 'CITY',
---         37.5063677,
---         130.8571536),
---        (210, 'ChIJKZOFCAiA4V8R6qLxln4VW9U', '독도', '경상북도 울릉군 독도리', '대한민국의 동해에 위치한 섬으로 중요한 역사적 의미를 가집니다.', 'CITY',
---         37.2429362, 131.8668421);
-
--- 경기도
-INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
-VALUES (215, 'ChIJr9c9ugIrfTUR3iXJA2xYMfM', '포천', '경기도 포천시',
-        '포천시는 대한민국 경기도 북부에 위치한 도시로, 자연 경관이 아름다운 지역으로 유명합니다. 특히 산악 지대가 많아 명성산, 산정호수, 백운계곡 등 관광 명소가 많고, 캠핑과 트레킹을 즐기기에 적합합니다.',
-        'CITY', 37.8982868, 127.2041251, 'GYEONGGI_DO'),
-       (216, 'ChIJA3bo8tPbfDURe_pZYu-eBgo', '동두천', '경기도 동두천시',
-        '동두천시는 경기도 북부에 위치한 군사도시로, 자연 경관과 함께 미군 기지 주변의 이국적인 분위기도 특징입니다.',
-        'CITY', 37.902444, 127.0531685, 'GYEONGGI_DO'),
-       (217, 'ChIJp3mNK-ooYzURCQHqedpn6CU', '가평', '경기도 가평군',
-        '가평군은 북한강을 끼고 있으며, 청평호와 남이섬, 자라섬 등 자연 경관이 수려한 관광지로 유명합니다.',
-        'CITY', 37.8312904, 127.5105858, 'GYEONGGI_DO'),
-       (218, 'ChIJ_xexY_O1fDUR0_lmFn1y4eo', '남양주', '경기도 남양주시',
-        '남양주시는 서울과 가까운 위치에 있으며, 다산 정약용의 고향이자 북한강과 함께 아름다운 자연을 간직한 도시입니다.',
-        'CITY', 37.4929835, 127.171677, 'GYEONGGI_DO'),
-       (219, 'ChIJw-EhiKJAYzURtobjoj4r3Sg', '양평', '경기도 양평군',
-        '양평군은 서울과 가까운 자연 휴양지로, 산과 강이 어우러져 캠핑, 수상 스포츠, 힐링 관광지로 사랑받는 지역입니다.',
-        'CITY', 37.4918429, 127.5030058, 'GYEONGGI_DO'),
-       (220, 'ChIJh_93e5BeYzURSPw7Qk1pCjg', '여주', '경기도 여주시',
-        '여주시는 도자기와 쌀로 유명한 지역으로, 세종대왕의 능이 위치해 역사적 의미도 깊습니다.',
-        'CITY', 37.2941469, 127.6463008, 'GYEONGGI_DO'),
-       (221, 'ChIJg2aRABSmZDURYOQUKaHNj1k', '이천', '경기도 이천시',
-        '이천시는 쌀과 도자기로 유명하며, 매년 도자기 축제가 열리고 있습니다. 또, 이천 온천이 있어 휴양지로도 알려져 있습니다.',
-        'CITY', 37.2891308, 127.4530256, 'GYEONGGI_DO'),
-       (222, 'ChIJwVlm56XKZDUR6zbMpuSnY5Y', '안성', '경기도 안성시',
-        '안성시는 한국 전통 농경 문화가 잘 보존된 곳으로, 안성맞춤이라는 말로도 유명한 전통적인 농업 도시입니다.',
-        'CITY', 37.0075339, 127.2695329, 'GYEONGGI_DO'),
-       (223, 'ChIJhUYLdeIXezURSetXeqzUMyY', '평택', '경기도 평택시',
-        '평택시는 서해안에 접해 있는 항구 도시로, 미군 기지가 위치해 있으며 최근 산업과 물류 중심지로 급부상하고 있습니다.',
-        'CITY', 36.9940244, 126.8524533, 'GYEONGGI_DO'),
-       (224, 'ChIJ9TPOaj1SezUR-7VRGXA1Mp0', '용인', '경기도 용인시',
-        '용인시는 자연과 첨단 도시가 공존하는 지역으로, 에버랜드, 한국민속촌 등 관광 명소가 많아 가족 단위 방문객이 많습니다.',
-        'CITY', 37.2361653, 127.1891246, 'GYEONGGI_DO'),
-       (225, 'ChIJ-1jEsddGezUR9CfyB4vKcyo', '오산', '경기도 오산시',
-        '오산시는 서울에서 남쪽으로 약 35km 떨어진 교통 요충지로, 오산 공군기지가 있는 군사도시입니다.',
-        'CITY', 37.15565429999999, 127.0726571, 'GYEONGGI_DO'),
-       (226, 'ChIJIfZd0f8SezURp-W-4kU9FD0', '화성', '경기도 화성시',
-        '화성시는 최근 급성장한 신도시로, 산업단지와 자연이 어우러져 있으며, 서해안과 접해 관광지로도 인기가 많습니다.',
-        'CITY', 37.1688927, 126.8941169, 'GYEONGGI_DO'),
-       (227, 'ChIJEUZ2IApDezURybRd7gIwN_E', '수원', '경기도 수원시',
-        '수원시는 경기도의 중심 도시로, 유네스코 세계문화유산인 수원 화성이 위치해 역사적, 문화적 가치가 큽니다.',
-        'CITY', 37.2635731, 127.0286009, 'GYEONGGI_DO'),
-       (228, 'ChIJp5sdcwcLezUR6RpjPtooIXA', '안산시', '경기도 안산시',
-        '안산시는 서해안에 위치해 있으며, 공업 도시로서의 역할과 함께 다문화 도시로도 유명합니다.',
-        'CITY', 37.317342, 126.8209476, 'GYEONGGI_DO'),
-       (229, 'ChIJr6f1ASOJcTURSPUlAe3S9AU', '광주', '경기도 광주시',
-        '광주시는 경기도 동부에 위치해 있으며, 산지와 계곡이 많아 자연 경관이 아름다운 곳입니다.',
-        'CITY', 35.15008220000001, 126.8559071, 'GYEONGGI_DO'),
-       (230, 'ChIJq_ZV66-wfDURLGEgt9LLrao', '구리', '경기도 구리시',
-        '구리시는 서울 근교에 위치해 있어 서울과의 접근성이 뛰어나며, 곱창 골목이 유명합니다.',
-        'CITY', 37.59719279999999, 127.1308565, 'GYEONGGI_DO'),
-       (231, 'ChIJvyAScPGnfDUR1JfjvGZWMVA', '성남', '경기도 성남시',
-        '성남시는 판교 테크노밸리를 중심으로 IT 산업이 발달한 첨단 도시이며, 분당신도시가 위치한 주거 중심지입니다.',
-        'CITY', 37.3918136, 127.113092, 'GYEONGGI_DO'),
-       (232, 'ChIJDb8DNzNlezURe1yrv81ckKo', '시흥', '경기도 시흥시',
-        '시흥시는 서해안과 접해 있는 도시로, 최근 신도시 개발과 산업단지 확장으로 주목받고 있는 도시입니다.',
-        'CITY', 37.3500952, 126.7393351, 'GYEONGGI_DO'),
-       (233, 'ChIJMVA9LMRgezURtTte1ZiXJ3Y', '안양', '경기도 안양시',
-        '안양시는 서울과 가까운 위성도시로, 산업단지와 주거 단지가 어우러진 지역입니다.',
-        'CITY', 37.3835395, 126.934176, 'GYEONGGI_DO'),
-       (234, 'ChIJ7zeIBq5iezURaqxiL41X2oE', '부천', '경기도 부천시',
-        '부천시는 서울과 인접해 있으며, 영화제, 만화축제 등 문화행사로 유명한 문화 중심 도시입니다.',
-        'CITY', 37.5038683, 126.7874615, 'GYEONGGI_DO'),
-       (235, 'ChIJkV2jedRjezURFbmdV2BB19A', '광명', '경기도 광명시',
-        '광명시는 서울과 가까운 위치에 있어 주거 및 상업 지역으로 발전했으며, 광명동굴과 같은 관광 명소도 있습니다.',
-        'CITY', 37.4418886, 126.8468729, 'GYEONGGI_DO'),
-       (236, 'ChIJzyD-5cVdezURFT58919_lQ4', '의왕', '경기도 의왕시',
-        '의왕시는 경기도 남부에 위치한 도시로, 백운호수와 왕송호수 등 자연 친화적인 환경이 잘 보존된 곳입니다.',
-        'CITY', 37.3496154, 126.9732245, 'GYEONGGI_DO'),
-       (237, 'ChIJs2xd03hfezURONrZ4npqMQM', '과천', '경기도 과천시',
-        '과천시는 서울과 인접한 작은 도시로, 서울대공원, 국립과천과학관 등이 위치해 문화와 과학이 어우러진 지역입니다.',
-        'CITY', 37.4279095, 126.991196, 'GYEONGGI_DO'),
-       (239, 'ChIJJY4Cmk6GfDURSOGVqk7LIrY', '김포', '경기도 김포시',
-        '김포시는 한강을 끼고 있어 최근 신도시 개발로 빠르게 성장하고 있으며, 서울과의 접근성이 뛰어난 지역입니다.',
-        'CITY', 37.6593806, 126.5930681, 'GYEONGGI_DO');
-
--- 충북
-INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
-VALUES (250, 'ChIJfVXxCFOUZDUR2d4WqpGzmvo', '음성', '충청북도 음성군',
+VALUES (74, 'ChIJfVXxCFOUZDUR2d4WqpGzmvo', '음성', '충청북도 음성군',
         '음성군은 충청북도의 북부에 위치해 있으며, 농업과 축산업이 발달한 지역입니다. 최근에는 다양한 산업단지도 조성되고 있습니다.',
         'CITY', 36.9388829, 127.6904779, 'CHUNGCHEONGBUK_DO'),
-       (251, 'ChIJoxTVVcGHYzUR1BvZ2nCGjc0', '제천', '충청북도 제천시', '제천시는 산과 계곡이 어우러진 관광 도시로, 청풍호와 제천 한방바이오밸리로 유명한 지역입니다.',
+       (75, 'ChIJoxTVVcGHYzUR1BvZ2nCGjc0', '제천', '충청북도 제천시', '제천시는 산과 계곡이 어우러진 관광 도시로, 청풍호와 제천 한방바이오밸리로 유명한 지역입니다.',
         'CITY', 37.1336455, 128.2038942, 'CHUNGCHEONGBUK_DO'),
-       (252, 'ChIJdykXlzLxYzURV9_CbQ04nbI', '단양', '충청북도 단양군', '단양군은 소백산과 단양팔경으로 유명한 관광 도시로, 자연 경관과 동굴 탐방이 인기 있는 지역입니다.',
+       (76, 'ChIJdykXlzLxYzURV9_CbQ04nbI', '단양', '충청북도 단양군', '단양군은 소백산과 단양팔경으로 유명한 관광 도시로, 자연 경관과 동굴 탐방이 인기 있는 지역입니다.',
         'CITY', 37.0088693, 128.3359256, 'CHUNGCHEONGBUK_DO'),
-       (253, 'ChIJgRGbRi6EZDURpIsGqHmxkoY', '충주', '충청북도 충주시',
+       (77, 'ChIJgRGbRi6EZDURpIsGqHmxkoY', '충주', '충청북도 충주시',
         '충주시는 충청북도의 중심부에 위치한 도시로, 충주호와 월악산 국립공원이 있어 자연 경관이 뛰어납니다.',
         'CITY', 36.9872192, 127.9282976, 'CHUNGCHEONGBUK_DO'),
-       (254, 'ChIJfTIx8JrtZDUR8l4zh7ba7wA', '괴산', '충청북도 괴산군', '괴산군은 청정 자연환경을 자랑하는 지역으로, 산과 강이 어우러져 농업과 관광이 발달한 곳입니다.',
+       (78, 'ChIJfTIx8JrtZDUR8l4zh7ba7wA', '괴산', '충청북도 괴산군', '괴산군은 청정 자연환경을 자랑하는 지역으로, 산과 강이 어우러져 농업과 관광이 발달한 곳입니다.',
         'CITY', 36.8091884, 127.7945778, 'CHUNGCHEONGBUK_DO'),
-       (255, 'ChIJPXkHCtrCZDURN9AADeggtz0', '증평', '충청북도 증평군', '증평군은 충청북도에서 가장 작은 군으로, 최근 교통 인프라 확장으로 발전하고 있는 지역입니다.',
+       (79, 'ChIJPXkHCtrCZDURN9AADeggtz0', '증평', '충청북도 증평군', '증평군은 충청북도에서 가장 작은 군으로, 최근 교통 인프라 확장으로 발전하고 있는 지역입니다.',
         'CITY', 36.7979566, 127.589951, 'CHUNGCHEONGBUK_DO'),
-       (256, 'ChIJQSAi8A_PZDUR58l41c1uqyE', '진천', '충청북도 진천군', '진천군은 역사적으로 농업과 축산업이 발달해 왔으며, 최근에는 혁신 도시로 성장 중인 지역입니다.',
+       (80, 'ChIJQSAi8A_PZDUR58l41c1uqyE', '진천', '충청북도 진천군', '진천군은 역사적으로 농업과 축산업이 발달해 왔으며, 최근에는 혁신 도시로 성장 중인 지역입니다.',
         'CITY', 36.8548412, 127.4341505, 'CHUNGCHEONGBUK_DO'),
-       (257, 'ChIJfa9k5K0nZTURiYhqfJx4mfw', '청주', '충청북도 청주시',
+       (81, 'ChIJfa9k5K0nZTURiYhqfJx4mfw', '청주', '충청북도 청주시',
         '청주시는 충청북도의 도청 소재지이자 최대 도시로, 교육과 행정의 중심지입니다. 문화와 역사가 깊은 도시입니다.',
         'CITY', 36.6283272, 127.4913407, 'CHUNGCHEONGBUK_DO'),
-       (258, 'ChIJVwAKd0IZZTURmlMBLcnKkxQ', '보은', '충청북도 보은군', '보은군은 속리산과 법주사로 유명하며, 역사적 유적지와 자연 경관을 함께 즐길 수 있는 관광지입니다.',
+       (82, 'ChIJVwAKd0IZZTURmlMBLcnKkxQ', '보은', '충청북도 보은군', '보은군은 속리산과 법주사로 유명하며, 역사적 유적지와 자연 경관을 함께 즐길 수 있는 관광지입니다.',
         'CITY', 36.4887681, 127.7177059, 'CHUNGCHEONGBUK_DO'),
-       (259, 'ChIJhaqof9wUZTURW7xaGKUSM00', '옥천', '충청북도 옥천군', '옥천군은 농업과 한옥 마을 등 전통문화가 보존된 지역으로, 장령산과 같은 자연 명소로도 유명합니다.',
+       (83, 'ChIJhaqof9wUZTURW7xaGKUSM00', '옥천', '충청북도 옥천군', '옥천군은 농업과 한옥 마을 등 전통문화가 보존된 지역으로, 장령산과 같은 자연 명소로도 유명합니다.',
         'CITY', 36.301186, 127.5689622, 'CHUNGCHEONGBUK_DO'),
-       (260, 'ChIJPVedZBNuZTURvx2uR-6t1ZI', '영동', '충청북도 영동군', '영동군은 포도와 와인으로 유명한 지역으로, 산과 강이 어우러진 자연 환경을 자랑합니다.',
+       (84, 'ChIJPVedZBNuZTURvx2uR-6t1ZI', '영동', '충청북도 영동군', '영동군은 포도와 와인으로 유명한 지역으로, 산과 강이 어우러진 자연 환경을 자랑합니다.',
         'CITY', 36.1747626, 127.7766525, 'CHUNGCHEONGBUK_DO');
 
--- 전북
+-- 전라도 - 남도
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
-VALUES (601, 'ChIJY9gWA0MjcDURmkLDkeAXvMc', '전주', '전라북도 전주시',
-        '전주시는 전라북도의 도청 소재지이자 한옥마을과 전주비빔밥으로 유명한 역사와 전통의 도시입니다.',
-        'CITY', 35.8397174, 127.1293249, 'JEOLLABUK_DO'),
-
-       (602, 'ChIJDx2AEJrdbzUR7MqSlGWqywQ', '진안', '전라북도 진안군',
-        '진안군은 산악 지대가 많아 고원지대 특유의 청정 자연을 자랑하며, 마이산이 특히 유명한 관광지입니다.',
-        'CITY', 35.7920364, 127.427288, 'JEOLLABUK_DO'),
-
-       (603, 'ChIJT_6-EzJgZTURKMH-lfbs6d8', '무주', '전라북도 무주군',
-        '무주군은 무주리조트와 덕유산 국립공원으로 유명하며, 겨울 스포츠와 자연 경관을 즐길 수 있는 지역입니다.',
-        'CITY', 36.0075339, 127.6573548, 'JEOLLABUK_DO'),
-
-       (604, 'ChIJn_FKry0qcDURObqxbjv-Bn8', '임실', '전라북도 임실군',
-        '임실군은 임실치즈로 유명하며, 농업과 축산업이 발달한 전원 지역입니다.',
-        'CITY', 35.6125056, 127.2860024, 'JEOLLABUK_DO'),
-
-       (605, 'ChIJTUI5jYAUcDURPIpSuFk4EOs', '익산', '전라북도 익산시',
-        '익산시는 전라북도 중부에 위치한 교통 요충지로, 백제 문화의 중심지이며 유네스코 세계문화유산에 등재된 미륵사지가 있습니다.',
-        'CITY', 35.9443701, 126.9595253, 'JEOLLABUK_DO'),
-
-       (606, 'ChIJmS9WoQVccDURlFonGSH41PM', '군산', '전라북도 군산시',
-        '군산시는 서해안에 위치한 항구 도시로, 일제강점기 건축물이 잘 보존되어 있는 역사적 도시입니다.',
-        'CITY', 35.97961340000001, 126.7155958, 'JEOLLABUK_DO'),
-
-       (607, 'ChIJhZJqPgNJcDURzJUi0LAk1uQ', '김제', '전라북도 김제시',
-        '김제시는 한국 농업의 중심지로, 김제 벽골제가 위치해 있으며, 매년 김제지평선축제가 열리는 지역입니다.',
-        'CITY', 35.8024889, 126.892438, 'JEOLLABUK_DO'),
-
-       (608, 'ChIJVTM-CX0FcTURqK7lbk7EHso', '부안', '전라북도 부안군',
-        '부안군은 변산반도 국립공원이 있는 지역으로, 서해안의 자연 경관을 자랑하며 해양 관광지가 발달해 있습니다.',
-        'CITY', 35.7264188, 126.7371611, 'JEOLLABUK_DO'),
-
-       (609, 'ChIJ4Qcf4buwcTURKQKjhX-11LA', '정읍', '전라북도 정읍시',
-        '정읍시는 농업과 축산업이 발달한 지역으로, 내장산 국립공원과 단풍으로 유명한 관광지입니다.',
-        'CITY', 35.5615819, 126.8636603, 'JEOLLABUK_DO'),
-
-       (610, 'ChIJI3q9moR1cTUR0tAxS2crQgg', '고창', '전라북도 고창군',
-        '고창군은 고인돌 유적지가 많은 지역으로, 한국 선사시대 문화를 엿볼 수 있는 역사적인 도시입니다.',
-        'CITY', 35.4349582, 126.7019568, 'JEOLLABUK_DO'),
-
-       (611, 'ChIJIU6c1QDFcTURa-P1NNmlQzk', '순창', '전라북도 순창군',
-        '순창군은 고추장과 장류로 유명한 지역으로, 전통 식품 산업이 발달한 도시입니다.',
-        'CITY', 35.3762981, 127.1436055, 'JEOLLABUK_DO'),
-
-       (612, 'ChIJgU3R6sotbjUR6J4G2yY9xrY', '남원', '전라북도 남원시',
-        '남원시는 춘향전의 배경으로 유명한 전통 문화 도시이며, 광한루와 지리산 등 관광 명소가 많은 지역입니다.',
-        'CITY', 35.4151468, 127.3862661, 'JEOLLABUK_DO');
-
--- 전남
-INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
-VALUES (650, 'ChIJp4u6RPvqcTURFYICFtg_oZs', '담양', '전라남도 담양군',
+VALUES (85, 'ChIJp4u6RPvqcTURFYICFtg_oZs', '담양', '전라남도 담양군',
         '담양군은 대나무와 담양죽녹원으로 유명하며, 전통과 자연이 조화를 이루는 관광 명소입니다.',
         'CITY', 35.3198702, 126.9851332, 'JEOLLANAM_DO'),
-
-       (651, 'ChIJtQMMMZo8bjURrJ27b3pIfWA', '구례', '전라남도 구례군',
+       (86, 'ChIJtQMMMZo8bjURrJ27b3pIfWA', '구례', '전라남도 구례군',
         '구례군은 지리산 국립공원과 화엄사 등 자연과 전통이 어우러진 지역으로, 산악 관광이 발달해 있습니다.',
         'CITY', 35.2582959, 127.4445947, 'JEOLLANAM_DO'),
-
-       (652, 'ChIJdQt_13jfcTURly4GUbj2He0', '곡성', '전라남도 곡성군',
+       (87, 'ChIJdQt_13jfcTURly4GUbj2He0', '곡성', '전라남도 곡성군',
         '곡성군은 섬진강과 기차마을로 유명하며, 자연 경관을 즐길 수 있는 관광지입니다.',
         'CITY', 35.2801817, 127.2929849, 'JEOLLANAM_DO'),
-
-       (653, 'ChIJ8y-C0DX1cTURz0JJDzwyd5M', '화순', '전라남도 화순군',
+       (88, 'ChIJ8y-C0DX1cTURz0JJDzwyd5M', '화순', '전라남도 화순군',
         '화순군은 자연과 역사가 어우러진 지역으로, 화순 고인돌 유적과 천불천탑이 유명합니다.',
         'CITY', 35.0604404, 126.9882884, 'JEOLLANAM_DO'),
-
-       (654, 'ChIJLSQoqIcDbjURE5dE2O5aDh0', '순천', '전라남도 순천시',
+       (89, 'ChIJLSQoqIcDbjURE5dE2O5aDh0', '순천', '전라남도 순천시',
         '순천시는 순천만 자연생태공원과 순천만 국가정원으로 유명하며, 자연 환경 보존이 잘 되어 있는 도시입니다.',
         'CITY', 34.957102, 127.4844257, 'JEOLLANAM_DO'),
-
-       (655, 'ChIJh4T1Bl1rbjURnYl-o09EwNU', '광양', '전라남도 광양시',
+       (90, 'ChIJh4T1Bl1rbjURnYl-o09EwNU', '광양', '전라남도 광양시',
         '광양시는 산업 도시로서 포스코 광양제철소가 위치한 곳이며, 매화축제로도 유명한 지역입니다.',
         'CITY', 34.9748042, 127.5890806, 'JEOLLANAM_DO'),
-
-       (656, 'ChIJr6uLHx-UbTURi26I5drZAok', '여수', '전라남도 여수시',
+       (91, 'ChIJr6uLHx-UbTURi26I5drZAok', '여수', '전라남도 여수시',
         '여수시는 엑스포 개최지로 잘 알려져 있으며, 해양 관광과 낭만이 있는 도시입니다.',
         'CITY', 34.7610473, 127.6629076, 'JEOLLANAM_DO'),
-
-       (657, 'ChIJ6yfQBmaKbTURa8D3GjQ5hOs', '고흥', '전라남도 고흥군',
+       (92, 'ChIJ6yfQBmaKbTURa8D3GjQ5hOs', '고흥', '전라남도 고흥군',
         '고흥군은 해양과 우주 산업이 발달한 지역으로, 나로우주센터와 아름다운 해안선으로 유명합니다.',
         'CITY', 34.6105935, 127.2846484, 'JEOLLANAM_DO'),
-
-       (658, 'ChIJH84yMhgGcjURV1AiULA5Wdg', '보성', '전라남도 보성군',
+       (93, 'ChIJH84yMhgGcjURV1AiULA5Wdg', '보성', '전라남도 보성군',
         '보성군은 녹차 밭과 보성차밭축제로 유명하며, 전통 차 문화를 체험할 수 있는 곳입니다.',
         'CITY', 34.7684697, 127.0832502, 'JEOLLANAM_DO'),
-
-       (659, 'ChIJ1bhOfl5CcjURlfTHOv1wAzg', '장흥', '전라남도 장흥군',
+       (94, 'ChIJ1bhOfl5CcjURlfTHOv1wAzg', '장흥', '전라남도 장흥군',
         '장흥군은 청정 자연환경을 자랑하며, 편백숲과 함께 장흥 물축제가 유명합니다.',
         'CITY', 34.6803775, 126.9051468, 'JEOLLANAM_DO'),
-
-       (660, 'ChIJY7GLeGFQcjURxgIYE3zQWis', '강진', '전라남도 강진군',
+       (95, 'ChIJY7GLeGFQcjURxgIYE3zQWis', '강진', '전라남도 강진군',
         '강진군은 다산 정약용의 유배지로 유명하며, 자연과 전통문화가 어우러진 관광지입니다.',
         'CITY', 34.6390091, 126.7679548, 'JEOLLANAM_DO'),
-
-       (661, 'ChIJKf2XmjrjcjURlNF3OS39YZE', '완도', '전라남도 완도군',
+       (96, 'ChIJKf2XmjrjcjURlNF3OS39YZE', '완도', '전라남도 완도군',
         '완도군은 청정 해역과 다양한 해양 자원이 풍부한 지역으로, 해양치유 관광이 발달해 있습니다.',
         'CITY', 34.319678, 126.746282, 'JEOLLANAM_DO'),
-
-       (662, 'ChIJ9Q-AJQYAczURNIm3Ff5RO7U', '해남', '전라남도 해남군',
+       (97, 'ChIJ9Q-AJQYAczURNIm3Ff5RO7U', '해남', '전라남도 해남군',
         '해남군은 한반도 남단에 위치한 지역으로, 땅끝마을과 자연 경관으로 유명한 관광지입니다.',
         'CITY', 34.5743438, 126.5908497, 'JEOLLANAM_DO'),
-
-       (663, 'ChIJDRpYFSwTczURpAKTd9VuAMo', '진도', '전라남도 진도군',
+       (98, 'ChIJDRpYFSwTczURpAKTd9VuAMo', '진도', '전라남도 진도군',
         '진도군은 진도대교와 진도아리랑, 명량대첩지로 유명하며, 전통 예술이 발달한 지역입니다.',
         'CITY', 34.4810185, 126.2638859, 'JEOLLANAM_DO'),
-
-       (664, 'ChIJX7zzpqekczURlIbIAK4ltrs', '목포', '전라남도 목포시',
+       (99, 'ChIJX7zzpqekczURlIbIAK4ltrs', '목포', '전라남도 목포시',
         '목포시는 서해안의 항구 도시로, 해양문화와 역사가 풍부한 지역입니다.',
         'CITY', 34.7990407, 126.3894783, 'JEOLLANAM_DO'),
-
-       (665, 'ChIJv6fpKqbHczURnA4xrTeF4yA', '무안', '전라남도 무안군',
+       (100, 'ChIJv6fpKqbHczURnA4xrTeF4yA', '무안', '전라남도 무안군',
         '무안군은 전라남도의 행정 중심지로, 무안공항과 도청 소재지로 발전하고 있는 지역입니다.',
         'CITY', 34.9882229, 126.4786758, 'JEOLLANAM_DO'),
-
-       (666, 'ChIJBesejWHRczURjWgr-JqlIlM', '함평', '전라남도 함평군',
+       (101, 'ChIJBesejWHRczURjWgr-JqlIlM', '함평', '전라남도 함평군',
         '함평군은 나비 축제로 유명하며, 자연 친화적인 환경이 잘 보존된 지역입니다.',
         'CITY', 35.0586227, 126.5198937, 'JEOLLANAM_DO'),
-
-       (667, 'ChIJxX1fprdhcTURRoAatn8boe8', '영광', '전라남도 영광군',
+       (102, 'ChIJxX1fprdhcTURRoAatn8boe8', '영광', '전라남도 영광군',
         '영광군은 영광굴비와 천일염으로 유명하며, 해양 자원이 풍부한 지역입니다.',
         'CITY', 35.2731138, 126.5025008, 'JEOLLANAM_DO'),
-
-       (668, 'ChIJy9IgWRsucjURsc4_ODqPbqE', '나주', '전라남도 나주시',
+       (103, 'ChIJy9IgWRsucjURsc4_ODqPbqE', '나주', '전라남도 나주시',
         '나주시는 한국 전통 배인 나주배의 고향이며, 빛가람 혁신도시가 위치한 전라남도의 경제 중심지입니다.',
         'CITY', 35.0358529, 126.7186503, 'JEOLLANAM_DO'),
-
-       (669, 'ChIJ-STomNNLcjURZFH3j8Y-e7g', '영암', '전라남도 영암군',
+       (104, 'ChIJ-STomNNLcjURZFH3j8Y-e7g', '영암', '전라남도 영암군',
         '영암군은 월출산 국립공원과 F1 코리아 그랑프리 서킷으로 유명한 지역입니다.',
         'CITY', 34.8001896, 126.6982696, 'JEOLLANAM_DO');
 
+-- 전라도 - 북도
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
+VALUES (105, 'ChIJY9gWA0MjcDURmkLDkeAXvMc', '전주', '전라북도 전주시',
+        '전주시는 전라북도의 도청 소재지이자 한옥마을과 전주비빔밥으로 유명한 역사와 전통의 도시입니다.',
+        'CITY', 35.8397174, 127.1293249, 'JEOLLABUK_DO'),
+       (106, 'ChIJDx2AEJrdbzUR7MqSlGWqywQ', '진안', '전라북도 진안군',
+        '진안군은 산악 지대가 많아 고원지대 특유의 청정 자연을 자랑하며, 마이산이 특히 유명한 관광지입니다.',
+        'CITY', 35.7920364, 127.427288, 'JEOLLABUK_DO'),
+       (107, 'ChIJT_6-EzJgZTURKMH-lfbs6d8', '무주', '전라북도 무주군',
+        '무주군은 무주리조트와 덕유산 국립공원으로 유명하며, 겨울 스포츠와 자연 경관을 즐길 수 있는 지역입니다.',
+        'CITY', 36.0075339, 127.6573548, 'JEOLLABUK_DO'),
+       (108, 'ChIJn_FKry0qcDURObqxbjv-Bn8', '임실', '전라북도 임실군',
+        '임실군은 임실치즈로 유명하며, 농업과 축산업이 발달한 전원 지역입니다.',
+        'CITY', 35.6125056, 127.2860024, 'JEOLLABUK_DO'),
+       (109, 'ChIJTUI5jYAUcDURPIpSuFk4EOs', '익산', '전라북도 익산시',
+        '익산시는 전라북도 중부에 위치한 교통 요충지로, 백제 문화의 중심지이며 유네스코 세계문화유산에 등재된 미륵사지가 있습니다.',
+        'CITY', 35.9443701, 126.9595253, 'JEOLLABUK_DO'),
+       (110, 'ChIJmS9WoQVccDURlFonGSH41PM', '군산', '전라북도 군산시',
+        '군산시는 서해안에 위치한 항구 도시로, 일제강점기 건축물이 잘 보존되어 있는 역사적 도시입니다.',
+        'CITY', 35.97961340000001, 126.7155958, 'JEOLLABUK_DO'),
+       (111, 'ChIJhZJqPgNJcDURzJUi0LAk1uQ', '김제', '전라북도 김제시',
+        '김제시는 한국 농업의 중심지로, 김제 벽골제가 위치해 있으며, 매년 김제지평선축제가 열리는 지역입니다.',
+        'CITY', 35.8024889, 126.892438, 'JEOLLABUK_DO'),
+       (112, 'ChIJVTM-CX0FcTURqK7lbk7EHso', '부안', '전라북도 부안군',
+        '부안군은 변산반도 국립공원이 있는 지역으로, 서해안의 자연 경관을 자랑하며 해양 관광지가 발달해 있습니다.',
+        'CITY', 35.7264188, 126.7371611, 'JEOLLABUK_DO'),
+       (113, 'ChIJ4Qcf4buwcTURKQKjhX-11LA', '정읍', '전라북도 정읍시',
+        '정읍시는 농업과 축산업이 발달한 지역으로, 내장산 국립공원과 단풍으로 유명한 관광지입니다.',
+        'CITY', 35.5615819, 126.8636603, 'JEOLLABUK_DO'),
+       (114, 'ChIJI3q9moR1cTUR0tAxS2crQgg', '고창', '전라북도 고창군',
+        '고창군은 고인돌 유적지가 많은 지역으로, 한국 선사시대 문화를 엿볼 수 있는 역사적인 도시입니다.',
+        'CITY', 35.4349582, 126.7019568, 'JEOLLABUK_DO'),
+       (115, 'ChIJIU6c1QDFcTURa-P1NNmlQzk', '순창', '전라북도 순창군',
+        '순창군은 고추장과 장류로 유명한 지역으로, 전통 식품 산업이 발달한 도시입니다.',
+        'CITY', 35.3762981, 127.1436055, 'JEOLLABUK_DO'),
+       (116, 'ChIJgU3R6sotbjUR6J4G2yY9xrY', '남원', '전라북도 남원시',
+        '남원시는 춘향전의 배경으로 유명한 전통 문화 도시이며, 광한루와 지리산 등 관광 명소가 많은 지역입니다.',
+        'CITY', 35.4151468, 127.3862661, 'JEOLLABUK_DO');
 
--- place - TRAVEL_PLACE
+-- 경기도
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
+VALUES (117, 'ChIJr9c9ugIrfTUR3iXJA2xYMfM', '포천', '경기도 포천시',
+        '포천시는 대한민국 경기도 북부에 위치한 도시로, 자연 경관이 아름다운 지역으로 유명합니다. 특히 산악 지대가 많아 명성산, 산정호수, 백운계곡 등 관광 명소가 많고, 캠핑과 트레킹을 즐기기에 적합합니다.',
+        'CITY', 37.8982868, 127.2041251, 'GYEONGGI_DO'),
+       (118, 'ChIJA3bo8tPbfDURe_pZYu-eBgo', '동두천', '경기도 동두천시',
+        '동두천시는 경기도 북부에 위치한 군사도시로, 자연 경관과 함께 미군 기지 주변의 이국적인 분위기도 특징입니다.',
+        'CITY', 37.902444, 127.0531685, 'GYEONGGI_DO'),
+       (119, 'ChIJp3mNK-ooYzURCQHqedpn6CU', '가평', '경기도 가평군',
+        '가평군은 북한강을 끼고 있으며, 청평호와 남이섬, 자라섬 등 자연 경관이 수려한 관광지로 유명합니다.',
+        'CITY', 37.8312904, 127.5105858, 'GYEONGGI_DO'),
+       (120, 'ChIJ_xexY_O1fDUR0_lmFn1y4eo', '남양주', '경기도 남양주시',
+        '남양주시는 서울과 가까운 위치에 있으며, 다산 정약용의 고향이자 북한강과 함께 아름다운 자연을 간직한 도시입니다.',
+        'CITY', 37.4929835, 127.171677, 'GYEONGGI_DO'),
+       (121, 'ChIJw-EhiKJAYzURtobjoj4r3Sg', '양평', '경기도 양평군',
+        '양평군은 서울과 가까운 자연 휴양지로, 산과 강이 어우러져 캠핑, 수상 스포츠, 힐링 관광지로 사랑받는 지역입니다.',
+        'CITY', 37.4918429, 127.5030058, 'GYEONGGI_DO'),
+       (122, 'ChIJh_93e5BeYzURSPw7Qk1pCjg', '여주', '경기도 여주시',
+        '여주시는 도자기와 쌀로 유명한 지역으로, 세종대왕의 능이 위치해 역사적 의미도 깊습니다.',
+        'CITY', 37.2941469, 127.6463008, 'GYEONGGI_DO'),
+       (123, 'ChIJg2aRABSmZDURYOQUKaHNj1k', '이천', '경기도 이천시',
+        '이천시는 쌀과 도자기로 유명하며, 매년 도자기 축제가 열리고 있습니다. 또, 이천 온천이 있어 휴양지로도 알려져 있습니다.',
+        'CITY', 37.2891308, 127.4530256, 'GYEONGGI_DO'),
+       (124, 'ChIJwVlm56XKZDUR6zbMpuSnY5Y', '안성', '경기도 안성시',
+        '안성시는 한국 전통 농경 문화가 잘 보존된 곳으로, 안성맞춤이라는 말로도 유명한 전통적인 농업 도시입니다.',
+        'CITY', 37.0075339, 127.2695329, 'GYEONGGI_DO'),
+       (125, 'ChIJhUYLdeIXezURSetXeqzUMyY', '평택', '경기도 평택시',
+        '평택시는 서해안에 접해 있는 항구 도시로, 미군 기지가 위치해 있으며 최근 산업과 물류 중심지로 급부상하고 있습니다.',
+        'CITY', 36.9940244, 126.8524533, 'GYEONGGI_DO'),
+       (126, 'ChIJ9TPOaj1SezUR-7VRGXA1Mp0', '용인', '경기도 용인시',
+        '용인시는 자연과 첨단 도시가 공존하는 지역으로, 에버랜드, 한국민속촌 등 관광 명소가 많아 가족 단위 방문객이 많습니다.',
+        'CITY', 37.2361653, 127.1891246, 'GYEONGGI_DO'),
+       (127, 'ChIJ-1jEsddGezUR9CfyB4vKcyo', '오산', '경기도 오산시',
+        '오산시는 서울에서 남쪽으로 약 35km 떨어진 교통 요충지로, 오산 공군기지가 있는 군사도시입니다.',
+        'CITY', 37.15565429999999, 127.0726571, 'GYEONGGI_DO'),
+       (128, 'ChIJIfZd0f8SezURp-W-4kU9FD0', '화성', '경기도 화성시',
+        '화성시는 최근 급성장한 신도시로, 산업단지와 자연이 어우러져 있으며, 서해안과 접해 관광지로도 인기가 많습니다.',
+        'CITY', 37.1688927, 126.8941169, 'GYEONGGI_DO'),
+       (129, 'ChIJEUZ2IApDezURybRd7gIwN_E', '수원', '경기도 수원시',
+        '수원시는 경기도의 중심 도시로, 유네스코 세계문화유산인 수원 화성이 위치해 역사적, 문화적 가치가 큽니다.',
+        'CITY', 37.2635731, 127.0286009, 'GYEONGGI_DO'),
+       (130, 'ChIJp5sdcwcLezUR6RpjPtooIXA', '안산시', '경기도 안산시',
+        '안산시는 서해안에 위치해 있으며, 공업 도시로서의 역할과 함께 다문화 도시로도 유명합니다.',
+        'CITY', 37.317342, 126.8209476, 'GYEONGGI_DO'),
+       (131, 'ChIJr6f1ASOJcTURSPUlAe3S9AU', '광주', '경기도 광주시',
+        '광주시는 경기도 동부에 위치해 있으며, 산지와 계곡이 많아 자연 경관이 아름다운 곳입니다.',
+        'CITY', 35.15008220000001, 126.8559071, 'GYEONGGI_DO'),
+       (132, 'ChIJq_ZV66-wfDURLGEgt9LLrao', '구리', '경기도 구리시',
+        '구리시는 서울 근교에 위치해 있어 서울과의 접근성이 뛰어나며, 곱창 골목이 유명합니다.',
+        'CITY', 37.59719279999999, 127.1308565, 'GYEONGGI_DO'),
+       (133, 'ChIJvyAScPGnfDUR1JfjvGZWMVA', '성남', '경기도 성남시',
+        '성남시는 판교 테크노밸리를 중심으로 IT 산업이 발달한 첨단 도시이며, 분당신도시가 위치한 주거 중심지입니다.',
+        'CITY', 37.3918136, 127.113092, 'GYEONGGI_DO'),
+       (134, 'ChIJDb8DNzNlezURe1yrv81ckKo', '시흥', '경기도 시흥시',
+        '시흥시는 서해안과 접해 있는 도시로, 최근 신도시 개발과 산업단지 확장으로 주목받고 있는 도시입니다.',
+        'CITY', 37.3500952, 126.7393351, 'GYEONGGI_DO'),
+       (135, 'ChIJMVA9LMRgezURtTte1ZiXJ3Y', '안양', '경기도 안양시',
+        '안양시는 서울과 가까운 위성도시로, 산업단지와 주거 단지가 어우러진 지역입니다.',
+        'CITY', 37.3835395, 126.934176, 'GYEONGGI_DO'),
+       (136, 'ChIJ7zeIBq5iezURaqxiL41X2oE', '부천', '경기도 부천시',
+        '부천시는 서울과 인접해 있으며, 영화제, 만화축제 등 문화행사로 유명한 문화 중심 도시입니다.',
+        'CITY', 37.5038683, 126.7874615, 'GYEONGGI_DO'),
+       (137, 'ChIJkV2jedRjezURFbmdV2BB19A', '광명', '경기도 광명시',
+        '광명시는 서울과 가까운 위치에 있어 주거 및 상업 지역으로 발전했으며, 광명동굴과 같은 관광 명소도 있습니다.',
+        'CITY', 37.4418886, 126.8468729, 'GYEONGGI_DO'),
+       (138, 'ChIJzyD-5cVdezURFT58919_lQ4', '의왕', '경기도 의왕시',
+        '의왕시는 경기도 남부에 위치한 도시로, 백운호수와 왕송호수 등 자연 친화적인 환경이 잘 보존된 곳입니다.',
+        'CITY', 37.3496154, 126.9732245, 'GYEONGGI_DO'),
+       (139, 'ChIJs2xd03hfezURONrZ4npqMQM', '과천', '경기도 과천시',
+        '과천시는 서울과 인접한 작은 도시로, 서울대공원, 국립과천과학관 등이 위치해 문화와 과학이 어우러진 지역입니다.',
+        'CITY', 37.4279095, 126.991196, 'GYEONGGI_DO'),
+       (140, 'ChIJJY4Cmk6GfDURSOGVqk7LIrY', '김포', '경기도 김포시',
+        '김포시는 한강을 끼고 있어 최근 신도시 개발로 빠르게 성장하고 있으며, 서울과의 접근성이 뛰어난 지역입니다.',
+        'CITY', 37.6593806, 126.5930681, 'GYEONGGI_DO');
+
+-- 특별시, 광역시 등
+INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
+VALUES (141, 'ChIJzzlcLQGifDURm_JbQKHsEX4', '서울', '서울특별시', '대한민국의 수도이자 가장 큰 도시입니다.', 'CITY', 37.5518911,
+        126.9917937, 'SEOUL'),
+       (142, 'ChIJNc0j6G3raDURpwhxJHTL2DU', '부산', '부산광역시', '대한민국의 제2의 도시이자 주요 항구 도시입니다.', 'CITY', 35.2100142,
+        129.0688702, 'METROPOLITAN_CITY'),
+       (143, 'ChIJ1a3vsrjjZTURMC44oCngkro', '대구', '대구광역시', '대한민국의 주요 대도시 중 하나로 섬유 산업으로 유명합니다.', 'CITY',
+        35.8294374, 128.5655119, 'METROPOLITAN_CITY'),
+       (144, 'ChIJR4ITliVveTURQmG3LJD9N30', '인천', '인천광역시', '대한민국의 주요 항구 도시이자 국제 공항이 위치한 곳입니다.', 'CITY',
+        37.4562557, 126.7052062, 'METROPOLITAN_CITY'),
+       (145, 'ChIJr6f1ASOJcTURSPUlAe3S9AU', '광주', '광주광역시', '대한민국의 주요 도시 중 하나로 예술과 문화의 중심지입니다.', 'CITY',
+        35.1557358, 126.8354271, 'METROPOLITAN_CITY'),
+       (146, 'ChIJAWZKutdIZTURtdOKmJ3WltE', '대전', '대전광역시', '대한민국의 주요 과학과 교육의 중심지입니다.', 'CITY', 36.3398175,
+        127.3940486, 'METROPOLITAN_CITY'),
+       (147, 'ChIJgd6y4osuZjURATHZM3P6g3A', '울산', '울산광역시', '대한민국의 주요 산업 도시로 자동차와 조선업으로 유명합니다.', 'CITY',
+        35.5537228, 129.2380554, 'METROPOLITAN_CITY'),
+       (148, 'ChIJRUDITFTjDDURMb8emNI2vGY', '제주', '제주특별자치도', '대한민국의 대표적인 관광지로 유명한 섬입니다.',
+        'CITY', 33.3846216, 126.5534925, 'JEJU_DO');
+--        (149, 'ChIJeTXJmw9F4F8RsVxeo703sV8', '울릉도', '경상북도 울릉군', '대한민국의 동해에 위치한 섬으로 아름다운 자연경관을 자랑합니다.', 'CITY',
+--         37.5063677, 130.8571536),
+--        (150, 'ChIJKZOFCAiA4V8R6qLxln4VW9U', '독도', '경상북도 울릉군 독도리', '대한민국의 동해에 위치한 섬으로 중요한 역사적 의미를 가집니다.', 'CITY',
+--         37.2429362, 131.8668421);
+
+
+-- place - TRAVEL_PLACE (여행지)
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (300, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '소금산 출렁다리', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'TRAVEL_PLACE',
+VALUES (200, 'ChIJR7Y1TBFyYzURB9CrhSkMGuE', '소금산 출렁다리', '강원도 원주', '강원도 원주에 위치한 아름다운 출렁다리입니다.', 'TRAVEL_PLACE',
         37.3676264, 127.8248756);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (301, 'ChIJo_aEJZk1fTURtJ6iQ3s2yzY', '한탄강 주상절리길', '강원도 철원', '한탄강을 따라 이어지는 신비로운 주상절리길입니다.', 'TRAVEL_PLACE',
+VALUES (201, 'ChIJo_aEJZk1fTURtJ6iQ3s2yzY', '한탄강 주상절리길', '강원도 철원', '한탄강을 따라 이어지는 신비로운 주상절리길입니다.', 'TRAVEL_PLACE',
         38.15418340000001, 127.2879289);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (302, 'ChIJVRLdCsjtaDURcdummQTLnRk', '오륙도 스카이워크', '부산광역시 남구', '부산 남구에 위치한 아름다운 해안 절경을 자랑하는 오륙도입니다.',
+VALUES (202, 'ChIJVRLdCsjtaDURcdummQTLnRk', '오륙도 스카이워크', '부산광역시 남구', '부산 남구에 위치한 아름다운 해안 절경을 자랑하는 오륙도입니다.',
         'TRAVEL_PLACE', 35.1006767, 129.1244009);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (303, 'ChIJW-FwpwdDDDURKKvdKdJhhF8', '용머리 해안', '제주특별자치도 서귀포', '제주 서귀포에 위치한 독특한 지형의 해안가입니다.', 'TRAVEL_PLACE',
+VALUES (203, 'ChIJW-FwpwdDDDURKKvdKdJhhF8', '용머리 해안', '제주특별자치도 서귀포', '제주 서귀포에 위치한 독특한 지형의 해안가입니다.', 'TRAVEL_PLACE',
         33.2316155, 126.3148321);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (304, 'ChIJc6ey6CDZbTURY6R4148iqfM', '여수 해상 케이블카', '전라남도 여수', '여수의 아름다운 해상 풍경을 감상할 수 있는 케이블카입니다.',
-        'TRAVEL_PLACE',
-        34.73056, 127.741572);
+VALUES (204, 'ChIJc6ey6CDZbTURY6R4148iqfM', '여수 해상 케이블카', '전라남도 여수', '여수의 아름다운 해상 풍경을 감상할 수 있는 케이블카입니다.',
+        'TRAVEL_PLACE', 34.73056, 127.741572);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (305, 'ChIJuVQp1w682F8RULr4nyAoHWU', '영금정', '강원도 속초', '속초의 아름다운 해안 절경을 감상할 수 있는 영금정입니다.', 'TRAVEL_PLACE',
+VALUES (205, 'ChIJuVQp1w682F8RULr4nyAoHWU', '영금정', '강원도 속초', '속초의 아름다운 해안 절경을 감상할 수 있는 영금정입니다.', 'TRAVEL_PLACE',
         38.2118554, 128.6014858);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (306, 'ChIJGzvMzrCYcTURd4DZLzgyFG8', '고창읍성', '전라북도 고창', '고창에 위치한 조선시대의 역사적인 읍성입니다.', 'TRAVEL_PLACE', 35.4313384,
+VALUES (206, 'ChIJGzvMzrCYcTURd4DZLzgyFG8', '고창읍성', '전라북도 고창', '고창에 위치한 조선시대의 역사적인 읍성입니다.', 'TRAVEL_PLACE', 35.4313384,
         126.7042361);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (307, 'ChIJRYAZP6n_DDURGnc9lYwcZ38', '사라오름', '제주특별자치도 제주시', '제주도의 아름다운 오름 중 하나입니다.', 'TRAVEL_PLACE', 33.3709058,
+VALUES (207, 'ChIJRYAZP6n_DDURGnc9lYwcZ38', '사라오름', '제주특별자치도 제주시', '제주도의 아름다운 오름 중 하나입니다.', 'TRAVEL_PLACE', 33.3709058,
         126.5704745);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (308, 'ChIJ9SUiOHBOZjUR_YnH8Lbjzt0', '경주 동궁과 월지', '경상북도 경주', '신라시대의 궁궐과 연못이 있는 역사적인 장소입니다.', 'TRAVEL_PLACE',
+VALUES (208, 'ChIJ9SUiOHBOZjUR_YnH8Lbjzt0', '경주 동궁과 월지', '경상북도 경주', '신라시대의 궁궐과 연못이 있는 역사적인 장소입니다.', 'TRAVEL_PLACE',
         35.8348173, 129.2265645);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (309, 'ChIJod7tSseifDUR9hXHLFNGMIs', '경복궁', '서울특별시 종로', '조선 시대의 대표적인 궁궐로, 다양한 문화재와 함께 서울의 중심부에 위치합니다.',
+VALUES (209, 'ChIJod7tSseifDUR9hXHLFNGMIs', '경복궁', '서울특별시 종로', '조선 시대의 대표적인 궁궐로, 다양한 문화재와 함께 서울의 중심부에 위치합니다.',
         'TRAVEL_PLACE', 37.579617, 126.977041);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (310, 'ChIJxw7HJy_taDUR-xaSTeHwbf8', '광안리해수욕장', '부산광역시 광안리해수욕장', '부산의 대표적인 해변 가운데 하나로, 밤에 보는 광안대교의 야경이 유명합니다.',
+VALUES (210, 'ChIJxw7HJy_taDUR-xaSTeHwbf8', '광안리해수욕장', '부산광역시 광안리해수욕장', '부산의 대표적인 해변 가운데 하나로, 밤에 보는 광안대교의 야경이 유명합니다.',
         'TRAVEL_PLACE', 35.1531696, 129.118666);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (311, 'ChIJn3jj9rkUDTURS7YjOgUyUVU', '제주도 성산일출봉', '제주특별자치도 제주도', '제주도의 대표적인 관광지로, 해안 절벽 위에 위치한 화산 분화구입니다.',
+VALUES (211, 'ChIJn3jj9rkUDTURS7YjOgUyUVU', '제주도 성산일출봉', '제주특별자치도 제주도', '제주도의 대표적인 관광지로, 해안 절벽 위에 위치한 화산 분화구입니다.',
         'TRAVEL_PLACE', 33.45805600000001, 126.9425);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (312, 'ChIJQwyfbNqyZzUR31ffyfmvm6w', '경주 불국사', '경상북도 경주', '신라 시대의 불교 사원으로, 유네스코 세계문화유산에 등재되어 있습니다.',
+VALUES (212, 'ChIJQwyfbNqyZzUR31ffyfmvm6w', '경주 불국사', '경상북도 경주', '신라 시대의 불교 사원으로, 유네스코 세계문화유산에 등재되어 있습니다.',
         'TRAVEL_PLACE', 35.7901973, 129.3320806);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (313, 'ChIJS73uEmIjcDURjoTQxhu-9I4', '전주 한옥마을', '전라북도 전주', '전통 한옥이 잘 보존된 지역으로, 한국의 전통 문화를 체험할 수 있는 곳입니다.',
+VALUES (213, 'ChIJS73uEmIjcDURjoTQxhu-9I4', '전주 한옥마을', '전라북도 전주', '전통 한옥이 잘 보존된 지역으로, 한국의 전통 문화를 체험할 수 있는 곳입니다.',
         'TRAVEL_PLACE', 35.8175376, 127.1520417);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (314, 'ChIJda9gFeQmYzURIsXnKaOqStY', '남이섬', '강원도 춘천',
+VALUES (214, 'ChIJda9gFeQmYzURIsXnKaOqStY', '남이섬', '강원도 춘천',
         '남이섬은 춘천시에 위치한 소양강에 있는 작은 섬으로, 사계절 내내 다양한 자연경관을 즐길 수 있습니다.',
         'TRAVEL_PLACE', 37.7899352, 127.5258072);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (900, 'ChIJJ-wqKnLzYTUR_Tro9d6ViAU', '대관령 양떼목장', '강원도 평창',
+VALUES (215, 'ChIJJ-wqKnLzYTUR_Tro9d6ViAU', '대관령 양떼목장', '강원도 평창',
         '대관령 양떼목장은 아름다운 자연 속에서 양들과 함께하는 체험을 제공하는 목장입니다.',
         'TRAVEL_PLACE', 37.688488, 128.7527571);
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (901, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '제주 새별오름', '제주도',
+VALUES (216, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '제주 새별오름', '제주도',
         '제주 새별오름은 아름다운 경관과 함께 하이킹을 즐길 수 있는 인기 있는 장소입니다.',
         'TRAVEL_PLACE', 33.3659432, 126.35644);
 
--- place - THEME_TRAVEL/FESTIVAL
+-- place - THEME_TRAVEL/FESTIVAL (축제)
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (500, 'ChIJA9lRtLGqfDURyWWCAEvlS_A', '광주 화담숲', '광주광역시',
+VALUES (300, 'ChIJA9lRtLGqfDURyWWCAEvlS_A', '광주 화담숲', '광주광역시',
         '화담숲은 가을의 단풍과 겨울의 눈꽃이 아름다운 화담숲은 사계절 내내 매력적인 장소입니다.', 'THEME',
         37.3412584, 127.2892037, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (501, 'ChIJ9z9q8xRhYzUR1OCCur9d4XA', '여주 강천섬', '경기도 여주',
+VALUES (301, 'ChIJ9z9q8xRhYzUR1OCCur9d4XA', '여주 강천섬', '경기도 여주',
         '가을 단풍과 겨울의 맑은 공기를 만끽할 수 있는 강천섬은 자연과 함께하는 힐링 장소입니다.', 'THEME',
         37.2339212, 127.6955603, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (502, 'ChIJxZQsAfTXfDURpJBS-kMCYm0', '포천 허브아일랜드 핑크뮬리', '경기도 포천',
+VALUES (302, 'ChIJxZQsAfTXfDURpJBS-kMCYm0', '포천 허브아일랜드 핑크뮬리', '경기도 포천',
         '가을의 핑크뮬리와 겨울의 차가운 바람 속에서 힐링할 수 있는 공간입니다.', 'THEME',
         37.9654806, 127.131773, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (503, 'ChIJdySJbz8rejURa17dmzpN3Xc', '인천 굴업도', '인천광역시',
+VALUES (303, 'ChIJdySJbz8rejURa17dmzpN3Xc', '인천 굴업도', '인천광역시',
         '가을의 여유로운 바다와 겨울철의 맑은 하늘이 어우러진 굴업도는 완벽한 여행지입니다.', 'THEME',
         37.1915355, 125.9798551, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (504, 'ChIJpbP86vIlbzURA5H-TxfQwfY', '함양 곶감축제', '경상남도 함양',
+VALUES (304, 'ChIJpbP86vIlbzURA5H-TxfQwfY', '함양 곶감축제', '경상남도 함양',
         '가을의 풍성한 곶감과 겨울의 따뜻한 정을 느낄 수 있는 축제입니다.', 'THEME',
         35.2506332, 128.4202145, 'FESTIVAL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (505, 'ChIJtZ6jupmqDTURppQwD7fxFKU', '제주 동백축제', '제주도',
+VALUES (305, 'ChIJtZ6jupmqDTURppQwD7fxFKU', '제주 동백축제', '제주도',
         '겨울철 동백꽃이 만개하는 시기에 열리는 축제로, 따뜻한 제주에서 겨울을 즐길 수 있습니다.', 'THEME',
         33.3087565, 126.6337938, 'FESTIVAL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (506, 'ChIJoUN_1UduYjURJtyaYzGnfVI', '인제 자작나무숲', '강원도 인제',
+VALUES (306, 'ChIJoUN_1UduYjURJtyaYzGnfVI', '인제 자작나무숲', '강원도 인제',
         '가을의 단풍과 겨울의 설경이 아름다운 자작나무숲은 자연 속에서 힐링할 수 있는 곳입니다.', 'THEME',
         37.9883101, 128.199084, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (507, 'ChIJRxSQ5FH_DDURJGgM5HCZeJ4', '제주 한라산', '제주도',
+VALUES (307, 'ChIJRxSQ5FH_DDURJGgM5HCZeJ4', '제주 한라산', '제주도',
         '가을의 단풍과 겨울의 눈 덮인 풍경이 아름다운 한라산은 등산객들에게 인기 있는 장소입니다.', 'THEME',
         33.3616666, 126.5291666, 'TRAVEL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (508, 'ChIJhzI9RjAkYjURskp7QN2zCzM', '평창 송어축제', '강원도 평창',
+VALUES (308, 'ChIJhzI9RjAkYjURskp7QN2zCzM', '평창 송어축제', '강원도 평창',
         '겨울철 송어 낚시와 다양한 체험을 즐길 수 있는 축제로, 가족과 함께하기 좋은 곳입니다.', 'THEME',
         37.6331225, 128.5569903, 'FESTIVAL');
-
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-VALUES (509, 'ChIJj7dwjy9kYjURVh-S2hxkVQg', '인제 빙어축제', '강원도 인제',
+VALUES (309, 'ChIJj7dwjy9kYjURVh-S2hxkVQg', '인제 빙어축제', '강원도 인제',
         '겨울철 얼음낚시와 다양한 즐길거리가 있는 축제로, 추운 겨울을 따뜻하게 보내는 방법입니다.', 'THEME',
         37.99764, 128.0985467, 'FESTIVAL');
 
 
-ALTER TABLE place AUTO_INCREMENT = 1000;
+ALTER TABLE place AUTO_INCREMENT = 400;
 
