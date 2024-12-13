@@ -85,7 +85,8 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
 		}
 		Review updatingReview = beanUtils.copyNonNullProperties(review, findReview);
-		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW, review.getId().toString());
+		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+			reviewId.toString());
 
 		List<FileResDto> fileInfos = addToReviewFile(updateDto.getNewFileIds(), updatingReview);
 
