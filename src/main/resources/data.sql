@@ -568,5 +568,5 @@ VALUES (315, 'ChIJEbinyzGLYTURXiqiYnm4zWI', '대관령 눈꽃축제', '강원특
 
 
 
--- ALTER TABLE place AUTO_INCREMENT = 400;
+ALTER TABLE place AUTO_INCREMENT = 400;
 
