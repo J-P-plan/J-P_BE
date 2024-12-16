@@ -377,7 +377,10 @@ VALUES (117, 'ChIJr9c9ugIrfTUR3iXJA2xYMfM', '포천', '경기도 포천시',
         'CITY', 37.4279095, 126.991196, 'GYEONGGI_DO'),
        (140, 'ChIJJY4Cmk6GfDURSOGVqk7LIrY', '김포', '경기도 김포시',
         '김포시는 한강을 끼고 있어 최근 신도시 개발로 빠르게 성장하고 있으며, 서울과의 접근성이 뛰어난 지역입니다.',
-        'CITY', 37.6593806, 126.5930681, 'GYEONGGI_DO');
+        'CITY', 37.6593806, 126.5930681, 'GYEONGGI_DO'),
+       (151, 'ChIJuQhD6D7sfDURB6J0Dx5TGW8', '파주', '경기도 파주시',
+         '대한민국 경기도의 북서부에 위치한 도시로, 풍부한 역사적, 문화적 유산과 아름다운 자연경관을 자랑하는 지역입니다. ',
+         'CITY', 37.7595855, 126.7777674, 'GYEONGGI_DO');
 
 -- 특별시, 광역시 등
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
@@ -459,32 +462,32 @@ VALUES (216, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '제주 새별오름', '제주도',
         '제주 새별오름은 아름다운 경관과 함께 하이킹을 즐길 수 있는 인기 있는 장소입니다.',
         'TRAVEL_PLACE', 33.3659432, 126.35644);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (217, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '남산 서울타워', '제주도',
+VALUES (217, 'ChIJx1wSqKGjfDURiG_MjnFZSmE', '남산 서울타워', '서울특별시 용산구',
         '서울의 랜드마크로, 멋진 전망과 야경을 즐길 수 있는 인기 관광지입니다',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 37.5512167, 126.9881884);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (218, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '월미도 테마파크', '제주도',
+VALUES (218, 'ChIJ_99FToiCezURBfrQIL7RhFE', '월미도 테마파크', '인천광역시 중구',
         '다양한 놀이기구와 아름다운 바다 풍경으로 가족과 함께 즐기기 좋은 곳입니다.',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 37.4713635, 126.5962858);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (219, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '애버랜드', '제주도',
+VALUES (219, 'ChIJc9c0zgNUezURmIAjGbaKoR8', '에버랜드', '경기도 용인시',
         '대한민국 최대 규모의 놀이공원으로 다양한 어트랙션과 사파리 체험이 가능합니다.',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 37.2939104, 127.2025664);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (220, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '강릉 안반데기', '제주도',
+VALUES (220, 'ChIJrbKV0NCNYTURYtA3DV87BE4', '강릉 안반데기', '강원특별자치도 강릉시',
         '산 정상의 고원 지역으로, 아름다운 풍경과 시원한 바람을 즐길 수 있는 명소입니다.',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 37.6228085, 128.7360803);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (221, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '속초 울산바위', '제주도',
+VALUES (221, 'ChIJcXnV0bCi2F8RpPmT1GVEVhQ', '속초 울산바위', '속초시',
         '설악산 국립공원 내 위치한 바위산으로, 웅장한 풍경과 등산로로 유명합니다.',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 38.1963889, 128.47);
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (222, 'ChIJISPJvy5ZDDUR9-piabjbc7E', '하동 삼성군', '제주도',
+VALUES (222, 'ChIJr9PPfZ9IbjURyJt0_8dEL30', '하동 삼성궁', '경상남도 하동군',
         '우리나라 전통 도교의 성지를 재현한 독특한 건축물과 아름다운 자연 경관을 자랑합니다.',
-        'TRAVEL_PLACE', 33.3659432, 126.35644);
+        'TRAVEL_PLACE', 35.2409469, 127.7014224);
 
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG)
-VALUES (223, 'ChIJ1fVDx9gjfTURS0Y4KdmyC3c', '임진강 댑싸리공원', '청양군',
+VALUES (223, 'ChIJ1fVDx9gjfTURS0Y4KdmyC3c', '임진강 댑싸리공원', '경기도 연천군',
         '임진강 유역의 아름다운 댑싸리 군락과 함께 가을의 정취를 만끽할 수 있는 자연 공원입니다.', 'TRAVEL_PLACE',
         38.1310079, 127.0171638);
 
