@@ -12,6 +12,9 @@ import com.jp.backend.domain.comment.entity.Reply;
 import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
 import com.jp.backend.domain.comment.reposiroty.JpaReplyRepository;
+import com.jp.backend.domain.diary.entity.Diary;
+import com.jp.backend.domain.diary.repository.DiaryRepository;
+import com.jp.backend.domain.diary.repository.JpaDiaryRepository;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
 import com.jp.backend.domain.user.entity.User;
@@ -34,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
 	private final JpaReviewRepository reviewRepository;
 	private final CustomBeanUtils<Comment> commentBeanUtils;
 	private final CustomBeanUtils<Reply> replyBeanUtils;
+	private final JpaDiaryRepository diaryRepository;
 
 	@Override
 	public CommentResDto createComment(
@@ -43,13 +47,14 @@ public class CommentServiceImpl implements CommentService {
 		String username) {
 		User user = userService.verifyUser(username);
 
-		reviewRepository.findById(targetId)
-			.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));
-
 		switch (commentType) {
 			case REVIEW -> {
 				Review review = reviewRepository.findById(targetId)
 					.orElseThrow(() -> new CustomLogicException(ExceptionCode.REVIEW_NONE));
+			}
+			case DIARY -> {
+				Diary diary = diaryRepository.findById(targetId)
+					.orElseThrow(() -> new CustomLogicException(ExceptionCode.DIARY_NONE));
 			}
 			default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
