@@ -6,6 +6,7 @@ import com.jp.backend.domain.comment.enums.CommentType;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.audit.Auditable;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,6 +37,6 @@ public class Comment extends Auditable {
 	private String content;
 	private CommentType commentType;
 	private Long targetId;
-	@OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Reply> replyList;
 }
