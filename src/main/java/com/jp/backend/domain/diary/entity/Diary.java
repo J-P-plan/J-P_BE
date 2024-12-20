@@ -1,5 +1,6 @@
 package com.jp.backend.domain.diary.entity;
 
+import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.schedule.entity.Schedule;
 import com.jp.backend.domain.user.entity.User;
 import com.jp.backend.global.audit.Auditable;
@@ -34,6 +35,10 @@ public class Diary extends Auditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+
+	// TODO 연관관계 말고 그냥 placeId 자체를 저장할까 훔냐 고민고민
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Place city;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	private Schedule schedule;

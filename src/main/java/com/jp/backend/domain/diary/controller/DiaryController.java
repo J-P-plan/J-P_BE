@@ -1,5 +1,7 @@
 package com.jp.backend.domain.diary.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -68,28 +70,38 @@ public class DiaryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@Operation(summary = "여행기 상세 조회 API")
+	// TODO list에 - user 좋아요 여부 있어야함
+	// TODO 상세 - user 좋아요 여부/찜여부 있어야함
+	@Operation(summary = "여행기 상세 조회 API",
+		description = "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 상세 정보 + 유저의 좋아요/찜 여부가 함께 나타납니다.")
 	@GetMapping("/diary/{diaryId}")
 	public ResponseEntity<DiaryResDto> getDiary(
-		@PathVariable(value = "diaryId") Long diaryId) {
+		@PathVariable(value = "diaryId") Long diaryId,
+		@AuthenticationPrincipal UserPrincipal principal) {
+		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
 
-		return ResponseEntity.ok(diaryService.findDiary(diaryId));
+		return ResponseEntity.ok(diaryService.findDiary(diaryId, username));
 	}
 
 	@Operation(summary = "전체 여행기 조회 API - Pagination",
-		description =
-			"공개된 여행기를 elementCnt 개수 만큼 조회한다."
-				+ "<br> <br> Data 명세 <br>"
-				+ "page : 조회할 페이지 <br>"
-				+ "sort : HOT 인기순 / NEW 최신순 (STAR_HIGH와 SATR_LOW는 아직 사용 불가 -> TYPE_NONE 에러) <br>"
-				+ "elementCnt : 10 (default)")
+		description = "공개된 여행기를 elementCnt 개수 만큼 조회한다."
+			+ "( placeId를 넣으면 -> 해당 도시의 여행기 추천 / placeId를 넣지 않으면 -> 전체 여행기 추천)"
+			+ "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 정보 + 유저의 좋아요 여부가 함께 나타납니다."
+			+ "<br> <br> Data 명세 <br>"
+			+ "page : 조회할 페이지 <br>"
+			+ "placeId : 장소 아이디 <br>"
+			+ "sort : HOT 인기순 / NEW 최신순 (STAR_HIGH와 SATR_LOW는 아직 사용 불가 -> TYPE_NONE 에러) <br>"
+			+ "elementCnt : 10 (default)")
 	@GetMapping("/diaries")
 	public ResponseEntity<PageResDto<DiaryCompactResDto>> getDiaryPage(
 		@RequestParam(value = "page") Integer page,
+		@RequestParam(value = "placeId", required = false) String placeId,
 		@RequestParam(value = "sort") SortType sort,
-		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt) {
+		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt,
+		@AuthenticationPrincipal UserPrincipal principal) {
+		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
 
-		return ResponseEntity.ok(diaryService.findDiaryPage(page, sort, elementCnt));
+		return ResponseEntity.ok(diaryService.findDiaryPage(page, placeId, sort, elementCnt, username));
 
 	}
 

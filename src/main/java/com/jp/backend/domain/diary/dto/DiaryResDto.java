@@ -47,6 +47,12 @@ public class DiaryResDto {
 	@Schema(description = "조회수")
 	private Integer viewCnt;
 
+	@Schema(description = "좋아요 눌렀는지 여부")
+	private Boolean isLiked;
+
+	@Schema(description = "찜 눌렀는지 여부")
+	private Boolean isBookmarked;
+
 	@Schema(description = "댓글 개수")
 	private Long commentCnt;
 
@@ -62,7 +68,8 @@ public class DiaryResDto {
 	// TODO 태그
 
 	@Builder
-	public DiaryResDto(Diary diary, Schedule schedule, Long likeCnt, Long commentCnt, List<Comment> commentList,
+	public DiaryResDto(Diary diary, Schedule schedule, Long likeCnt, Boolean isLiked, Boolean isBookmarked,
+		Long commentCnt, List<Comment> commentList,
 		List<FileResDto> fileInfos) {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
@@ -72,6 +79,8 @@ public class DiaryResDto {
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();
 		this.likeCnt = likeCnt;
 		this.viewCnt = (diary.getViewCnt() != null) ? diary.getViewCnt() : 0;
+		this.isLiked = isLiked;
+		this.isBookmarked = isBookmarked;
 		this.commentCnt = (commentCnt != null) ? commentCnt : 0L;
 		this.commentResDtoList = (commentList != null) ? commentList.stream()
 			.map(comment -> CommentResDto.builder().comment(comment).build())

@@ -40,6 +40,9 @@ public class ReviewCompactResDto {
 	@Schema(description = "좋아요 갯수")
 	private Long likeCnt;
 
+	@Schema(description = "좋아요 눌렀는지 여부")
+	private Boolean isLiked;
+
 	@Schema(description = "별점")
 	private Double star;
 
@@ -55,12 +58,14 @@ public class ReviewCompactResDto {
 	private List<FileResDto> fileInfos;
 
 	@Builder
-	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, List<FileResDto> fileInfos) {
+	public ReviewCompactResDto(Review review, Integer commentCnt, Long likeCnt, Boolean isLiked,
+		List<FileResDto> fileInfos) {
 		this.id = review.getId();
 		this.subject = review.getSubject();
 		this.content = review.getContent();
 		this.star = review.getStar();
 		this.likeCnt = likeCnt;
+		this.isLiked = isLiked;
 		this.placeId = review.getPlaceId();
 		this.userCompactResDto = UserCompactResDto.builder().user(review.getUser()).build();
 		this.commentCnt = commentCnt; //todo 바꾸기
