@@ -59,7 +59,8 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.updateReview(reviewId, updateDto, principal.getUsername()));
 	}
 
-	@Operation(summary = "리뷰 상세조회 API")
+	@Operation(summary = "리뷰 상세조회 API",
+		description = "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 상세 정보 + 유저의 좋아요/찜 여부가 함께 나타납니다.")
 	@GetMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(
 		@PathVariable(value = "reviewId") Long reviewId,
