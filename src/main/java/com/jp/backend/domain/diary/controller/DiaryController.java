@@ -70,8 +70,6 @@ public class DiaryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// TODO list에 - user 좋아요 여부 있어야함
-	// TODO 상세 - user 좋아요 여부/찜여부 있어야함
 	@Operation(summary = "여행기 상세 조회 API",
 		description = "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 상세 정보 + 유저의 좋아요/찜 여부가 함께 나타납니다.")
 	@GetMapping("/diary/{diaryId}")
