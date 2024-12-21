@@ -8,6 +8,7 @@ import com.jp.backend.domain.review.enums.SortType;
 
 public interface DiaryRepository {
 	Page<Diary> findDiaryPage(
+		String placeId,
 		SortType sort,
 		Pageable pageable
 	);

@@ -14,4 +14,6 @@ public interface GooglePlaceService {
 	GooglePlaceDetailsResDto getPlaceDetailsFromGoogle(String placeId, String fields);
 
 	boolean verifyPlaceId(String placeId);
+
+	String getFirstPhotoUrl(GooglePlaceDetailsResDto googleDetails);
 }

@@ -22,9 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LikeResDto {
-	// TODO 이거 그냥 인터페이스 만들고 구현 클래스 place랑 diary랑 나눠서 할까
 	@Schema(description = "아이디")
 	private Long id;
 
@@ -49,25 +47,32 @@ public class LikeResDto {
 
 	// Place의 경우
 	@Schema(description = "좋아요 대상의 장소명")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String targetName;
 
 	@Schema(description = "좋아요 대상의 간단한 지역명")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String targetAddress;
 
 	@Schema(description = "좋아요 대상의 장소 타입")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private PlaceType placeType;
 
 	// Diary의 경우
 	@Schema(description = "좋아요 대상의 제목")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String targetSubject;
 
 	@Schema(description = "좋아요 대상의 일정 시작일")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDate targetScheduleStartDate;
 
 	@Schema(description = "좋아요 대상의 일정 종료일")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private LocalDate targetScheduleEndDate;
 
 	@Schema(description = "좋아요 대상의 작성자 정보")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private UserCompactResDto targetUserCompactResDto;
 
 	@Builder

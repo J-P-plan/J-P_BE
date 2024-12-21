@@ -76,12 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
 				.map(GooglePlaceDetailsResDto::getRating)
 				.orElse(0.0);
 
-			String photoUrl = Optional.ofNullable(googleDetails)
-				.map(GooglePlaceDetailsResDto::getPhotoUrls)
-				.filter(urls -> !urls.isEmpty())
-				.map(urls -> urls.get(0))
-				.orElse(null);
-			// google에서 별점 가져와서 넣어주기
+			String photoUrl = googlePlaceService.getFirstPhotoUrl(googleDetails); // 구글에서 사진 가져오기
 
 			placeCompactList.add(PlaceCompactResDto.builder()
 				.entity(place)
@@ -125,12 +120,11 @@ public class PlaceServiceImpl implements PlaceService {
 		// TODO 태그 구현 이후 리팩토링
 		List<String> tagNames = place == null ? new ArrayList<>() : placeRepository.findTagNames(placeId);
 
-		// 유저 Id랑 좋아요 여부 가져오기
-		boolean isLiked = false; // 로그인 안했으면 일단 false
-		if (user != null) { // 로그인 했으면
-			isLiked = likeRepository.findLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId, user.getId())
+		boolean isLiked =
+			user != null && likeRepository.findLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId,
+					user.getId())
 				.isPresent();
-		}
+
 		Long likeCount = likeRepository.countLike(LikeActionType.BOOKMARK, LikeTargetType.PLACE, placeId);
 		// TODO 여기 placeDetailByGoogle의 유저 리뷰 개수(userTotal어쩌구)랑 이거 합해서 보여줄까 고민
 

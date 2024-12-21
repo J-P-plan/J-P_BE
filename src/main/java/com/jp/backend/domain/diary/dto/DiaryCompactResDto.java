@@ -43,6 +43,9 @@ public class DiaryCompactResDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Long likeCnt;
 
+	@Schema(description = "좋아요 눌렀는지 여부")
+	private Boolean isLiked;
+
 	@Schema(description = "댓글 개수")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Long commentCnt;
@@ -59,8 +62,9 @@ public class DiaryCompactResDto {
 
 	// TODO 태그 필요
 
+	// 전체 여행기 list 불러올 때 사
 	@Builder
-	public DiaryCompactResDto(Diary diary, Schedule schedule, Long likeCnt, Long commentCnt,
+	public DiaryCompactResDto(Diary diary, Schedule schedule, Long likeCnt, Boolean isLiked, Long commentCnt,
 		List<FileResDto> fileInfos) {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
@@ -68,12 +72,14 @@ public class DiaryCompactResDto {
 		this.scheduleEndDate = schedule.getEndDate();
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();
 		this.likeCnt = likeCnt;
+		this.isLiked = isLiked;
 		this.commentCnt = commentCnt;
 		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 		this.isPublic = diary.getIsPublic();
 		this.createdAt = diary.getCreatedAt();
 	}
 
+	// 내 여행기 list 불러올 때 사용
 	@Builder
 	public DiaryCompactResDto(Diary diary, Schedule schedule, List<FileResDto> fileInfos) {
 		this.id = diary.getId();

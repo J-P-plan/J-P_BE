@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jp.backend.domain.file.entity.PlaceFile;
+import com.jp.backend.domain.googleplace.dto.GooglePlaceDetailsResDto;
+import com.jp.backend.domain.googleplace.service.GooglePlaceService;
+import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.place.entity.Place;
 import com.jp.backend.domain.place.repository.JpaPlaceRepository;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
@@ -61,6 +66,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 	private final CustomBeanUtils<DayLocation> beanUtils;
 	private final JpaExpenseRepository expenseRepository;
 	private final JpaUserRepository userRepository;
+	private final GooglePlaceService googlePlaceService;
 
 	// 일정 생성 메서드
 	@Override
@@ -72,7 +78,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		String title = city.getName();
 		User.Mbti mbti = (user.getMbti() != null) ? user.getMbti() : User.Mbti.J;
 
-		Schedule schedule = postDto.toEntity(city, title , mbti);
+		Schedule schedule = postDto.toEntity(city, title, mbti);
 		ScheduleUser scheduleUser = com.jp.backend.domain.schedule.entity.ScheduleUser.builder()
 			.user(user)
 			.isCreater(true)
@@ -107,7 +113,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		//J면 시간 받아서 시간에 대해 인덱스 재설정
 		//P면 인덱스만 받아서 젤 마지막에 추가(시간은 가장 마지막거랑 동일)
-		if(mbti.equals(User.Mbti.J)) {
+		if (mbti.equals(User.Mbti.J)) {
 
 			List<DayLocation> existingDayLocations = dayLocationRepository.findAllByDay(day);
 
@@ -143,7 +149,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				.orElse(LocalTime.of(9, 0)); // 값이 없으면 기본값 반환
 			AtomicInteger index = new AtomicInteger(dayLocationRepository.countByDay(day).intValue() + 1);
 			newDayLocations = dayLocationReqDtoList.stream().map(
-				dayLocationReqDto ->dayLocationReqDto.toEntity(lastTime, index.getAndIncrement(), day)).toList();
+				dayLocationReqDto -> dayLocationReqDto.toEntity(lastTime, index.getAndIncrement(), day)).toList();
 
 			dayLocationRepository.saveAll(newDayLocations);
 			day.addLocation(newDayLocations);
@@ -284,6 +290,59 @@ public class ScheduleServiceImpl implements ScheduleService {
 			.stream().map(day -> DayResDto.builder().day(day).build()).toList();
 	}
 
+	// 일정의 모든 장소 조회 메서드 (여행기 작성시 사용)
+	@Override
+	@Transactional
+	public List<PlaceCompactResDto> findAllPlacesInSchedule(Long scheduleId) {
+		Schedule schedule = scheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new CustomLogicException(ExceptionCode.SCHEDULE_NONE));
+
+		// placeId 기준으로 중복 제거
+		List<DayLocation> distinctLocations = schedule.getDayList().stream()
+			.flatMap(day -> day.getDayLocationList().stream())
+			.collect(Collectors.toMap(
+				DayLocation::getPlaceId, // 키
+				dayLocation -> dayLocation, // 값
+				(existing, replacement) -> existing // 중복 시 기존 값 유지
+			))
+			.values()
+			.stream()
+			.toList();
+
+		List<PlaceCompactResDto> placeCompactList = new ArrayList<>();
+		for (DayLocation dayLocation : distinctLocations) {
+			Place place = placeRepository.findByPlaceId(dayLocation.getPlaceId())
+				.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
+
+			GooglePlaceDetailsResDto googleDetails = googlePlaceService.getPlaceDetailsFromGoogle(place.getPlaceId(),
+				"rating,photo");
+
+			Double rating = Optional.ofNullable(googleDetails)
+				.map(GooglePlaceDetailsResDto::getRating)
+				.orElse(0.0);
+
+			String photoUrl;
+			List<PlaceFile> files = place.getFiles();
+			if (files != null && !files.isEmpty()) {
+				photoUrl = files.stream()
+					.filter(file -> file.getFileOrder() == 0)
+					.map(file -> file.getFile().getUrl())
+					.findFirst()
+					.orElse(null); // 없으면 null
+			} else {
+				photoUrl = googlePlaceService.getFirstPhotoUrl(googleDetails);
+			}
+
+			placeCompactList.add(PlaceCompactResDto.builder()
+				.entity(place)
+				.rating(rating)
+				.photoUrl(photoUrl)
+				.build());
+		}
+
+		return placeCompactList;
+	}
+
 	// 사용자별 일정 페이지 조회 메서드
 	@Override
 	@Transactional
@@ -389,7 +448,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		return true;
 	}
-
 
 	private void reorderDayLocations(List<DayLocation> dayLocations) {
 		// 1순위: 시간, 2순위: 인덱스로 정렬
