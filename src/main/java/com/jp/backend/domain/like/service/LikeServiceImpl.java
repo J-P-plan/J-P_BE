@@ -134,9 +134,13 @@ public class LikeServiceImpl implements LikeService {
 					if (like.getLikeTargetType() == LikeTargetType.PLACE) {
 						place = placeRepository.findByPlaceId(like.getTargetId())
 							.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
+						GooglePlaceDetailsResDto googleDetails = googlePlaceService.getPlaceDetailsFromGoogle(
+							place.getPlaceId(),
+							"photo");
 						List<PlaceFile> placeFiles = placeFileRepository.findByPlace_PlaceIdOrderByFileOrder(
 							like.getTargetId());
-						firstFileUrl = placeFiles.isEmpty() ? null : placeFiles.get(0).getFile().getUrl();
+						firstFileUrl = placeFiles.isEmpty() ? googlePlaceService.getFirstPhotoUrl(googleDetails) :
+							placeFiles.get(0).getFile().getUrl(); // db에 없으면 구글 / 있으면 그거
 					}
 					if (like.getLikeTargetType() == LikeTargetType.DIARY) {
 						diary = diaryRepository.findById(Long.valueOf(like.getTargetId()))

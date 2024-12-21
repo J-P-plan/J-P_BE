@@ -1,5 +1,7 @@
 package com.jp.backend.domain.review.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,31 +59,36 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewService.updateReview(reviewId, updateDto, principal.getUsername()));
 	}
 
-	@Operation(summary = "리뷰 상세조회 API")
+	@Operation(summary = "리뷰 상세조회 API",
+		description = "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 상세 정보 + 유저의 좋아요/찜 여부가 함께 나타납니다.")
 	@GetMapping("/review/{reviewId}")
 	public ResponseEntity<ReviewResDto> postReview(
-		@PathVariable(value = "reviewId") Long reviewId
+		@PathVariable(value = "reviewId") Long reviewId,
+		@AuthenticationPrincipal UserPrincipal principal
 	) throws Exception {
-		return ResponseEntity.ok(reviewService.findReview(reviewId));
+		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
+		return ResponseEntity.ok(reviewService.findReview(reviewId, username));
 	}
 
 	@Operation(summary = "리뷰 조회 API - Pagination",
-		description =
-			"리뷰를 elementCnt 개수 만큼 조회한다."
-				+ "<br> <br> Data 명세 <br>"
-				+ "page : 조회할 페이지 <br>"
-				+ "placeId : 장소 아이디 <br>"
-				+ "sort : 최신순/인기순 <br>"
-				+ "elementCnt : 10 (default)")
+		description = "리뷰를 elementCnt 개수 만큼 조회한다."
+			+ "- 유저의 토큰을 넣어 요청한 경우 -->  여행기 정보 + 유저의 좋아요 여부가 함께 나타납니다."
+			+ "<br> <br> Data 명세 <br>"
+			+ "page : 조회할 페이지 <br>"
+			+ "placeId : 장소 아이디 <br>"
+			+ "sort : 최신순/인기순 <br>"
+			+ "elementCnt : 10 (default)")
 	@GetMapping("/reviews")
 	public ResponseEntity<PageResDto<ReviewCompactResDto>> getReviewPage(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(value = "placeId", required = false) String placeId,
 		@RequestParam(value = "sort") SortType sort,
-		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt
+		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt,
+		@AuthenticationPrincipal UserPrincipal principal
 	) throws Exception {
+		Optional<String> username = Optional.ofNullable(principal).map(UserPrincipal::getUsername);
 		return ResponseEntity.ok(reviewService.findReviewPage(page, placeId, sort
-			, elementCnt));
+			, elementCnt, username));
 	}
 
 	@Operation(summary = "내 리뷰 조회 API - Pagination",

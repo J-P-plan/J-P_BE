@@ -2,6 +2,7 @@ package com.jp.backend.domain.review.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.review.enums.SortType;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
 import com.jp.backend.domain.user.entity.User;
+import com.jp.backend.domain.user.repository.JpaUserRepository;
 import com.jp.backend.domain.user.service.UserService;
 import com.jp.backend.global.dto.PageInfo;
 import com.jp.backend.global.dto.PageResDto;
@@ -50,6 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final JpaLikeRepository likeRepository;
 	private final JpaReviewFileRepository reviewFileRepository;
 	private final FileService fileService;
+	private final JpaUserRepository userRepository;
 
 	@Override
 	@Transactional
@@ -95,9 +98,15 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	@Transactional
-	public ReviewResDto findReview(Long reviewId) {
+	public ReviewResDto findReview(Long reviewId, Optional<String> emailOption) {
+		User user = emailOption.flatMap(userRepository::findByEmail)
+			.orElse(null);
+
 		Review review = verifyReview(reviewId);
 		review.addViewCnt();
+
+		boolean isLiked = user != null && likeRepository.findLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+			String.valueOf(reviewId), user.getId()).isPresent();
 
 		Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW, reviewId.toString());
 		List<Comment> commentList = commentRepository.findAllByCommentTypeAndTargetId(CommentType.REVIEW, reviewId);
@@ -108,6 +117,7 @@ public class ReviewServiceImpl implements ReviewService {
 		return ReviewResDto.builder()
 			.review(review)
 			.likeCnt(likeCnt)
+			.isLiked(isLiked)
 			.commentList(commentList)
 			.fileInfos(fileInfos)
 			.build();
@@ -117,7 +127,11 @@ public class ReviewServiceImpl implements ReviewService {
 		Integer page,
 		String placeId,
 		SortType sort,
-		Integer elementCnt) {
+		Integer elementCnt,
+		Optional<String> emailOption) {
+		User user = emailOption.flatMap(userRepository::findByEmail)
+			.orElse(null);
+
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
 		Page<ReviewCompactResDto> reviewPage =
@@ -129,6 +143,9 @@ public class ReviewServiceImpl implements ReviewService {
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
 					Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
 						review.getId().toString());
+					boolean isLiked =
+						user != null && likeRepository.findLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+							String.valueOf(review.getId()), user.getId()).isPresent();
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
@@ -138,6 +155,7 @@ public class ReviewServiceImpl implements ReviewService {
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.isLiked(isLiked)
 						.fileInfos(fileInfos)
 						.build();
 				});

@@ -1,5 +1,7 @@
 package com.jp.backend.domain.diary.service;
 
+import java.util.Optional;
+
 import com.jp.backend.domain.diary.dto.DiaryCompactResDto;
 import com.jp.backend.domain.diary.dto.DiaryReqDto;
 import com.jp.backend.domain.diary.dto.DiaryResDto;
@@ -14,9 +16,10 @@ public interface DiaryService {
 
 	void deleteDiary(Long diaryId, String email);
 
-	DiaryResDto findDiary(Long diaryId);
+	DiaryResDto findDiary(Long diaryId, Optional<String> emailOption);
 
-	PageResDto<DiaryCompactResDto> findDiaryPage(Integer page, SortType sort, Integer elementCnt);
+	PageResDto<DiaryCompactResDto> findDiaryPage(Integer page, String placeId, SortType sort, Integer elementCnt,
+		Optional<String> emailOption);
 
 	PageResDto<DiaryCompactResDto> findMyDiaryPage(Integer page, Integer elementCnt, String email);
 }
