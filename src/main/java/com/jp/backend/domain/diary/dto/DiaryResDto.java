@@ -1,9 +1,11 @@
 package com.jp.backend.domain.diary.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.comment.dto.CommentResDto;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.diary.entity.Diary;
@@ -65,6 +67,10 @@ public class DiaryResDto {
 	@Schema(description = "공개 여부")
 	private Boolean isPublic;
 
+	@Schema(description = "작성일자")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm", timezone = "Asia/Seoul")
+	private LocalDateTime createdAt;
+
 	// TODO 태그
 
 	@Builder
@@ -87,5 +93,6 @@ public class DiaryResDto {
 			.toList() : new ArrayList<>();
 		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 		this.isPublic = diary.getIsPublic();
+		this.createdAt = diary.getCreatedAt();
 	}
 }
