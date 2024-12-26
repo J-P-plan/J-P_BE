@@ -35,13 +35,13 @@ public class ReviewResDto {
 	private UserCompactResDto userCompactResDto;
 
 	@Schema(description = "장소아이디")
-	private String placeId; //장소 위경도가 필요할까 ,,,?_?
+	private String placeId;
 
 	@Schema(description = "별점")
 	private Double star;
 
 	@Schema(description = "좋아요 갯수")
-	private Long likeCnt; //장소 위경도가 필요할까 ,,,?_?
+	private Long likeCnt;
 
 	@Schema(description = "좋아요 눌렀는지 여부")
 	private Boolean isLiked;
@@ -53,7 +53,7 @@ public class ReviewResDto {
 	private Integer viewCnt;
 
 	@Schema(description = "작성일자")
-	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm", timezone = "Asia/Seoul")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
 	private LocalDateTime createdAt;
 
 	@Schema(description = "댓글 리스트")
