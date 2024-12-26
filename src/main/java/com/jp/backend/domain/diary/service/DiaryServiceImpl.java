@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
-import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.comment.repository.JpaCommentRepository;
 import com.jp.backend.domain.diary.dto.DiaryCompactResDto;
 import com.jp.backend.domain.diary.dto.DiaryReqDto;
 import com.jp.backend.domain.diary.dto.DiaryResDto;

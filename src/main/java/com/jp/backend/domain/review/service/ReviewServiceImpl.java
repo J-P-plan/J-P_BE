@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.enums.CommentType;
-import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
+import com.jp.backend.domain.comment.repository.JpaCommentRepository;
 import com.jp.backend.domain.file.dto.FileResDto;
 import com.jp.backend.domain.file.entity.File;
 import com.jp.backend.domain.file.entity.ReviewFile;
@@ -189,6 +189,9 @@ public class ReviewServiceImpl implements ReviewService {
 					//todo 쿼리가 너무 많이 나갈 것 같아서 리팩토링 필요
 					Long likeCnt = likeRepository.countLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
 						review.getId().toString());
+					boolean isLiked =
+						user != null && likeRepository.findLike(LikeActionType.LIKE, LikeTargetType.REVIEW,
+							String.valueOf(review.getId()), user.getId()).isPresent();
 					for (Comment comment : commentList) {
 						commentCnt += comment.getReplyList().size();
 					}
@@ -207,6 +210,7 @@ public class ReviewServiceImpl implements ReviewService {
 						.review(review)
 						.commentCnt(commentCnt)
 						.likeCnt(likeCnt)
+						.isLiked(isLiked)
 						.fileInfos(fileInfos)
 						.build();
 				});
