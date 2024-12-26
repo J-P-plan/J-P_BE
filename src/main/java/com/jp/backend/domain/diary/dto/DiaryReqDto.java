@@ -7,6 +7,7 @@ import com.jp.backend.domain.schedule.entity.Schedule;
 import com.jp.backend.domain.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DiaryReqDto {
 	@Schema(description = "제목")
+	@NotBlank(message = "제목을 입력해 주세요.")
 	private String subject;
 
 	@Schema(description = "내용")
+	@NotBlank(message = "내용을 입력해 주세요.")
 	private String content;
 
 	@Schema(description = "파일아이디 리스트")

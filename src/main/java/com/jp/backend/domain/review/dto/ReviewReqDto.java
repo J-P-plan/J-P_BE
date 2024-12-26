@@ -6,6 +6,8 @@ import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,15 +19,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReviewReqDto {
 	@Schema(description = "제목")
+	@NotBlank(message = "제목을 입력해 주세요.")
 	private String subject;
 
 	@Schema(description = "내용")
+	@NotBlank(message = "내용을 입력해 주세요.")
 	private String content;
 
 	@Schema(description = "장소아이디")
-	private String placeId; //장소 위경도가 필요할까 ,,,?_?
+	@NotBlank(message = "placeId를 입력해 주세요.")
+	private String placeId;
 
 	@Schema(description = "별점")
+	@NotNull(message = "별점을 입력해 주세요.")
 	private Double star;
 
 	@Schema(description = "파일아이디 리스트")
