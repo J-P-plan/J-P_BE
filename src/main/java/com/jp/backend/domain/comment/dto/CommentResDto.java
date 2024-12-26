@@ -29,7 +29,7 @@ public class CommentResDto {
 	private UserCompactResDto userCompactResDto;
 
 	@Schema(description = "작성일자")
-	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm", timezone = "Asia/Seoul")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
 	private LocalDateTime createdAt;
 
 	@Schema(description = "대댓글 리스트")
