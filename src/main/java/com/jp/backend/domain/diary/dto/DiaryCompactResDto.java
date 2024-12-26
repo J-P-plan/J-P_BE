@@ -58,11 +58,11 @@ public class DiaryCompactResDto {
 
 	@Schema(description = "작성일자")
 	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
-	private LocalDateTime createdAt; // TDOO 이거 resposne에 나타나는지 확인
+	private LocalDateTime createdAt;
 
 	// TODO 태그 필요
 
-	// 전체 여행기 list 불러올 때 사
+	// 전체 여행기 list 불러올 때 사용
 	@Builder
 	public DiaryCompactResDto(Diary diary, Schedule schedule, Long likeCnt, Boolean isLiked, Long commentCnt,
 		List<FileResDto> fileInfos) {

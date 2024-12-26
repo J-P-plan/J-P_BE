@@ -50,7 +50,7 @@ public class ReviewCompactResDto {
 	private String placeId; //장소 위경도가 필요할까 ,,,?_?
 
 	@Schema(description = "작성일자")
-	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm", timezone = "Asia/Seoul")
 	private LocalDateTime createdAt;
 
 	@Schema(description = "리뷰의 파일 정보")

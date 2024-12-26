@@ -53,7 +53,7 @@ public class ReviewResDto {
 	private Integer viewCnt;
 
 	@Schema(description = "작성일자")
-	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm", timezone = "Asia/Seoul")
 	private LocalDateTime createdAt;
 
 	@Schema(description = "댓글 리스트")
