@@ -1,9 +1,11 @@
 package com.jp.backend.domain.diary.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.comment.dto.CommentResDto;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.diary.entity.Diary;
@@ -47,6 +49,12 @@ public class DiaryResDto {
 	@Schema(description = "조회수")
 	private Integer viewCnt;
 
+	@Schema(description = "좋아요 눌렀는지 여부")
+	private Boolean isLiked;
+
+	@Schema(description = "찜 눌렀는지 여부")
+	private Boolean isBookmarked;
+
 	@Schema(description = "댓글 개수")
 	private Long commentCnt;
 
@@ -59,10 +67,15 @@ public class DiaryResDto {
 	@Schema(description = "공개 여부")
 	private Boolean isPublic;
 
+	@Schema(description = "작성일자")
+	@JsonFormat(pattern = "yyyy년 MM월 dd일 HH:mm")
+	private LocalDateTime createdAt;
+
 	// TODO 태그
 
 	@Builder
-	public DiaryResDto(Diary diary, Schedule schedule, Long likeCnt, Long commentCnt, List<Comment> commentList,
+	public DiaryResDto(Diary diary, Schedule schedule, Long likeCnt, Boolean isLiked, Boolean isBookmarked,
+		Long commentCnt, List<Comment> commentList,
 		List<FileResDto> fileInfos) {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
@@ -72,11 +85,14 @@ public class DiaryResDto {
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();
 		this.likeCnt = likeCnt;
 		this.viewCnt = (diary.getViewCnt() != null) ? diary.getViewCnt() : 0;
+		this.isLiked = isLiked;
+		this.isBookmarked = isBookmarked;
 		this.commentCnt = (commentCnt != null) ? commentCnt : 0L;
 		this.commentResDtoList = (commentList != null) ? commentList.stream()
 			.map(comment -> CommentResDto.builder().comment(comment).build())
 			.toList() : new ArrayList<>();
 		this.fileInfos = fileInfos != null ? fileInfos : new ArrayList<>();
 		this.isPublic = diary.getIsPublic();
+		this.createdAt = diary.getCreatedAt();
 	}
 }

@@ -2,6 +2,7 @@ package com.jp.backend.domain.schedule.service;
 
 import java.util.List;
 
+import com.jp.backend.domain.place.dto.PlaceCompactResDto;
 import com.jp.backend.domain.schedule.dto.DayLocationReqDto;
 import com.jp.backend.domain.schedule.dto.DayLocationResDto;
 import com.jp.backend.domain.schedule.dto.DayMoveDto;
@@ -32,6 +33,8 @@ public interface ScheduleService {
 
 	List<DayResDto> findDays(Long scheduleId);
 
+	List<PlaceCompactResDto> findAllPlacesInSchedule(Long scheduleId);
+
 	PageResDto<ScheduleResDto> findMySchedules(Integer page,
 		ScheduleSort sort,
 		Integer elementCnt,
@@ -44,5 +47,5 @@ public interface ScheduleService {
 
 	Long updateDay(Long dayId, List<DayLocationReqDto> dayLocationReqDtoList);
 
-	Boolean moveDayLocation(Long dayLocationId,User.Mbti mbti, DayMoveDto dayMoveDto);
+	Boolean moveDayLocation(Long dayLocationId, User.Mbti mbti, DayMoveDto dayMoveDto);
 }

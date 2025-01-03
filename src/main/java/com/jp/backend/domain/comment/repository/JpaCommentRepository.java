@@ -1,4 +1,4 @@
-package com.jp.backend.domain.comment.reposiroty;
+package com.jp.backend.domain.comment.repository;
 
 import java.util.List;
 

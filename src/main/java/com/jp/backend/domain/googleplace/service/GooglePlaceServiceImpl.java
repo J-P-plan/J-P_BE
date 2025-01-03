@@ -284,4 +284,12 @@ public class GooglePlaceServiceImpl implements GooglePlaceService {
 		return false;
 	}
 
+	public String getFirstPhotoUrl(GooglePlaceDetailsResDto googleDetails) {
+		return Optional.ofNullable(googleDetails)
+			.map(GooglePlaceDetailsResDto::getPhotoUrls)
+			.filter(urls -> !urls.isEmpty())
+			.map(urls -> urls.get(0))
+			.orElse(null);
+	}
+
 }

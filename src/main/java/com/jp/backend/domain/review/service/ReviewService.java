@@ -1,6 +1,7 @@
 package com.jp.backend.domain.review.service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.jp.backend.domain.review.dto.ReviewCompactResDto;
 import com.jp.backend.domain.review.dto.ReviewReqDto;
@@ -14,13 +15,14 @@ public interface ReviewService {
 
 	ReviewResDto updateReview(Long reviewId, ReviewUpdateDto updateDto, String username);
 
-	ReviewResDto findReview(Long reviewId);
+	ReviewResDto findReview(Long reviewId, Optional<String> emailOption);
 
 	PageResDto<ReviewCompactResDto> findReviewPage(
 		Integer page,
 		String placeId,
 		SortType sort,
-		Integer elementCnt);
+		Integer elementCnt,
+		Optional<String> emailOption);
 
 	PageResDto<ReviewCompactResDto> findMyReviewPage(
 		Integer page,

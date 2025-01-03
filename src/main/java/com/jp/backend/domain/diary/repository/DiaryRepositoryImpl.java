@@ -21,11 +21,12 @@ public class DiaryRepositoryImpl implements DiaryRepository {
 	private final QDiary qDiary = QDiary.diary;
 
 	@Override
-	public Page<Diary> findDiaryPage(SortType sort, Pageable pageable) {
+	public Page<Diary> findDiaryPage(String placeId, SortType sort, Pageable pageable) {
 		JPAQuery<Diary> query = queryFactory.selectFrom(qDiary);
 
 		List<Diary> result = query
 			.where(qDiary.isPublic.isTrue())
+			.where((placeId != null) ? qDiary.city.placeId.eq(placeId) : null)
 			.orderBy(orderBySort(sort), qDiary.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -34,6 +35,7 @@ public class DiaryRepositoryImpl implements DiaryRepository {
 		Long totalCount = queryFactory.select(qDiary.count())
 			.from(qDiary)
 			.where(qDiary.isPublic.isTrue())
+			.where((placeId != null) ? qDiary.city.placeId.eq(placeId) : null)
 			.fetchOne();
 
 		return new PageImpl<>(result, pageable, totalCount);

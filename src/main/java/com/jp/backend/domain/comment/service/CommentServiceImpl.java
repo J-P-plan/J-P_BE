@@ -10,10 +10,9 @@ import com.jp.backend.domain.comment.dto.ReplyResDto;
 import com.jp.backend.domain.comment.entity.Comment;
 import com.jp.backend.domain.comment.entity.Reply;
 import com.jp.backend.domain.comment.enums.CommentType;
-import com.jp.backend.domain.comment.reposiroty.JpaCommentRepository;
-import com.jp.backend.domain.comment.reposiroty.JpaReplyRepository;
+import com.jp.backend.domain.comment.repository.JpaCommentRepository;
+import com.jp.backend.domain.comment.repository.JpaReplyRepository;
 import com.jp.backend.domain.diary.entity.Diary;
-import com.jp.backend.domain.diary.repository.DiaryRepository;
 import com.jp.backend.domain.diary.repository.JpaDiaryRepository;
 import com.jp.backend.domain.review.entity.Review;
 import com.jp.backend.domain.review.repository.JpaReviewRepository;
@@ -106,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
 		Comment findComment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new CustomLogicException(ExceptionCode.COMMENT_NONE));
 
-		Reply reply = reqDto.postReply(user,findComment);
+		Reply reply = reqDto.postReply(user, findComment);
 		Reply savedReply = replyRepository.save(reply);
 
 		return ReplyResDto.builder().reply(savedReply).build();

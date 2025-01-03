@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jp.backend.domain.comment.entity.Comment;
-import com.jp.backend.domain.comment.entity.Reply;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,8 +42,11 @@ public class CommentResDto {
 		this.createdAt = comment.getCreatedAt();
 		this.userCompactResDto = UserCompactResDto.builder().user(comment.getUser()).build();
 		this.createdAt = comment.getCreatedAt();
-		if(comment.getReplyList() !=null)
-		this.replyList = comment.getReplyList().stream().map(reply -> ReplyResDto.builder().reply(reply).build()).toList();
+		if (comment.getReplyList() != null)
+			this.replyList = comment.getReplyList()
+				.stream()
+				.map(reply -> ReplyResDto.builder().reply(reply).build())
+				.toList();
 	}
 
 }

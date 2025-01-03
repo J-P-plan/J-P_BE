@@ -379,8 +379,8 @@ VALUES (117, 'ChIJr9c9ugIrfTUR3iXJA2xYMfM', '포천', '경기도 포천시',
         '김포시는 한강을 끼고 있어 최근 신도시 개발로 빠르게 성장하고 있으며, 서울과의 접근성이 뛰어난 지역입니다.',
         'CITY', 37.6593806, 126.5930681, 'GYEONGGI_DO'),
        (151, 'ChIJuQhD6D7sfDURB6J0Dx5TGW8', '파주', '경기도 파주시',
-         '대한민국 경기도의 북서부에 위치한 도시로, 풍부한 역사적, 문화적 유산과 아름다운 자연경관을 자랑하는 지역입니다. ',
-         'CITY', 37.7595855, 126.7777674, 'GYEONGGI_DO');
+        '대한민국 경기도의 북서부에 위치한 도시로, 풍부한 역사적, 문화적 유산과 아름다운 자연경관을 자랑하는 지역입니다. ',
+        'CITY', 37.7595855, 126.7777674, 'GYEONGGI_DO');
 
 -- 특별시, 광역시 등
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, CITY_TYPE)
@@ -544,9 +544,9 @@ VALUES (310, 'ChIJF2NeAS2ffDURFxHIxVjEdIU', '여의도 불꽃축제', '서울특
         37.5215787, 126.9419657, 'FESTIVAL');
 
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
-    VALUES (311, 'ChIJOwGVpzWYejURfqzqEWR0xsE', '청양 칠갑산 얼음분수 축제', '청양군',
-            '칠갑산의 아름다운 겨울 풍경과 함께 얼음분수, 눈 조각 등 다양한 겨울 놀이를 체험할 수 있는 축제입니다.', 'THEME',
-            36.4098965, 126.9138686, 'FESTIVAL');
+VALUES (311, 'ChIJOwGVpzWYejURfqzqEWR0xsE', '청양 칠갑산 얼음분수 축제', '청양군',
+        '칠갑산의 아름다운 겨울 풍경과 함께 얼음분수, 눈 조각 등 다양한 겨울 놀이를 체험할 수 있는 축제입니다.', 'THEME',
+        36.4098965, 126.9138686, 'FESTIVAL');
 
 INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, LNG, THEME_TYPE)
 VALUES (312, 'ChIJTdYZ3IewfDUR5PISNTeZJys', '구리 코스모스 축제', '경기도 구리시',
@@ -567,8 +567,6 @@ INSERT INTO place (ID, PLACE_ID, NAME, SUB_NAME, DESCRIPTION, PLACE_TYPE, LAT, L
 VALUES (315, 'ChIJEbinyzGLYTURXiqiYnm4zWI', '대관령 눈꽃축제', '강원특별자치도 평창군',
         '겨울철 눈꽃으로 덮인 대관령의 아름다움을 즐길 수 있는 축제로, 다양한 겨울 액티비티가 준비되어 있습니다.', 'THEME',
         37.67332469999999, 128.7100274, 'FESTIVAL');
-
-
 
 
 ALTER TABLE place AUTO_INCREMENT = 400;
