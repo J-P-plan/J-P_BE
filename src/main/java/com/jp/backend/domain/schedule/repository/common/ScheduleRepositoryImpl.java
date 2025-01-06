@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.jp.backend.domain.diary.entity.QDiary;
 import com.jp.backend.domain.schedule.entity.QSchedule;
 import com.jp.backend.domain.schedule.entity.QScheduleUser;
 import com.jp.backend.domain.schedule.entity.Schedule;
@@ -24,16 +25,19 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	private final QSchedule schedule = QSchedule.schedule;
 	private final QScheduleUser scheduleUser = QScheduleUser.scheduleUser;
 	private final QUser user = QUser.user;
+	private final QDiary diary = QDiary.diary;
 
 	@Override
-	public Page<Schedule> getSchedulePage(Pageable pageable, Long userId, Long placeId, ScheduleSort sort) {
+	public Page<Schedule> getSchedulePage(Pageable pageable, Long userId, Long placeId, ScheduleSort sort, Boolean isDiary) {
 
 		List<Schedule> result = jpaQueryFactory.selectFrom(schedule)
 			.innerJoin(schedule.scheduleUsers, scheduleUser).fetchJoin()
 			.innerJoin(scheduleUser.user, user)
+			.leftJoin(diary).on(diary.schedule.eq(schedule))
 			.where(
 				(userId != null) ? user.id.eq(userId) : null,
-				(placeId != null) ? schedule.city.id.eq(placeId) : null
+				(placeId != null) ? schedule.city.id.eq(placeId) : null,
+				(isDiary != null) ? (isDiary ? diary.isNotNull() : diary.isNull()) : null
 			)
 			.orderBy(orderBySort(sort).toArray(new OrderSpecifier<?>[0]))
 			.fetch();
@@ -42,9 +46,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 			.from(schedule)
 			.innerJoin(schedule.scheduleUsers, scheduleUser)
 			.innerJoin(scheduleUser.user, user)
+			.leftJoin(diary).on(diary.schedule.eq(schedule))
 			.where(
 				(userId != null) ? user.id.eq(userId) : null,
-				(placeId != null) ? schedule.city.id.eq(placeId) : null
+				(placeId != null) ? schedule.city.id.eq(placeId) : null,
+				(isDiary != null) ? (isDiary ? diary.isNotNull() : diary.isNull()) : null
 			)
 			.fetchOne();
 		return new PageImpl<>(result);

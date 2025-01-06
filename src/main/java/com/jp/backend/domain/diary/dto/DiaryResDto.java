@@ -34,6 +34,9 @@ public class DiaryResDto {
 	@Schema(description = "내용")
 	private String content;
 
+	@Schema(description = "일정 아이디")
+	private Long scheduleId;
+
 	@Schema(description = "일정 시작일")
 	private LocalDate scheduleStartDate;
 
@@ -80,6 +83,7 @@ public class DiaryResDto {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
 		this.content = diary.getContent();
+		this.scheduleId = schedule.getId();
 		this.scheduleStartDate = schedule.getStartDate();
 		this.scheduleEndDate = schedule.getEndDate();
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();

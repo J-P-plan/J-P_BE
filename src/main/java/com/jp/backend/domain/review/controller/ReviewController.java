@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -106,6 +107,16 @@ public class ReviewController {
 		@RequestParam(required = false, defaultValue = "10", value = "elementCnt") Integer elementCnt
 	) throws Exception {
 		return ResponseEntity.ok(reviewService.findMyReviewPage(page, elementCnt, principal.getUsername()));
+	}
+
+	@Operation(summary = "리뷰 삭제 API",
+		description = "리뷰를 삭제합니다")
+	@DeleteMapping("/review/{reviewId}")
+	public ResponseEntity<Boolean> deleteReview(
+		@PathVariable(value = "reviewId") Long reviewId,
+		@AuthenticationPrincipal UserPrincipal principal
+	) {
+		return ResponseEntity.ok(reviewService.deleteReview(reviewId, principal.getUsername()));
 	}
 
 }

@@ -30,6 +30,9 @@ public class DiaryCompactResDto {
 	@Schema(description = "제목")
 	private String subject;
 
+	@Schema(description = "일정 아이디")
+	private Long scheduleId;
+
 	@Schema(description = "일정 시작일")
 	private LocalDate scheduleStartDate;
 
@@ -68,6 +71,7 @@ public class DiaryCompactResDto {
 		List<FileResDto> fileInfos) {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
+		this.scheduleId = schedule.getId();
 		this.scheduleStartDate = schedule.getStartDate();
 		this.scheduleEndDate = schedule.getEndDate();
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();
@@ -84,6 +88,7 @@ public class DiaryCompactResDto {
 	public DiaryCompactResDto(Diary diary, Schedule schedule, List<FileResDto> fileInfos) {
 		this.id = diary.getId();
 		this.subject = diary.getSubject();
+		this.scheduleId = schedule.getId();
 		this.scheduleStartDate = schedule.getStartDate();
 		this.scheduleEndDate = schedule.getEndDate();
 		this.userCompactResDto = UserCompactResDto.builder().user(diary.getUser()).build();

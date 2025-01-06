@@ -163,10 +163,11 @@ public class ScheduleController {
 	public ResponseEntity<PageResDto<ScheduleResDto>> findMySchedules(
 		@RequestParam(value = "page") Integer page,
 		@RequestParam(required = false, value = "sort", defaultValue = "DESC") ScheduleSort sort,
+		@RequestParam(required = false, value = "isDiary") Boolean isDiary,
 		@RequestParam(required = false, value = "elementCnt,", defaultValue = "10") Integer elementCnt,
 		@AuthenticationPrincipal UserPrincipal principal
 	) {
-		return ResponseEntity.ok(scheduleService.findMySchedules(page, sort, elementCnt, principal.getUsername()));
+		return ResponseEntity.ok(scheduleService.findMySchedules(page, sort, elementCnt, principal.getUsername(), isDiary));
 	}
 
 	@GetMapping("/schedules")
