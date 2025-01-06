@@ -48,8 +48,7 @@ public class GoogleService {
 	@Value("${spring.security.oauth2.client.registration.google.client-secret}")
 	private String GOOGLE_CLIENT_SECRET;
 	private final String DEV_REDIRECT_URL = "http://localhost:3000/survey";
-	@Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
-	private String PROD_REDIRECT_URL;
+	private final String PROD_REDIRECT_URL = "https://j-p-plan.vercel.app/survey";
 
 	public String getGoogleAccessToken(String accessCode, Boolean isDev) {
 
@@ -60,6 +59,7 @@ public class GoogleService {
 
 		String redirect_url = isDev ? DEV_REDIRECT_URL : PROD_REDIRECT_URL;
 
+		System.out.println("----------redirectUrl===== : " + redirect_url);
 		RestTemplate restTemplate = new RestTemplate();
 		Map<String, String> params = new HashMap<>();
 
