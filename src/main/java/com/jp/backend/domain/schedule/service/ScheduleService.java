@@ -38,7 +38,8 @@ public interface ScheduleService {
 	PageResDto<ScheduleResDto> findMySchedules(Integer page,
 		ScheduleSort sort,
 		Integer elementCnt,
-		String username);
+		String username,
+		Boolean isDiary);
 
 	PageResDto<ScheduleResDto> findSchedules(Integer page,
 		Long placeId,

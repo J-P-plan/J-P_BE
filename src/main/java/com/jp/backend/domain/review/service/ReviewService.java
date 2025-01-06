@@ -29,4 +29,6 @@ public interface ReviewService {
 		Integer elementCnt,
 		String username);
 
+	Boolean deleteReview(Long reviewId, String username);
+
 }

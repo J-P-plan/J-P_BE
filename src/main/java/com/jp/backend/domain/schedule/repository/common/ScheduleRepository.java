@@ -7,5 +7,5 @@ import com.jp.backend.domain.schedule.entity.Schedule;
 import com.jp.backend.domain.schedule.enums.ScheduleSort;
 
 public interface ScheduleRepository {
-	Page<Schedule> getSchedulePage(Pageable pageable, Long userId, Long placeId, ScheduleSort sort);
+	Page<Schedule> getSchedulePage(Pageable pageable, Long userId, Long placeId, ScheduleSort sort, Boolean isDiary);
 }

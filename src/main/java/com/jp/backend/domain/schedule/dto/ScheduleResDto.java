@@ -8,6 +8,7 @@ import com.jp.backend.domain.schedule.entity.Schedule;
 import com.jp.backend.domain.schedule.enums.Status;
 import com.jp.backend.domain.user.dto.UserCompactResDto;
 import com.jp.backend.domain.user.entity.User;
+import com.querydsl.core.annotations.QueryProjection;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,7 @@ public class ScheduleResDto {
 	private User.Mbti mbti;
 
 	@Builder
+	@QueryProjection
 	public ScheduleResDto(Schedule schedule, List<UserCompactResDto> users, List<DayResDto> dayResDtos) {
 		this.id = schedule.getId();
 		this.title = schedule.getTitle();

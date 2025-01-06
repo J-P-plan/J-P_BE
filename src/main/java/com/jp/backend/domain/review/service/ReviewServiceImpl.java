@@ -224,6 +224,21 @@ public class ReviewServiceImpl implements ReviewService {
 		return new PageResDto<>(pageInfo, reviewPage.getContent());
 	}
 
+	@Override
+	@Transactional
+	public Boolean deleteReview(Long reviewId, String username) {
+		Review findReview = verifyReview(reviewId);
+
+		//작성자가 아니라면 RestException
+		if (!username.equals(findReview.getUser().getEmail())) {
+			throw new CustomLogicException(ExceptionCode.FORBIDDEN);
+		}
+
+		reviewRepository.delete(findReview);
+
+		return true;
+	}
+
 	private List<FileResDto> addToReviewFile(List<String> fileIds, Review review) {
 		List<FileResDto> fileInfos = new ArrayList<>();
 

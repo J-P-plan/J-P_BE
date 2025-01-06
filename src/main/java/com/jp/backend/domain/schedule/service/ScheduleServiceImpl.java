@@ -347,11 +347,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	@Transactional
 	public PageResDto<ScheduleResDto> findMySchedules(
-		Integer page, ScheduleSort sort, Integer elementCnt, String username) {
+		Integer page, ScheduleSort sort, Integer elementCnt, String username, Boolean isDiary) {
 		User user = userService.verifyUser(username);
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		Page<ScheduleResDto> schedules = scheduleRepository.getSchedulePage(pageable, user.getId(), null, sort)
+		Page<ScheduleResDto> schedules = scheduleRepository.getSchedulePage(pageable, user.getId(), null, sort, isDiary)
 			.map(schedule -> ScheduleResDto.builder().schedule(schedule).build());
 		PageInfo pageInfo =
 			PageInfo.<ScheduleResDto>builder()
@@ -370,7 +370,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
-		Page<ScheduleResDto> schedules = scheduleRepository.getSchedulePage(pageable, null, placeId, sort)
+		Page<ScheduleResDto> schedules = scheduleRepository.getSchedulePage(pageable, null, placeId, sort, null)
 			.map(schedule -> ScheduleResDto.builder().schedule(schedule).build());
 		PageInfo pageInfo =
 			PageInfo.<ScheduleResDto>builder()
