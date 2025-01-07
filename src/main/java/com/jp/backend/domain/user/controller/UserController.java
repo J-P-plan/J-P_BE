@@ -58,4 +58,12 @@ public class UserController {
 		return ResponseEntity.ok(userService.findUser(principal.getUsername()));
 	}
 
+	@GetMapping("/search")
+	@Operation(summary = "유저 검색 API", description = "초대를 위해 다른 유저를 검색합니다.")
+	public ResponseEntity<UserResDto> findOthers(
+		@AuthenticationPrincipal UserPrincipal principal
+	) {
+		return ResponseEntity.ok(userService.findUser(principal.getUsername()));
+	}
+
 }

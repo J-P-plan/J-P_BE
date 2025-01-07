@@ -7,9 +7,9 @@ public enum LikeActionType {
 	BOOKMARK("찜");
 
 	@Getter
-	private String likeActionType;
+	private final String value;
 
-	LikeActionType(String likeActionType) {
-		this.likeActionType = likeActionType;
+	LikeActionType(String value) {
+		this.value = value;
 	}
 }

@@ -8,9 +8,9 @@ public enum LikeTargetType {
 	DIARY("여행기");
 
 	@Getter
-	private String likeTargetType;
+	private final String value;
 
-	LikeTargetType(String likeTargetType) {
-		this.likeTargetType = likeTargetType;
+	LikeTargetType(String value) {
+		this.value = value;
 	}
 }
