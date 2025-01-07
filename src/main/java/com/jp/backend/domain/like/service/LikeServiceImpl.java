@@ -116,86 +116,24 @@ public class LikeServiceImpl implements LikeService {
 	// 마이페이지 찜목록 - 여행기/장소
 	@Override
 	public PageResDto<LikeResDto> getFavoriteList(LikeTargetType likeTargetType, PlaceType placeType, String email,
-		Integer page,
-		Integer elementCnt) {
+		Integer page, Integer elementCnt) {
 		User user = userService.verifyUser(email);
-
 		Pageable pageable = PageRequest.of(page - 1, elementCnt == null ? 10 : elementCnt);
 
 		Page<LikeResDto> likePage;
-		// 유저의 전체 좋아요 리스트 조회
-		if (likeTargetType == null) {
+
+		if (likeTargetType == null) { // 전체 좋아요 리스트 조회
 			likePage = likeRepository.getAllFavoriteList(user.getId(), pageable)
-				.map(like -> {
-					Diary diary = null;
-					Place place = null;
-					String firstFileUrl = "";
-
-					if (like.getLikeTargetType() == LikeTargetType.PLACE) {
-						place = placeRepository.findByPlaceId(like.getTargetId())
-							.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
-						GooglePlaceDetailsResDto googleDetails = googlePlaceService.getPlaceDetailsFromGoogle(
-							place.getPlaceId(),
-							"photo");
-						List<PlaceFile> placeFiles = placeFileRepository.findByPlace_PlaceIdOrderByFileOrder(
-							like.getTargetId());
-						firstFileUrl = placeFiles.isEmpty() ? googlePlaceService.getFirstPhotoUrl(googleDetails) :
-							placeFiles.get(0).getFile().getUrl(); // db에 없으면 구글 / 있으면 그거
-					}
-					if (like.getLikeTargetType() == LikeTargetType.DIARY) {
-						diary = diaryRepository.findById(Long.valueOf(like.getTargetId()))
-							.orElseThrow(() -> new CustomLogicException(ExceptionCode.DIARY_NONE));
-						List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(
-							Long.valueOf(like.getTargetId()));
-						firstFileUrl = diaryFiles.isEmpty() ? null : diaryFiles.get(0).getFile().getUrl();
-					}
-
-					return LikeResDto.builder()
-						.like(like)
-						.diary(diary)
-						.place(place)
-						.fileUrl(firstFileUrl)
-						.build();
-				});
-		}
-		// placeType에 따라 필터링한 유저의 장소 좋아요 리스트 조회
-		else if (likeTargetType == LikeTargetType.PLACE) {
+				.map(this::buildLikeResDto);
+		} else if (likeTargetType == LikeTargetType.PLACE) { // 장소 좋아요 리스트 조회
 			if (placeType == null) {
 				throw new CustomLogicException(ExceptionCode.PLACE_TYPE_REQUIRED);
 			}
 			likePage = likeRepository.getFavoriteListForPlace(placeType, user.getId(), pageable)
-				.map(like -> {
-					Place place = placeRepository.findByPlaceId(like.getTargetId())
-						.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
-					List<PlaceFile> placeFiles = placeFileRepository.findByPlace_PlaceIdOrderByFileOrder(
-						like.getTargetId());
-					String firstFileUrl = placeFiles.isEmpty() ? null : placeFiles.get(0).getFile().getUrl();
-
-					return LikeResDto.builder()
-						.like(like)
-						.diary(null)
-						.place(place)
-						.fileUrl(firstFileUrl)
-						.build();
-				});
-		}
-		// 유저의 여행기 좋아요 리스트 조회
-		else if (likeTargetType == LikeTargetType.DIARY) {
+				.map(this::buildLikeResDto);
+		} else if (likeTargetType == LikeTargetType.DIARY) { // 여행기 좋아요 리스트 조회
 			likePage = likeRepository.getFavoriteListForDiary(user.getId(), pageable)
-				.map(like -> {
-					Diary diary = diaryRepository.findById(Long.valueOf(like.getTargetId()))
-						.orElseThrow(() -> new CustomLogicException(ExceptionCode.DIARY_NONE));
-					List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(
-						Long.valueOf(like.getTargetId()));
-					String firstFileUrl = diaryFiles.isEmpty() ? null : diaryFiles.get(0).getFile().getUrl();
-
-					return LikeResDto.builder()
-						.like(like)
-						.diary(diary)
-						.place(null)
-						.fileUrl(firstFileUrl)
-						.build();
-				});
+				.map(this::buildLikeResDto);
 		} else {
 			throw new CustomLogicException(ExceptionCode.TYPE_NONE);
 		}
@@ -206,6 +144,40 @@ public class LikeServiceImpl implements LikeService {
 			.build();
 
 		return new PageResDto<>(pageInfo, likePage.getContent());
+	}
+
+	private LikeResDto buildLikeResDto(Like like) {
+		String firstFileUrl = "";
+		Diary diary = null;
+		Place place = null;
+
+		switch (like.getLikeTargetType()) {
+			case PLACE -> {
+				place = placeRepository.findByPlaceId(like.getTargetId())
+					.orElseThrow(() -> new CustomLogicException(ExceptionCode.PLACE_NONE));
+				List<PlaceFile> placeFiles = placeFileRepository.findByPlace_PlaceIdOrderByFileOrder(
+					place.getPlaceId());
+				firstFileUrl = placeFiles.isEmpty()
+					? googlePlaceService.getFirstPhotoUrl(
+					googlePlaceService.getPlaceDetailsFromGoogle(place.getPlaceId(), "photo"))
+					: placeFiles.get(0).getFile().getUrl();
+			}
+			case DIARY -> {
+				diary = diaryRepository.findById(Long.valueOf(like.getTargetId()))
+					.orElseThrow(() -> new CustomLogicException(ExceptionCode.DIARY_NONE));
+				List<DiaryFile> diaryFiles = diaryFileRepository.findByDiaryIdOrderByFileOrder(
+					Long.valueOf(like.getTargetId()));
+				firstFileUrl = diaryFiles.isEmpty() ? null : diaryFiles.get(0).getFile().getUrl();
+			}
+			default -> throw new CustomLogicException(ExceptionCode.TYPE_NONE);
+		}
+
+		return LikeResDto.builder()
+			.like(like)
+			.diary(diary)
+			.place(place)
+			.fileUrl(firstFileUrl)
+			.build();
 	}
 
 	// targetId 존재 여부 검증
