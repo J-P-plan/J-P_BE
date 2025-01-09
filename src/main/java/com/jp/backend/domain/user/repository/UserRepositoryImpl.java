@@ -1,4 +1,4 @@
-package com.jp.backend.domain.user.repository.Impl;
+package com.jp.backend.domain.user.repository;
 
 import java.util.List;
 
@@ -26,6 +26,15 @@ public class UserRepositoryImpl implements UserRepository {
 			.join(scheduleUser.user, user)
 			.where(scheduleUser.schedule.id.eq(scheduleSeq))
 			.fetch();
+	}
+
+	@Override
+	public List<User> findByString(String searchString) {
+		return jpaQueryFactory
+				.select(user)
+				.from(user)
+				.where(user.email.containsIgnoreCase(searchString))
+				.fetch();
 	}
 
 }

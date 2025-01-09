@@ -1,16 +1,15 @@
 package com.jp.backend.domain.user.controller;
 
 import java.net.URI;
+import java.util.List;
 
+import com.jp.backend.domain.user.dto.UserCompactResDto;
+import com.jp.backend.global.exception.CustomLogicException;
+import com.jp.backend.global.exception.ExceptionCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.jp.backend.auth.entity.UserPrincipal;
 import com.jp.backend.domain.user.dto.UserPostDto;
@@ -59,11 +58,19 @@ public class UserController {
 	}
 
 	@GetMapping("/search")
-	@Operation(summary = "유저 검색 API", description = "초대를 위해 다른 유저를 검색합니다.")
-	public ResponseEntity<UserResDto> findOthers(
-		@AuthenticationPrincipal UserPrincipal principal
-	) {
-		return ResponseEntity.ok(userService.findUser(principal.getUsername()));
+	@Operation(summary = "유저 검색 API",
+			description = "초대를 위해 다른 유저를 검색합니다." +
+					"( 최소 2자 이상부터 검색 가능합니다. )")
+	public ResponseEntity<List<UserCompactResDto>> findOthers(
+			@RequestParam(required = false, value = "searchString") String searchString,
+			@AuthenticationPrincipal UserPrincipal principal) {
+
+		// 최소 2자 이상부터 검색 가능
+		if (searchString == null || searchString.length() < 2) {
+			throw new CustomLogicException(ExceptionCode.SEARCH_STRING_TOO_SHORT);
+		}
+
+		return ResponseEntity.ok(userService.findOtherUsers(searchString, principal.getUsername()));
 	}
 
 }

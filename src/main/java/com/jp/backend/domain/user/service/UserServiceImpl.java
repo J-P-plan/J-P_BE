@@ -1,5 +1,6 @@
 package com.jp.backend.domain.user.service;
 
+import com.jp.backend.domain.user.dto.UserCompactResDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,8 @@ import com.jp.backend.global.exception.ExceptionCode;
 import com.jp.backend.global.utils.CustomBeanUtils;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -64,6 +67,19 @@ public class UserServiceImpl implements UserService {
 	public UserResDto findUser(String username) {
 		User user = verifyUser(username);
 		return UserResDto.builder().user(user).build();
+	}
+
+	// 다른 유저 검색
+	@Override
+	@Transactional(readOnly = true)
+	public List<UserCompactResDto> findOtherUsers(String searchString, String username) {
+		verifyUser(username);
+
+		List<User> users = userRepository.findByString(searchString);
+
+		return users.stream()
+				.map(user -> UserCompactResDto.builder().user(user).build())
+				.toList();
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class InviteController {
 	private final InviteService inviteService;
 
+	// TODO 얘는 그냥 검색해서 바로 초대하는 거
 	@Operation(summary = "초대 API")
 	@PostMapping
 	public ResponseEntity invite(@Valid @RequestBody InviteReqDto reqDto,
@@ -33,9 +34,12 @@ public class InviteController {
 		// 생성된 초대 코드가 없다면, 랜덤한 문자열을 만들어 value로 지정하고, 유효기간 1일의 TTL을 설정
 		// 초대 링크 만든 사람이면 그냥 들어가지게? 그 사람이 들어갔는데 초대한다고 뜨면 안되잖아
 
+		// TODO 여러명 선택해서 한번에 초대가능
+
 		return ResponseEntity.ok().build();
 	}
-	// TODO 초대 코드 검증 ?
+	// TODO 초대 코드 만들기
+	// TODO 초대 코드 검증
 
 	@Operation(summary = "수락 API")
 	@PostMapping("/{inviteId}/accept")

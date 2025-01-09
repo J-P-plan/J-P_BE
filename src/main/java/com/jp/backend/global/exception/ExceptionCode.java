@@ -9,6 +9,7 @@ public enum ExceptionCode {
 	USER_DUPLICATED(409, "USER_DUPLICATED"),
 	WIDTH_OR_HEIGHT_REQUIRED(400, "너비 또는 높이 중 하나는 필요합니다."),
 	TYPE_NONE(404, "TYPE_NONE"),
+	SEARCH_STRING_TOO_SHORT(400, "검색어가 너무 짧습니다. 3자 이상 입력해주세요."),
 
 	// JWT Token
 	TOKEN_INVALID(401, "TOKEN_INVALID"),
