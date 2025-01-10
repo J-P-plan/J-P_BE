@@ -7,5 +7,5 @@ import com.jp.backend.domain.user.entity.User;
 public interface UserRepository {
 	List<User> findBySchedule(Long scheduleSeq);
 
-	List<User> findByString(String searchString);
+	List<User> findByString(String searchString, String username);
 }

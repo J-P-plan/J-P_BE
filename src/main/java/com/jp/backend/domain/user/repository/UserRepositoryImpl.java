@@ -29,11 +29,12 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public List<User> findByString(String searchString) {
+	public List<User> findByString(String searchString, String username) {
 		return jpaQueryFactory
 				.select(user)
 				.from(user)
-				.where(user.email.containsIgnoreCase(searchString))
+				.where(user.email.containsIgnoreCase(searchString)
+						.and(user.email.ne(username))) // 본인은 제외
 				.fetch();
 	}
 

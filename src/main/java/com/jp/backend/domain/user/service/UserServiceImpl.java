@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserCompactResDto> findOtherUsers(String searchString, String username) {
 		verifyUser(username);
 
-		List<User> users = userRepository.findByString(searchString);
+		List<User> users = userRepository.findByString(searchString, username);
 
 		return users.stream()
 				.map(user -> UserCompactResDto.builder().user(user).build())

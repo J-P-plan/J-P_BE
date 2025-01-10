@@ -1,18 +1,14 @@
 package com.jp.backend.domain.invite.entity;
 
-import com.jp.backend.domain.invite.enums.InviteType;
+import com.jp.backend.domain.invite.enums.InviteStatus;
+import com.jp.backend.domain.schedule.entity.Schedule;
+import com.jp.backend.domain.user.entity.User;
+import com.jp.backend.global.audit.Auditable;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,13 +16,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Invite {
+public class Invite extends Auditable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	// 유저 / 스케줄 N:N
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Schedule schedule;
 
 	@Enumerated(value = EnumType.STRING)
-	private InviteType inviteType;
+	private InviteStatus inviteStatus;
+
+	// TODO invitedAt --> audiatable
+	private LocalDateTime respondedAt; // 응답 시간
 }

@@ -54,6 +54,9 @@ public enum ExceptionCode {
 	SCHEDULE_NONE(404, "SCHEDULE_NONE"),
 	DAY_LOCATION_NONE(404, "DAY_LOCATION_NONE"),
 	SCHEDULE_USER_NONE(404, "해당 일정에 유저가 없습니다."),
+
+	// Invite
+	INVITE_NONE(404, "INVITE_NONE"),
   
 	// Diary
 	DIARY_NONE(404, "DIARY_NONE"),
