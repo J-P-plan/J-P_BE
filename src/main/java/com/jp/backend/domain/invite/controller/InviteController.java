@@ -28,7 +28,7 @@ public class InviteController {
 	// TODO 얘는 그냥 검색해서 바로 초대하는 거
 	@Operation(summary = "초대 API")
 	@PostMapping
-	public ResponseEntity<InviteResDto> invite(@Valid @RequestBody InviteReqDto reqDto,
+	public ResponseEntity<Boolean> invite(@Valid @RequestBody InviteReqDto reqDto,
 											   @AuthenticationPrincipal UserPrincipal principal) {
 
 		return ResponseEntity.ok(inviteService.inviteUser(reqDto, principal.getUsername()));

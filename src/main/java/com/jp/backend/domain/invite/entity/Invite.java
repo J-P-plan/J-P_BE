@@ -30,6 +30,7 @@ public class Invite extends Auditable {
 	@Enumerated(value = EnumType.STRING)
 	private InviteStatus inviteStatus;
 
-	// TODO invitedAt --> audiatable
-	private LocalDateTime respondedAt; // 응답 시간
+	private LocalDateTime invitedAt; // 초대 보낸 시간
+
+	private LocalDateTime respondedAt; // 응답한 시간
 }
