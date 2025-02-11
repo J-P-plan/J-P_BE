@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class InviteController {
 	private final InviteService inviteService;
 
-	// TODO 얘는 그냥 검색해서 바로 초대하는 거
+	// 유저 검색 후 초대하는 기능
 	@Operation(summary = "초대 API")
 	@PostMapping
 	public ResponseEntity<Boolean> invite(@Valid @RequestBody InviteReqDto reqDto,

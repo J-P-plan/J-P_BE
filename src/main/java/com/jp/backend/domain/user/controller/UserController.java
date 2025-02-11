@@ -60,7 +60,7 @@ public class UserController {
 	@GetMapping("/search")
 	@Operation(summary = "유저 검색 API",
 			description = "초대를 위해 다른 유저를 검색합니다." +
-					"( 최소 2자 이상부터 검색 가능하며, 본인은 검색 결과에 나타나지 않습니다. )")
+					"( 최소 2자 이상부터 검색 가능하며, 본인은 검색 결과에 나타나지 않습니다.)")
 	public ResponseEntity<List<UserCompactResDto>> findOthers(
 			@RequestParam(required = false, value = "searchString") String searchString,
 			@AuthenticationPrincipal UserPrincipal principal) {
