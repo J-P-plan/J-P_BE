@@ -2,6 +2,7 @@
 FROM gradle:8.5.0-jdk21 AS build
 COPY . /home/gradle/app
 WORKDIR /home/gradle/app
+RUN chmod +x gradlew
 RUN ./gradlew build --no-daemon
 
 # 2. 실행 스테이지
