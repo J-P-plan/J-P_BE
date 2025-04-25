@@ -40,6 +40,11 @@ google:
   places:
     api-key: ${GOOGLE_PLACES_API_KEY}
 
+server:
+  port: ${PORT:8080}  # Render : PORT 환경변수, 로컬 : 8080
+  ssl:
+    enabled: false    # Render 자체적으로 SSL 처리
+
 spring-doc:
   swagger-ui:
     tags-sorter: alpha
