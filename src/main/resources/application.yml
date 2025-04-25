@@ -2,8 +2,8 @@ spring:
   sql:
     init:
       mode: never
-  profiles:
-    active: prod
+  # profiles:
+  #   active: prod
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
