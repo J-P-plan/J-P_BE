@@ -3,7 +3,7 @@ spring:
     init:
       mode: never
   profiles:
-    active: local
+    active: prod
   output: #로그 색상 바꾸기
     ansi:
       enabled: always
@@ -41,11 +41,9 @@ google:
     api-key: ${GOOGLE_PLACES_API_KEY}
 
 server:
-  port: 8080
+  port: ${PORT:8080}  # Render : PORT 환경변수, 로컬 : 8080
   ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: jandp1234
-    key-store-type: PKCS12
+    enabled: false    # Render 자체적으로 SSL 처리
 
 spring-doc:
   swagger-ui:
