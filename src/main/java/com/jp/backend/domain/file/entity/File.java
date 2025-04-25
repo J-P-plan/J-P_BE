@@ -32,7 +32,7 @@ public class File {
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
-	@Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
+	//@Column(columnDefinition = "BINARY(16)") // binary 형태로 저장 --> 데이터 공간을 적게 차지함
 	private UUID id;
 
 	private String bucket;
